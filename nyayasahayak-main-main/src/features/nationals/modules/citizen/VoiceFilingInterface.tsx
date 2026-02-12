@@ -97,7 +97,7 @@ const VoiceFilingInterface: React.FC = () => {
      */
     const parseTranscript = (text: string): Partial<Case> => {
         const lowerText = text.toLowerCase();
-        let sectionsInvoked: string[] = [];
+        const sectionsInvoked: string[] = [];
         let urgency: UrgencyLevel = 'LOW';
         let caseType = 'Civil';
 

@@ -40,7 +40,8 @@ jobs:
     
     - name: Run tests with coverage
       run: |
-        pytest --cov=app --cov-report=xml --cov-report=html
+        # Only run tests in the tests directory, exclude scripts
+        pytest tests/ --cov=app --cov-report=xml --cov-report=html
     
     - name: Upload coverage reports
       uses: codecov/codecov-action@v3

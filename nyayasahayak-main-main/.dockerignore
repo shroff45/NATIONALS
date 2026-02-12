@@ -8,6 +8,8 @@ dist-ssr
 coverage
 *.test.ts
 *.test.tsx
+test-models.ts
+find-gen-models.cjs
 
 # IDEs
 .vscode/*
@@ -25,6 +27,7 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
+tsc_*.txt
 
 # OS
 .DS_Store

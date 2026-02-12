@@ -28,6 +28,14 @@ wheels/
 .coverage
 htmlcov/
 .tox/
+test_*.py
+
+# Development Scripts
+reproduce_*.py
+debug_*.py
+list_users.py
+error.txt
+error_utf8.txt
 
 # IDEs
 .vscode/

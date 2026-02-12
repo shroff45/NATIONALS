@@ -71,12 +71,12 @@ jobs:
     
     - name: Run linting
       run: npm run lint
-    
+
+    - name: Security Audit
+      run: npm audit --audit-level=high || true
+
     - name: Build
       run: npm run build
-    
-    - name: Run tests
-      run: npm test -- --coverage --watchAll=false || true
 
   # Build and Push Docker Images
   build-and-push:

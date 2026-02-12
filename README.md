@@ -4,6 +4,8 @@
 
 ### ✅ 11 Expert-Level Documents Created:
 
+All detailed documentation and implementation plans have been moved to the `docs/` directory.
+
 1. **SKILL_01_SmartFIR.md** (~800 lines) - Complete police FIR generation
 2. **SKILL_02_FinancialAnalyzer.md** (~600 lines) - Financial crime detection  
 3. **SKILL_19_RegistryAutomator.md** (~500 lines) - Document scrutiny & fees
@@ -28,11 +30,11 @@ Your Skills 19 & 20 are already working! Just run:
 
 ```bash
 # Terminal 1 - Backend
-cd d:/Project/nationals/backend
+cd backend
 uvicorn app.main:app --reload
 
 # Terminal 2 - Frontend  
-cd d:/Project/nationals/nyayasahayak-main-main
+cd frontend
 npm run dev
 
 # Open browser
@@ -42,7 +44,7 @@ http://localhost:5173/admin/registry
 
 ### Option 2: Deploy All 24 Skills (2 hours)
 
-Follow: `CONTINUOUS_IMPLEMENTATION_SCRIPT.md`
+Follow: `docs/CONTINUOUS_IMPLEMENTATION_SCRIPT.md`
 
 ---
 
@@ -79,22 +81,16 @@ Your LegalOS 4.0 platform:
 
 ---
 
-## 📂 ALL FILES LOCATION
+## 📂 DIRECTORY STRUCTURE
 
 ```
-D:\Project\nationals\
-├── SKILL_01_SmartFIR.md
-├── SKILL_02_FinancialAnalyzer.md
-├── SKILL_19_RegistryAutomator.md
-├── SKILL_20_ListingOptimizer.md
-├── SKILLS_08_21_QuickRef.md
-├── SKILL_ALL_MasterIndex.md
-├── EXPERT_IMPLEMENTATION_GUIDE.md
-├── EXPERT_PRODUCTION_CODE.md
-├── CONTINUOUS_IMPLEMENTATION_SCRIPT.md
-├── LEGALOS_4_0_COMPLETE_BACKUP.md
-├── FINAL_PRODUCTION_CHECKLIST.md
-└── README.md (this file)
+./
+├── backend/            # Python FastAPI Backend
+├── frontend/           # React Frontend
+├── docs/               # Implementation plans and documentation
+├── scripts/            # Shell scripts
+├── docker-compose.yml  # Docker orchestration
+└── README.md           # This file
 ```
 
 ---

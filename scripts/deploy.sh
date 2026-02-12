@@ -1,9 +1,12 @@
 #!/bin/bash
 # LegalOS 4.0 - Deployment Script
-# Usage: ./deploy.sh [environment]
-# Example: ./deploy.sh production
+# Usage: ./scripts/deploy.sh [environment]
+# Example: ./scripts/deploy.sh production
 
 set -e
+
+# Change to project root
+cd "$(dirname "$0")/.."
 
 # Colors for output
 RED='\033[0;31m'
@@ -149,7 +152,7 @@ show_status() {
     echo -e "${BLUE}Useful Commands:${NC}"
     echo -e "  Stop: ${YELLOW}docker-compose -f $COMPOSE_FILE down${NC}"
     echo -e "  Restart: ${YELLOW}docker-compose -f $COMPOSE_FILE restart${NC}"
-    echo -e "  Update: ${YELLOW}./deploy.sh${NC}"
+    echo -e "  Update: ${YELLOW}./scripts/deploy.sh${NC}"
 }
 
 # Main deployment flow

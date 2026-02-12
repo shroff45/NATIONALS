@@ -1,0 +1,92 @@
+# General
+.DS_Store
+Thumbs.db
+*.log
+*.zip
+*.gz
+*.tar
+
+# VS Code
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
+# Python / Backend
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environments
+venv/
+.venv/
+env/
+.env
+.env.local
+.env.*.local
+backend/.env
+backend/.env.*
+
+# Node.js / Frontend
+node_modules/
+frontend/node_modules/
+frontend/dist/
+frontend/build/
+frontend/.env
+frontend/.env.local
+frontend/.env.*.local
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+frontend/.eslintcache
+
+# Docker / Volumes
+postgres-data/
+redis-data/
+grafana-data/
+prometheus-data/
+
+# Application Specific
+evidence-storage/
+backend/uploads/
+*.sqlite
+*.db
+*.sqlite3
+debug_db.py
+create_backup.py
+seed_roles.py
+
+# Backups
+backups/
+*_backup_*.zip
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+backend/.pytest_cache/
+backend/coverage.xml
+
+# LegalOS Specific
+PRODUCTION_DEPLOYMENT_GUIDE.md

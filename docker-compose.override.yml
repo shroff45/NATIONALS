@@ -1,0 +1,47 @@
+# LegalOS 4.0 - Local Development Override
+# Usage: docker-compose -f docker-compose.yml -f docker-compose.override.yml up
+
+version: '3.8'
+
+services:
+  backend:
+    volumes:
+      # Mount source code for hot reload
+      - ./backend/app:/app/app:ro
+      - ./backend/requirements.txt:/app/requirements.txt:ro
+    environment:
+      - DEBUG=true
+      - LOG_LEVEL=DEBUG
+      - ENVIRONMENT=development
+    # Override command for development (auto-reload)
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload --reload-dir /app/app
+
+  frontend:
+    volumes:
+      # Mount source code for hot reload
+      - ./nyayasahayak-main-main/src:/app/src:ro
+      - ./nyayasahayak-main-main/public:/app/public:ro
+      - ./nyayasahayak-main-main/package.json:/app/package.json:ro
+    environment:
+      - NODE_ENV=development
+      - CHOKIDAR_USEPOLLING=true
+    # Override command for development
+    command: npm run dev
+    ports:
+      - "5173:5173"
+
+  db:
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      # Use named volume for persistence even in dev
+      - postgres_data_dev:/var/lib/postgresql/data
+
+  redis:
+    ports:
+      - "6379:6379"
+
+volumes:
+  postgres_data_dev:

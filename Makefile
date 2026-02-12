@@ -48,7 +48,6 @@ shell-db:
 test:
 	@echo "Running backend tests..."
 	docker-compose exec backend pytest -v
-	test-frontend:
 	@echo "Running frontend tests..."
 	docker-compose exec frontend npm test
 
@@ -66,11 +65,11 @@ clean:
 
 # Deployment
 deploy:
-	./deploy.sh
+	./scripts/deploy.sh
 
 # Backup
 backup:
-	./backup.sh
+	./scripts/backup.sh
 
 # Database operations
 migrate:

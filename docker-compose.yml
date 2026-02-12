@@ -8,7 +8,7 @@ services:
   backend:
     build:
       context: ./backend
-      dockerfile: ../Dockerfile.backend
+      dockerfile: Dockerfile
     container_name: legalos-backend
     restart: unless-stopped
     ports:
@@ -41,8 +41,8 @@ services:
   # Frontend Web Application
   frontend:
     build:
-      context: ./nyayasahayak-main-main
-      dockerfile: ../Dockerfile.frontend
+      context: ./frontend
+      dockerfile: Dockerfile
     container_name: legalos-frontend
     restart: unless-stopped
     ports:

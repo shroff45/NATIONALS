@@ -1,8 +1,11 @@
 #!/bin/bash
 # LegalOS 4.0 - Backup Script
-# Usage: ./backup.sh [backup_directory]
+# Usage: ./scripts/backup.sh [backup_directory]
 
 set -e
+
+# Change to project root
+cd "$(dirname "$0")/.."
 
 BACKUP_DIR=${1:-./backups}
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)

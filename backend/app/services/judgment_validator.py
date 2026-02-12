@@ -23,12 +23,12 @@ class JudgmentValidatorService:
 
     # Mandatory components every judgment must have
     MANDATORY_SECTIONS = [
-        ("parties", r"(petitioner|appellant|complainant|prosecution)\s*(v\.?s?\.?|versus)\s*(respondent|accused|defendant)", "Case title with parties"),
-        ("facts", r"(brief facts|facts of the case|factual matrix)", "Statement of facts"),
-        ("issues", r"(issues? (for|to be) (consideration|decided)|points? for determination)", "Issues for determination"),
-        ("arguments", r"(arguments?|submissions?|contentions?)\s*(of|by)\s*(prosecution|defence|petitioner|respondent)", "Arguments of both sides"),
-        ("analysis", r"(analysis|discussion|reasoning|consideration)", "Court's analysis"),
-        ("order", r"(order|judgment|decree|verdict|disposed)", "Final order/disposal"),
+        ("parties", re.compile(r"(petitioner|appellant|complainant|prosecution)\s*(v\.?s?\.?|versus)\s*(respondent|accused|defendant)", re.IGNORECASE), "Case title with parties"),
+        ("facts", re.compile(r"(brief facts|facts of the case|factual matrix)", re.IGNORECASE), "Statement of facts"),
+        ("issues", re.compile(r"(issues? (for|to be) (consideration|decided)|points? for determination)", re.IGNORECASE), "Issues for determination"),
+        ("arguments", re.compile(r"(arguments?|submissions?|contentions?)\s*(of|by)\s*(prosecution|defence|petitioner|respondent)", re.IGNORECASE), "Arguments of both sides"),
+        ("analysis", re.compile(r"(analysis|discussion|reasoning|consideration)", re.IGNORECASE), "Court's analysis"),
+        ("order", re.compile(r"(order|judgment|decree|verdict|disposed)", re.IGNORECASE), "Final order/disposal"),
     ]
 
     # Known citation patterns
@@ -54,8 +54,9 @@ class JudgmentValidatorService:
         text = request.judgment_text.lower()
 
         # --- Check 1: Mandatory Sections ---
-        for section_key, pattern, label in self.MANDATORY_SECTIONS:
-            if not re.search(pattern, text, re.IGNORECASE):
+        for section_key, pattern_regex, label in self.MANDATORY_SECTIONS:
+            # Use request.judgment_text for regex search (case-insensitive via compiled regex)
+            if not pattern_regex.search(request.judgment_text):
                 issues.append(ValidationIssue(
                     id=str(uuid.uuid4()),
                     category=IssueCategory.PROCEDURAL,

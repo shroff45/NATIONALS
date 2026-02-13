@@ -22,26 +22,28 @@ class JudgmentValidatorService:
     """
 
     # Mandatory components every judgment must have
+    # Optimized: Pre-compiled regexes, lowercased to avoid re.IGNORECASE overhead
     MANDATORY_SECTIONS = [
-        ("parties", r"(petitioner|appellant|complainant|prosecution)\s*(v\.?s?\.?|versus)\s*(respondent|accused|defendant)", "Case title with parties"),
-        ("facts", r"(brief facts|facts of the case|factual matrix)", "Statement of facts"),
-        ("issues", r"(issues? (for|to be) (consideration|decided)|points? for determination)", "Issues for determination"),
-        ("arguments", r"(arguments?|submissions?|contentions?)\s*(of|by)\s*(prosecution|defence|petitioner|respondent)", "Arguments of both sides"),
-        ("analysis", r"(analysis|discussion|reasoning|consideration)", "Court's analysis"),
-        ("order", r"(order|judgment|decree|verdict|disposed)", "Final order/disposal"),
+        ("parties", re.compile(r"(petitioner|appellant|complainant|prosecution)\s*(v\.?s?\.?|versus)\s*(respondent|accused|defendant)"), "Case title with parties"),
+        ("facts", re.compile(r"(brief facts|facts of the case|factual matrix)"), "Statement of facts"),
+        ("issues", re.compile(r"(issues? (for|to be) (consideration|decided)|points? for determination)"), "Issues for determination"),
+        ("arguments", re.compile(r"(arguments?|submissions?|contentions?)\s*(of|by)\s*(prosecution|defence|petitioner|respondent)"), "Arguments of both sides"),
+        ("analysis", re.compile(r"(analysis|discussion|reasoning|consideration)"), "Court's analysis"),
+        ("order", re.compile(r"(order|judgment|decree|verdict|disposed)"), "Final order/disposal"),
     ]
 
     # Known citation patterns
+    # Optimized: Lowercased to run on lower() text without re.IGNORECASE
     CITATION_PATTERN = re.compile(
-        r'\(\d{4}\)\s+\d+\s+SCC\s+\d+|'       # (2024) 5 SCC 123
-        r'AIR\s+\d{4}\s+SC\s+\d+|'              # AIR 2024 SC 456
-        r'\d{4}\s+Cr\.?L\.?J\.?\s+\d+|'         # 2024 CrLJ 789
-        r'SLP\s*\(C(rl|iv)\)\s*No\.?\s*\d+',    # SLP(Crl) No. 1234
-        re.IGNORECASE
+        r'\(\d{4}\)\s+\d+\s+scc\s+\d+|'       # (2024) 5 scc 123
+        r'air\s+\d{4}\s+sc\s+\d+|'              # air 2024 sc 456
+        r'\d{4}\s+cr\.?l\.?j\.?\s+\d+|'         # 2024 crlj 789
+        r'slp\s*\(c(rl|iv)\)\s*no\.?\s*\d+',    # slp(crl) no. 1234
     )
 
     # BNS Section pattern
-    BNS_PATTERN = re.compile(r'(BNS|IPC)\s*(Section|S\.?)\s*\d+', re.IGNORECASE)
+    # Optimized: Lowercased
+    BNS_PATTERN = re.compile(r'(bns|ipc)\s*(section|s\.?)\s*\d+')
 
     def __init__(self):
         self.reports: Dict[str, JudgmentValidateResponse] = {}
@@ -51,11 +53,14 @@ class JudgmentValidatorService:
         result_id = str(uuid.uuid4())
         issues: List[ValidationIssue] = []
         strengths: List[str] = []
+
+        # Convert to lower case once.
+        # This allows us to use case-sensitive regexes (on lowercased text) which are much faster than re.IGNORECASE.
         text = request.judgment_text.lower()
 
         # --- Check 1: Mandatory Sections ---
         for section_key, pattern, label in self.MANDATORY_SECTIONS:
-            if not re.search(pattern, text, re.IGNORECASE):
+            if not pattern.search(text):
                 issues.append(ValidationIssue(
                     id=str(uuid.uuid4()),
                     category=IssueCategory.PROCEDURAL,
@@ -70,7 +75,7 @@ class JudgmentValidatorService:
                 strengths.append(f"✅ Contains {label}")
 
         # --- Check 2: Citation Verification ---
-        citations = self.CITATION_PATTERN.findall(request.judgment_text)
+        citations = self.CITATION_PATTERN.findall(text)
         if len(citations) == 0:
             issues.append(ValidationIssue(
                 id=str(uuid.uuid4()),
@@ -86,7 +91,7 @@ class JudgmentValidatorService:
             strengths.append(f"✅ Contains {len(citations)} case citation(s)")
 
         # --- Check 3: BNS/IPC Section References ---
-        bns_refs = self.BNS_PATTERN.findall(request.judgment_text)
+        bns_refs = self.BNS_PATTERN.findall(text)
         if request.offense_sections and len(bns_refs) == 0:
             issues.append(ValidationIssue(
                 id=str(uuid.uuid4()),
@@ -101,6 +106,7 @@ class JudgmentValidatorService:
 
         # --- Check 4: Constitutional Reference ---
         constitutional_keywords = ["article 14", "article 19", "article 21", "fundamental rights", "constitutional"]
+        # Use simple substring search on lowercased text (fastest method)
         has_constitutional = any(kw in text for kw in constitutional_keywords)
         if has_constitutional:
             strengths.append("✅ References constitutional provisions")

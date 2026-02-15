@@ -262,12 +262,20 @@ const Nyayabot: React.FC<NyayabotProps> = ({ t, messages, setMessages, currentUs
             );
 
             const response = await geminiService.chatWithNyayabot(userMessage, fileParts, newMessages);
-            const groundingChunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks;
+            const rawResponse = response as any;
+            const groundingChunks = rawResponse.candidates?.[0]?.groundingMetadata?.groundingChunks;
             const sources = groundingChunks?.map((chunk: any) => chunk.web.uri);
 
-            const modelResponse: ChatMessage = { role: 'model', content: response.text || '', sources };
+            let content = '';
+            if (typeof rawResponse.text === 'function') {
+                content = rawResponse.text();
+            } else if (typeof rawResponse.text === 'string') {
+                content = rawResponse.text;
+            }
+
+            const modelResponse: ChatMessage = { role: 'model', content, sources };
             setMessages([...newMessages, modelResponse]);
-            saveMessageToDb('model', response.text || '');
+            saveMessageToDb('model', content);
 
         } catch (error: any) {
             console.error("Error chatting with Nyayabot:", error);

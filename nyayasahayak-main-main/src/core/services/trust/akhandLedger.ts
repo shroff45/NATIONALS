@@ -7,7 +7,7 @@ import {
 import { SHA256 } from 'crypto-js';
 
 // In-memory storage
-let blockchain: BlockchainBlock[] = [];
+const blockchain: BlockchainBlock[] = [];
 const bailContracts = new Map<string, SmartBailContract>();
 
 /**

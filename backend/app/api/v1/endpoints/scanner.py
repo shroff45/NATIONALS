@@ -4,7 +4,7 @@ Document Scanner API - Skill 11 (Expert)
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
 from app.schemas.scanner import ScannedDocument, ScanRequest
 from app.services.document_scanner import scanner_service
-from app.core.security import get_current_admin_user as get_current_user
+from app.dependencies import get_current_user
 
 router = APIRouter(prefix="/scanner", tags=["Citizen - Document Scanner"])
 

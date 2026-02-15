@@ -4,7 +4,8 @@ from app.api.v1.endpoints import (
     police, financial, evidence, witness, case_linker, chargesheet,
     investigation, bench_memo, bail_reckoner, sentencing, scanner,
     speech, chat, duty, warrant, crime3d,
-    triage, judgment, rights, case_status, legal_aid, feedback, auth, audit
+    triage, judgment, rights, case_status, legal_aid, feedback, auth, audit,
+    citizen
 )
 
 api_router = APIRouter()
@@ -44,6 +45,9 @@ api_router.include_router(bail_reckoner.router, prefix="/judge", tags=["bail-rec
 
 # Skill 10: Sentencing Assistant (Nyaya Mitra)
 api_router.include_router(sentencing.router, prefix="/judge", tags=["sentencing"])
+
+# CITIZEN DASHBOARD (Nyaya Setu Core)
+api_router.include_router(citizen.router, prefix="/citizen", tags=["citizen-dashboard"])
 
 # Skill 11: Document Scanner (Nyaya Setu)
 api_router.include_router(scanner.router, prefix="/citizen", tags=["scanner"])

@@ -78,25 +78,12 @@ export const verifyCredentials = async (
     const cleanId = identifier.trim().toLowerCase();
     const cleanPass = password.trim();
     
-    // First try mock credentials for demo purposes
-    const idBeforeAt = cleanId.split('@')[0];
-    const mockUser = MOCK_USERS.find(u =>
-        u.role === role &&
-        (u.username === cleanId ||
-            u.username === idBeforeAt ||
-            u.id === cleanId)
-    );
-
-    if (mockUser && mockUser.password === cleanPass) {
-        // Return profile without sensitive auth data
-        const { password: _pw, username: _un, ...profile } = mockUser;
-        return profile;
-    }
+    // Mock credentials check removed to fix build error and rely on backend
 
     // Try real backend authentication
     try {
         // Map role to backend role format
-        const backendRole = role.toLowerCase();
+        const backendRole = (role || "").toLowerCase();
         
         // Build request data
         const requestData: any = {

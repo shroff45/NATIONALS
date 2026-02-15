@@ -10,6 +10,7 @@ export type UserRole = 'CITIZEN' | 'POLICE' | 'JUDGE' | 'ADMIN' | null;
 
 export interface UserProfile {
     name: string;
+    email?: string;
     id: string; // Aadhar Token or Badge ID
     avatar: string;
     role: UserRole;

@@ -4,7 +4,7 @@ Know Your Rights API - Skill 22 (Expert)
 from fastapi import APIRouter, Depends, HTTPException
 from app.schemas.rights import RightsQueryRequest, RightsQueryResponse, RightsCategory
 from app.services.rights_service import get_rights_service
-from app.core.security import get_current_admin_user as get_current_user
+from app.dependencies import get_current_user
 
 router = APIRouter(prefix="/rights", tags=["Citizen - Know Your Rights"])
 

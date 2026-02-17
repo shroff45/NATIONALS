@@ -22,13 +22,14 @@ class JudgmentValidatorService:
     """
 
     # Mandatory components every judgment must have
+    # Optimized: Pre-compiled regex patterns to avoid recompilation overhead
     MANDATORY_SECTIONS = [
-        ("parties", r"(petitioner|appellant|complainant|prosecution)\s*(v\.?s?\.?|versus)\s*(respondent|accused|defendant)", "Case title with parties"),
-        ("facts", r"(brief facts|facts of the case|factual matrix)", "Statement of facts"),
-        ("issues", r"(issues? (for|to be) (consideration|decided)|points? for determination)", "Issues for determination"),
-        ("arguments", r"(arguments?|submissions?|contentions?)\s*(of|by)\s*(prosecution|defence|petitioner|respondent)", "Arguments of both sides"),
-        ("analysis", r"(analysis|discussion|reasoning|consideration)", "Court's analysis"),
-        ("order", r"(order|judgment|decree|verdict|disposed)", "Final order/disposal"),
+        ("parties", re.compile(r"(petitioner|appellant|complainant|prosecution)\s*(v\.?s?\.?|versus)\s*(respondent|accused|defendant)", re.IGNORECASE), "Case title with parties"),
+        ("facts", re.compile(r"(brief facts|facts of the case|factual matrix)", re.IGNORECASE), "Statement of facts"),
+        ("issues", re.compile(r"(issues? (for|to be) (consideration|decided)|points? for determination)", re.IGNORECASE), "Issues for determination"),
+        ("arguments", re.compile(r"(arguments?|submissions?|contentions?)\s*(of|by)\s*(prosecution|defence|petitioner|respondent)", re.IGNORECASE), "Arguments of both sides"),
+        ("analysis", re.compile(r"(analysis|discussion|reasoning|consideration)", re.IGNORECASE), "Court's analysis"),
+        ("order", re.compile(r"(order|judgment|decree|verdict|disposed)", re.IGNORECASE), "Final order/disposal"),
     ]
 
     # Known citation patterns
@@ -44,7 +45,8 @@ class JudgmentValidatorService:
     BNS_PATTERN = re.compile(r'(BNS|IPC)\s*(Section|S\.?)\s*\d+', re.IGNORECASE)
 
     def __init__(self):
-        self.reports: Dict[str, JudgmentValidateResponse] = {}
+        # Optimization: Removed self.reports dictionary which caused unbounded memory growth
+        pass
 
     async def validate(self, request: JudgmentValidateRequest) -> JudgmentValidateResponse:
         """Run comprehensive judgment validation"""
@@ -55,7 +57,8 @@ class JudgmentValidatorService:
 
         # --- Check 1: Mandatory Sections ---
         for section_key, pattern, label in self.MANDATORY_SECTIONS:
-            if not re.search(pattern, text, re.IGNORECASE):
+            # Optimization: Use pre-compiled regex on lowercased text
+            if not pattern.search(text):
                 issues.append(ValidationIssue(
                     id=str(uuid.uuid4()),
                     category=IssueCategory.PROCEDURAL,
@@ -153,7 +156,7 @@ class JudgmentValidatorService:
             recommendation=recommendation,
         )
 
-        self.reports[result_id] = response
+        # Optimization: Response is returned directly, not stored in memory
         return response
 
 

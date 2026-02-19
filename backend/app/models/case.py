@@ -22,8 +22,8 @@ class Case(Base):
     incident_datetime = Column(DateTime, nullable=True)
     
     # System Metadata
-    status = Column(String, default=FIRStatus.DRAFT) # Enum stored as string
-    police_station_id = Column(String, nullable=True)
+    status = Column(String, default=FIRStatus.DRAFT, index=True) # Enum stored as string, indexed for filtering
+    police_station_id = Column(String, nullable=True, index=True) # Indexed for filtering by station
     
     # AI Analysis (JSON)
     analysis_data = Column(JSON, nullable=True) # Stores analysis.json()

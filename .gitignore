@@ -72,6 +72,8 @@ evidence-storage/
 backend/uploads/
 *.sqlite
 *.db
+*.db-shm
+*.db-wal
 *.sqlite3
 debug_db.py
 create_backup.py

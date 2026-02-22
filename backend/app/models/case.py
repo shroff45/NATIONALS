@@ -12,7 +12,7 @@ class Case(Base):
     fir_number = Column(String, unique=True, index=True, nullable=False)
     
     # Complainant Details
-    complainant_id = Column(String, ForeignKey("users.id"), nullable=True) # Optional for now if anonymous
+    complainant_id = Column(String, ForeignKey("users.id"), nullable=True, index=True) # Optional for now if anonymous
     complainant_name = Column(String, nullable=False)
     complainant_contact = Column(String, nullable=True)
     
@@ -22,8 +22,8 @@ class Case(Base):
     incident_datetime = Column(DateTime, nullable=True)
     
     # System Metadata
-    status = Column(String, default=FIRStatus.DRAFT) # Enum stored as string
-    police_station_id = Column(String, nullable=True)
+    status = Column(String, default=FIRStatus.DRAFT, index=True) # Enum stored as string
+    police_station_id = Column(String, nullable=True, index=True)
     
     # AI Analysis (JSON)
     analysis_data = Column(JSON, nullable=True) # Stores analysis.json()

@@ -22,15 +22,15 @@ class Case(Base):
     incident_datetime = Column(DateTime, nullable=True)
     
     # System Metadata
-    status = Column(String, default=FIRStatus.DRAFT) # Enum stored as string
-    police_station_id = Column(String, nullable=True)
+    status = Column(String, default=FIRStatus.DRAFT, index=True) # Enum stored as string
+    police_station_id = Column(String, nullable=True, index=True)
     
     # AI Analysis (JSON)
     analysis_data = Column(JSON, nullable=True) # Stores analysis.json()
     confidence_score = Column(Float, default=0.0)
     
     # Meta
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=datetime.utcnow, index=True)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     # Relationships

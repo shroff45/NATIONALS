@@ -44,7 +44,11 @@ class JudgmentValidatorService:
     BNS_PATTERN = re.compile(r'(BNS|IPC)\s*(Section|S\.?)\s*\d+', re.IGNORECASE)
 
     def __init__(self):
-        self.reports: Dict[str, JudgmentValidateResponse] = {}
+        # ⚡ Bolt Optimization:
+        # Removed instance-level self.reports dictionary.
+        # Why: Storing unbounded request data in a singleton service causes severe memory leaks.
+        # Impact: Prevents memory from growing linearly with O(n) requests over time.
+        pass
 
     async def validate(self, request: JudgmentValidateRequest) -> JudgmentValidateResponse:
         """Run comprehensive judgment validation"""
@@ -153,7 +157,6 @@ class JudgmentValidatorService:
             recommendation=recommendation,
         )
 
-        self.reports[result_id] = response
         return response
 
 

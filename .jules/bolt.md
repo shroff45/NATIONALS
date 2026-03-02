@@ -1,0 +1,3 @@
+## 2025-03-02 - [Compiled Regexes in Singletons]
+**Learning:** Re-compiling regular expressions on every request in high-traffic services (`JudgmentValidatorService` etc.) creates an unnecessary CPU bottleneck. Python's `re.search` caches patterns, but compiling them explicitly as class-level constants and avoiding redundant cache lookups prevents both memory leaks and CPU overhead. Additionally, be careful of unbound memory leaks when storing validation responses infinitely inside a service singleton dictionary (`self.reports`).
+**Action:** When creating a service with static analysis patterns, always pre-compile the patterns as class-level variables (`re.compile`) and avoid storing infinite unbounded response histories in the singleton class state.

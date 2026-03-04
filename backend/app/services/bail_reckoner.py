@@ -18,6 +18,7 @@ class BailReckonerService:
     
     def __init__(self):
         self.reports: Dict[str, BailReport] = {}
+        self.max_reports = 1000
         
     async def analyze_bail(self, request: BailAnalysisRequest) -> BailReport:
         """Analyze bail eligibility"""
@@ -93,6 +94,9 @@ class BailReckonerService:
             created_at=datetime.now()
         )
         
+        if len(self.reports) >= self.max_reports:
+            self.reports.pop(next(iter(self.reports)))
+
         self.reports[report_id] = report
         return report
 

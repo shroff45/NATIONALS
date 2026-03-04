@@ -45,6 +45,7 @@ class JudgmentValidatorService:
 
     def __init__(self):
         self.reports: Dict[str, JudgmentValidateResponse] = {}
+        self.max_reports = 1000
 
     async def validate(self, request: JudgmentValidateRequest) -> JudgmentValidateResponse:
         """Run comprehensive judgment validation"""
@@ -152,6 +153,9 @@ class JudgmentValidatorService:
             strengths=strengths,
             recommendation=recommendation,
         )
+
+        if len(self.reports) >= self.max_reports:
+            self.reports.pop(next(iter(self.reports)))
 
         self.reports[result_id] = response
         return response

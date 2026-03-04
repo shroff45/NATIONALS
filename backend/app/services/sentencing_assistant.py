@@ -17,6 +17,7 @@ class SentencingAssistantService:
     
     def __init__(self):
         self.reports: Dict[str, SentencingReport] = {}
+        self.max_reports = 1000
         
     async def analyze_sentencing(self, request: SentencingRequest) -> SentencingReport:
         """Analyze sentencing Guidelines"""
@@ -86,6 +87,9 @@ class SentencingAssistantService:
             created_at=datetime.now()
         )
         
+        if len(self.reports) >= self.max_reports:
+            self.reports.pop(next(iter(self.reports)))
+
         self.reports[report_id] = report
         return report
 

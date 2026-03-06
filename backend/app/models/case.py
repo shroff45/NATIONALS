@@ -12,7 +12,8 @@ class Case(Base):
     fir_number = Column(String, unique=True, index=True, nullable=False)
     
     # Complainant Details
-    complainant_id = Column(String, ForeignKey("users.id"), nullable=True) # Optional for now if anonymous
+    # index=True: Used by row-level security middleware for User Dashboard lookup
+    complainant_id = Column(String, ForeignKey("users.id"), index=True, nullable=True) # Optional for now if anonymous
     complainant_name = Column(String, nullable=False)
     complainant_contact = Column(String, nullable=True)
     
@@ -22,15 +23,18 @@ class Case(Base):
     incident_datetime = Column(DateTime, nullable=True)
     
     # System Metadata
-    status = Column(String, default=FIRStatus.DRAFT) # Enum stored as string
-    police_station_id = Column(String, nullable=True)
+    # index=True: Frequently filtered by status for queue management
+    status = Column(String, index=True, default=FIRStatus.DRAFT) # Enum stored as string
+    # index=True: Used for multi-tenant police station filtering
+    police_station_id = Column(String, index=True, nullable=True)
     
     # AI Analysis (JSON)
     analysis_data = Column(JSON, nullable=True) # Stores analysis.json()
     confidence_score = Column(Float, default=0.0)
     
     # Meta
-    created_at = Column(DateTime, default=datetime.utcnow)
+    # index=True: Used for sorting and date-range filtering in all list views
+    created_at = Column(DateTime, index=True, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     # Relationships

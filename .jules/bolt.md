@@ -1,0 +1,3 @@
+## 2024-05-14 - Missing indexes on frequently filtered columns
+**Learning:** In a multi-tenant architecture, frequently filtered columns (like `status`, `police_station_id`, `created_at`, `complainant_id`) on primary tables (like `Case`) can cause severe performance bottlenecks if not indexed, as row-level security middleware and list endpoints perform full table scans.
+**Action:** Always verify that multi-tenant filtering columns, sorting columns, and columns used in row-level security middleware are properly indexed. Include a comment explaining the business use case for the index.

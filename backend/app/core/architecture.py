@@ -3,11 +3,8 @@ LegalOS Core Architecture
 Implements: Generic Repository, Service Pattern, Unit of Work
 """
 from abc import ABC, abstractmethod
-from typing import TypeVar, Generic, List, Optional, Dict, Any, Union
+from typing import TypeVar, Generic, List, Optional, Dict, Any
 from pydantic import BaseModel
-from datetime import datetime
-import asyncio
-from functools import wraps
 import logging
 
 # Generics
@@ -41,8 +38,9 @@ class InMemoryRepository(IRepository[T, ID]):
     High-performance in-memory repository for rapid prototyping and testing.
     Uses dict for O(1) lookups.
     """
-    def __init__(self):
+    def __init__(self, max_size: int = 10000):
         self._storage: Dict[ID, T] = {}
+        self._max_size = max_size
         
     async def get(self, id: ID) -> Optional[T]:
         return self._storage.get(id)
@@ -59,6 +57,11 @@ class InMemoryRepository(IRepository[T, ID]):
     async def create(self, entity: T) -> T:
         if not hasattr(entity, 'id'):
             raise ValueError("Entity must have an 'id' field")
+
+        # ⚡ Bolt: Enforce memory limit for unbounded dictionary to prevent memory leaks
+        if len(self._storage) >= self._max_size:
+            self._storage.pop(next(iter(self._storage)))
+
         self._storage[entity.id] = entity
         return entity
         

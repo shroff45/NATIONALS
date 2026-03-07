@@ -4,7 +4,6 @@ Rule-based validation of draft judgments for legal completeness
 """
 import uuid
 import re
-from datetime import datetime
 from typing import Dict, List
 from app.schemas.judgment import (
     JudgmentValidateRequest, JudgmentValidateResponse,
@@ -45,6 +44,7 @@ class JudgmentValidatorService:
 
     def __init__(self):
         self.reports: Dict[str, JudgmentValidateResponse] = {}
+        self._max_reports = 1000
 
     async def validate(self, request: JudgmentValidateRequest) -> JudgmentValidateResponse:
         """Run comprehensive judgment validation"""
@@ -152,6 +152,10 @@ class JudgmentValidatorService:
             strengths=strengths,
             recommendation=recommendation,
         )
+
+        # ⚡ Bolt: Enforce memory limit for unbounded dictionary to prevent memory leaks
+        if len(self.reports) >= self._max_reports:
+            self.reports.pop(next(iter(self.reports)))
 
         self.reports[result_id] = response
         return response

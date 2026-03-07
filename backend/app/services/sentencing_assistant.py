@@ -3,7 +3,7 @@ Sentencing Assistant Service - Skill 10
 """
 import uuid
 from datetime import datetime
-from typing import List, Optional, Dict
+from typing import Optional, Dict
 from app.schemas.sentencing import (
     SentencingReport, SentencingRequest, SentenceRange,
     SentencingFactor, FactorType, SentenceType
@@ -17,6 +17,7 @@ class SentencingAssistantService:
     
     def __init__(self):
         self.reports: Dict[str, SentencingReport] = {}
+        self._max_reports = 1000
         
     async def analyze_sentencing(self, request: SentencingRequest) -> SentencingReport:
         """Analyze sentencing Guidelines"""
@@ -86,6 +87,10 @@ class SentencingAssistantService:
             created_at=datetime.now()
         )
         
+        # ⚡ Bolt: Enforce memory limit for unbounded dictionary to prevent memory leaks
+        if len(self.reports) >= self._max_reports:
+            self.reports.pop(next(iter(self.reports)))
+
         self.reports[report_id] = report
         return report
 

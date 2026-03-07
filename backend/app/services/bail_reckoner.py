@@ -4,7 +4,7 @@ Analyzes bail eligibility based on BNSS/CrPC
 """
 import uuid
 from datetime import datetime
-from typing import List, Optional, Dict
+from typing import Optional, Dict
 from app.schemas.bail_reckoner import (
     BailReport, BailAnalysisRequest, RiskFactor,
     RiskLevel, BailRecommendation
@@ -18,6 +18,7 @@ class BailReckonerService:
     
     def __init__(self):
         self.reports: Dict[str, BailReport] = {}
+        self._max_reports = 1000
         
     async def analyze_bail(self, request: BailAnalysisRequest) -> BailReport:
         """Analyze bail eligibility"""
@@ -93,6 +94,10 @@ class BailReckonerService:
             created_at=datetime.now()
         )
         
+        # ⚡ Bolt: Enforce memory limit for unbounded dictionary to prevent memory leaks
+        if len(self.reports) >= self._max_reports:
+            self.reports.pop(next(iter(self.reports)))
+
         self.reports[report_id] = report
         return report
 

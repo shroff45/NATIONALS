@@ -1,0 +1,3 @@
+## 2024-03-09 - [Missing Indexes in Multi-Tenant Architectures]
+**Learning:** Found critical missing database indexes on frequently filtered columns (`status`, `police_station_id`, `created_at`, `complainant_id`) in `backend/app/models/case.py`. Without these indexes, the `DataIsolationMiddleware` and multi-tenant queries result in O(N) full table scans instead of efficient O(1)/O(log N) lookups, causing severe performance degradation as the `cases` table grows.
+**Action:** Always verify that foreign keys and frequently filtered columns (like tenant IDs, statuses, dates) have `index=True` in SQLAlchemy models, and document the specific business use case (e.g., 'User Dashboard lookup') as per codebase conventions.

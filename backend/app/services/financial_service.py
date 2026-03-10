@@ -318,6 +318,9 @@ class FinancialAnalyzer:
     
     def _detect_shell_companies(self):
         """Detect potential shell company indicators"""
+        # Cache cycles to prevent O((V+E)*C) recalculation inside the loop
+        cycles = None
+
         # Look for accounts with high in-degree and out-degree but low balance
         for node in self.graph.nodes():
             in_degree = self.graph.in_degree(node)
@@ -327,7 +330,9 @@ class FinancialAnalyzer:
             if in_degree >= 10 and out_degree >= 10:
                 # Check if it's part of circular trading
                 try:
-                    cycles = list(nx.simple_cycles(self.graph))
+                    if cycles is None:
+                        cycles = list(nx.simple_cycles(self.graph))
+
                     node_in_cycles = any(node in cycle for cycle in cycles)
                     
                     if node_in_cycles:

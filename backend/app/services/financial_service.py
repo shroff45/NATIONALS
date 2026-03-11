@@ -95,9 +95,17 @@ class FinancialAnalyzer:
     def _detect_circular_trading(self):
         """Detect money circulating in loops"""
         try:
-            cycles = list(nx.simple_cycles(self.graph))
+            # OPTIMIZATION: Use lazy evaluation for cycle finding to avoid infinite memory
+            # on dense graphs. nx.simple_cycles is O((V+E)*C) and evaluating it into a list
+            # can crash the process for combinatorial graphs.
+            cycle_gen = nx.simple_cycles(self.graph)
             
-            for cycle in cycles:
+            cycles_evaluated = 0
+            for cycle in cycle_gen:
+                cycles_evaluated += 1
+                if cycles_evaluated > 1000:  # Prevent infinite evaluation in dense graphs
+                    break
+
                 if len(cycle) >= 3:  # Minimum 3 nodes for meaningful cycle
                     # Calculate total amount in cycle
                     cycle_amount = self._calculate_cycle_amount(cycle)
@@ -319,6 +327,12 @@ class FinancialAnalyzer:
     def _detect_shell_companies(self):
         """Detect potential shell company indicators"""
         # Look for accounts with high in-degree and out-degree but low balance
+
+        # Calculate strongly connected components once (O(V+E)) instead of
+        # finding simple cycles inside the loop (O(N*(V+E)*C))
+        sccs = list(nx.strongly_connected_components(self.graph))
+        nodes_in_cycles = set().union(*(comp for comp in sccs if len(comp) > 1))
+
         for node in self.graph.nodes():
             in_degree = self.graph.in_degree(node)
             out_degree = self.graph.out_degree(node)
@@ -327,8 +341,7 @@ class FinancialAnalyzer:
             if in_degree >= 10 and out_degree >= 10:
                 # Check if it's part of circular trading
                 try:
-                    cycles = list(nx.simple_cycles(self.graph))
-                    node_in_cycles = any(node in cycle for cycle in cycles)
+                    node_in_cycles = node in nodes_in_cycles
                     
                     if node_in_cycles:
                         total_throughput = self._calculate_node_throughput(node)

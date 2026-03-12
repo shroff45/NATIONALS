@@ -318,6 +318,18 @@ class FinancialAnalyzer:
     
     def _detect_shell_companies(self):
         """Detect potential shell company indicators"""
+        # Bolt Performance: Cache cyclic nodes globally before node iteration
+        # using strongly_connected_components instead of computing simple_cycles per node.
+        # This reduces complexity from O(N * (V+E)*C) to O(V+E)
+        try:
+            # Nodes in strongly connected components of size > 1 are part of a cycle
+            cyclic_nodes = set()
+            for component in nx.strongly_connected_components(self.graph):
+                if len(component) > 1:
+                    cyclic_nodes.update(component)
+        except Exception:
+            cyclic_nodes = set()
+
         # Look for accounts with high in-degree and out-degree but low balance
         for node in self.graph.nodes():
             in_degree = self.graph.in_degree(node)
@@ -326,32 +338,28 @@ class FinancialAnalyzer:
             # Shell company pattern: Many connections, circular flow
             if in_degree >= 10 and out_degree >= 10:
                 # Check if it's part of circular trading
-                try:
-                    cycles = list(nx.simple_cycles(self.graph))
-                    node_in_cycles = any(node in cycle for cycle in cycles)
+                node_in_cycles = node in cyclic_nodes
+
+                if node_in_cycles:
+                    total_throughput = self._calculate_node_throughput(node)
                     
-                    if node_in_cycles:
-                        total_throughput = self._calculate_node_throughput(node)
-                        
-                        alert = AnomalyAlert(
-                            id=str(uuid.uuid4()),
-                            type=AnomalyType.SHELL_COMPANY,
-                            risk_level=RiskLevel.CRITICAL,
-                            title="Potential Shell Company Activity",
-                            description=f"Account shows shell company patterns: high connectivity with circular flows",
-                            affected_accounts=[node],
-                            amount_involved=total_throughput,
-                            evidence={
-                                "incoming_connections": in_degree,
-                                "outgoing_connections": out_degree,
-                                "circular_flow": True
-                            },
-                            detected_at=datetime.now(),
-                            confidence_score=0.70
-                        )
-                        self.anomalies.append(alert)
-                except:
-                    continue
+                    alert = AnomalyAlert(
+                        id=str(uuid.uuid4()),
+                        type=AnomalyType.SHELL_COMPANY,
+                        risk_level=RiskLevel.CRITICAL,
+                        title="Potential Shell Company Activity",
+                        description="Account shows shell company patterns: high connectivity with circular flows",
+                        affected_accounts=[node],
+                        amount_involved=total_throughput,
+                        evidence={
+                            "incoming_connections": in_degree,
+                            "outgoing_connections": out_degree,
+                            "circular_flow": True
+                        },
+                        detected_at=datetime.now(),
+                        confidence_score=0.70
+                    )
+                    self.anomalies.append(alert)
     
     def _calculate_node_throughput(self, node: str) -> float:
         """Calculate total money flowing through node"""

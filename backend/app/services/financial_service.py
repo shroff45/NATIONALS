@@ -197,7 +197,7 @@ class FinancialAnalyzer:
         
         # Check for structuring patterns
         for account, daily_txns in account_daily.items():
-            for day, txns in daily_txns.items():
+            for txns in daily_txns.values():
                 # Check multiple transactions just below threshold
                 below_threshold = [t for t in txns if 80000 <= t.amount < reporting_threshold]
                 
@@ -318,6 +318,11 @@ class FinancialAnalyzer:
     
     def _detect_shell_companies(self):
         """Detect potential shell company indicators"""
+        # Cache nodes involved in cycles to avoid calling simple_cycles inside loop
+        # A node is in a cycle if it's part of a strongly connected component with size > 1
+        # or if it has a self-loop (which strongly_connected_components handles)
+        cycle_nodes_cache = None
+
         # Look for accounts with high in-degree and out-degree but low balance
         for node in self.graph.nodes():
             in_degree = self.graph.in_degree(node)
@@ -327,8 +332,14 @@ class FinancialAnalyzer:
             if in_degree >= 10 and out_degree >= 10:
                 # Check if it's part of circular trading
                 try:
-                    cycles = list(nx.simple_cycles(self.graph))
-                    node_in_cycles = any(node in cycle for cycle in cycles)
+                    # Lazy evaluation of cycle nodes
+                    if cycle_nodes_cache is None:
+                        cycle_nodes_cache = set()
+                        for scc in nx.strongly_connected_components(self.graph):
+                            if len(scc) > 1:
+                                cycle_nodes_cache.update(scc)
+
+                    node_in_cycles = node in cycle_nodes_cache
                     
                     if node_in_cycles:
                         total_throughput = self._calculate_node_throughput(node)

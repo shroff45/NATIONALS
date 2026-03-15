@@ -5,14 +5,13 @@ NetworkX-based financial crime detection
 import uuid
 import networkx as nx
 from datetime import datetime, timedelta
-from typing import List, Dict, Set, Tuple
+from typing import List, Dict
 from collections import defaultdict
 
 from app.schemas.financial import (
-    Transaction, Account, AnomalyAlert, AnomalyType, RiskLevel,
+    AnomalyAlert, AnomalyType, RiskLevel,
     NetworkNode, NetworkEdge, FinancialNetwork, InvestigationLead,
-    FinancialAnalysisRequest, FinancialAnalysisResponse,
-    TransactionPattern
+    FinancialAnalysisRequest, FinancialAnalysisResponse
 )
 
 
@@ -119,7 +118,7 @@ class FinancialAnalyzer:
                             confidence_score=0.85
                         )
                         self.anomalies.append(alert)
-        except Exception as e:
+        except Exception:
             pass  # Handle graph cycles error
     
     def _calculate_cycle_amount(self, cycle: List[str]) -> float:
@@ -171,7 +170,7 @@ class FinancialAnalyzer:
                 for path in paths[:5]:  # Limit to 5 paths
                     path_amount = self._calculate_path_amount(path)
                     total += path_amount
-            except:
+            except Exception:
                 continue
         return total
     
@@ -186,7 +185,7 @@ class FinancialAnalyzer:
     def _detect_structuring(self):
         """Detect structuring (just below reporting threshold)"""
         reporting_threshold = 100000  # INR
-        structuring_window = 7  # days
+        _structuring_window = 7  # days (unused, kept for context)
         
         # Group transactions by account and date
         account_daily = defaultdict(lambda: defaultdict(list))
@@ -197,7 +196,8 @@ class FinancialAnalyzer:
         
         # Check for structuring patterns
         for account, daily_txns in account_daily.items():
-            for day, txns in daily_txns.items():
+            # ⚡ Bolt Optimization: Use .values() when key is unused to avoid tuple unpacking overhead
+            for txns in daily_txns.values():
                 # Check multiple transactions just below threshold
                 below_threshold = [t for t in txns if 80000 <= t.amount < reporting_threshold]
                 
@@ -319,18 +319,32 @@ class FinancialAnalyzer:
     def _detect_shell_companies(self):
         """Detect potential shell company indicators"""
         # Look for accounts with high in-degree and out-degree but low balance
+
+        # ⚡ Bolt Optimization: Calculate strongly connected components once outside the loop
+        # instead of nx.simple_cycles inside the loop (which is O(N * (V+E)*C))
+        nodes_in_cycles = None
+
         for node in self.graph.nodes():
             in_degree = self.graph.in_degree(node)
             out_degree = self.graph.out_degree(node)
             
             # Shell company pattern: Many connections, circular flow
             if in_degree >= 10 and out_degree >= 10:
+                # Lazy initialization of cycles detection
+                if nodes_in_cycles is None:
+                    try:
+                        sccs = list(nx.strongly_connected_components(self.graph))
+                        nodes_in_cycles = {n for scc in sccs if len(scc) > 1 for n in scc}
+                        # Also include self-loops
+                        nodes_in_cycles.update(list(nx.nodes_with_selfloops(self.graph)))
+                    except Exception:
+                        nodes_in_cycles = set()
+
                 # Check if it's part of circular trading
                 try:
-                    cycles = list(nx.simple_cycles(self.graph))
-                    node_in_cycles = any(node in cycle for cycle in cycles)
+                    node_in_cycles_flag = node in nodes_in_cycles
                     
-                    if node_in_cycles:
+                    if node_in_cycles_flag:
                         total_throughput = self._calculate_node_throughput(node)
                         
                         alert = AnomalyAlert(
@@ -338,7 +352,7 @@ class FinancialAnalyzer:
                             type=AnomalyType.SHELL_COMPANY,
                             risk_level=RiskLevel.CRITICAL,
                             title="Potential Shell Company Activity",
-                            description=f"Account shows shell company patterns: high connectivity with circular flows",
+                            description="Account shows shell company patterns: high connectivity with circular flows",
                             affected_accounts=[node],
                             amount_involved=total_throughput,
                             evidence={
@@ -350,7 +364,7 @@ class FinancialAnalyzer:
                             confidence_score=0.70
                         )
                         self.anomalies.append(alert)
-                except:
+                except Exception:
                     continue
     
     def _calculate_node_throughput(self, node: str) -> float:

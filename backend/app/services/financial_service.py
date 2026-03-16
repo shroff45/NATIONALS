@@ -5,14 +5,13 @@ NetworkX-based financial crime detection
 import uuid
 import networkx as nx
 from datetime import datetime, timedelta
-from typing import List, Dict, Set, Tuple
+from typing import List, Dict
 from collections import defaultdict
 
 from app.schemas.financial import (
-    Transaction, Account, AnomalyAlert, AnomalyType, RiskLevel,
+    AnomalyAlert, AnomalyType, RiskLevel,
     NetworkNode, NetworkEdge, FinancialNetwork, InvestigationLead,
-    FinancialAnalysisRequest, FinancialAnalysisResponse,
-    TransactionPattern
+    FinancialAnalysisRequest, FinancialAnalysisResponse
 )
 
 
@@ -119,7 +118,7 @@ class FinancialAnalyzer:
                             confidence_score=0.85
                         )
                         self.anomalies.append(alert)
-        except Exception as e:
+        except Exception:
             pass  # Handle graph cycles error
     
     def _calculate_cycle_amount(self, cycle: List[str]) -> float:
@@ -171,7 +170,7 @@ class FinancialAnalyzer:
                 for path in paths[:5]:  # Limit to 5 paths
                     path_amount = self._calculate_path_amount(path)
                     total += path_amount
-            except:
+            except Exception:
                 continue
         return total
     
@@ -186,7 +185,6 @@ class FinancialAnalyzer:
     def _detect_structuring(self):
         """Detect structuring (just below reporting threshold)"""
         reporting_threshold = 100000  # INR
-        structuring_window = 7  # days
         
         # Group transactions by account and date
         account_daily = defaultdict(lambda: defaultdict(list))
@@ -318,6 +316,22 @@ class FinancialAnalyzer:
     
     def _detect_shell_companies(self):
         """Detect potential shell company indicators"""
+
+        # Precompute nodes involved in cycles using strongly connected components (O(V+E))
+        # This prevents running O(V+E*C) cycle detection inside the node loop
+        nodes_in_cycles = set()
+        try:
+            for scc in nx.strongly_connected_components(self.graph):
+                if len(scc) > 1:
+                    nodes_in_cycles.update(scc)
+                elif len(scc) == 1:
+                    node = list(scc)[0]
+                    # Check for self-loop
+                    if self.graph.has_edge(node, node):
+                        nodes_in_cycles.add(node)
+        except Exception:
+            pass
+
         # Look for accounts with high in-degree and out-degree but low balance
         for node in self.graph.nodes():
             in_degree = self.graph.in_degree(node)
@@ -326,32 +340,26 @@ class FinancialAnalyzer:
             # Shell company pattern: Many connections, circular flow
             if in_degree >= 10 and out_degree >= 10:
                 # Check if it's part of circular trading
-                try:
-                    cycles = list(nx.simple_cycles(self.graph))
-                    node_in_cycles = any(node in cycle for cycle in cycles)
+                if node in nodes_in_cycles:
+                    total_throughput = self._calculate_node_throughput(node)
                     
-                    if node_in_cycles:
-                        total_throughput = self._calculate_node_throughput(node)
-                        
-                        alert = AnomalyAlert(
-                            id=str(uuid.uuid4()),
-                            type=AnomalyType.SHELL_COMPANY,
-                            risk_level=RiskLevel.CRITICAL,
-                            title="Potential Shell Company Activity",
-                            description=f"Account shows shell company patterns: high connectivity with circular flows",
-                            affected_accounts=[node],
-                            amount_involved=total_throughput,
-                            evidence={
-                                "incoming_connections": in_degree,
-                                "outgoing_connections": out_degree,
-                                "circular_flow": True
-                            },
-                            detected_at=datetime.now(),
-                            confidence_score=0.70
-                        )
-                        self.anomalies.append(alert)
-                except:
-                    continue
+                    alert = AnomalyAlert(
+                        id=str(uuid.uuid4()),
+                        type=AnomalyType.SHELL_COMPANY,
+                        risk_level=RiskLevel.CRITICAL,
+                        title="Potential Shell Company Activity",
+                        description="Account shows shell company patterns: high connectivity with circular flows",
+                        affected_accounts=[node],
+                        amount_involved=total_throughput,
+                        evidence={
+                            "incoming_connections": in_degree,
+                            "outgoing_connections": out_degree,
+                            "circular_flow": True
+                        },
+                        detected_at=datetime.now(),
+                        confidence_score=0.70
+                    )
+                    self.anomalies.append(alert)
     
     def _calculate_node_throughput(self, node: str) -> float:
         """Calculate total money flowing through node"""

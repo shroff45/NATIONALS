@@ -1,0 +1,3 @@
+## 2024-03-18 - Avoid Graph Pathfinding in Node Iterations
+**Learning:** Calling `networkx.simple_cycles` inside a node iteration loop causes severe O(N * (V+E)*C) performance degradation when evaluating multiple anomalies, especially for dense transaction graphs. The correct approach is to calculate cycle properties (or use a faster algorithm like `networkx.strongly_connected_components` which is O(V+E)) globally *once* and cache the result.
+**Action:** When adding anomaly detection that relies on graph traversal, always prefer lazily caching global calculations (like SCCs or cycle detection) outside of node/edge loops to ensure scalable performance for large transaction datasets.

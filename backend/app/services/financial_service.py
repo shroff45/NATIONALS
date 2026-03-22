@@ -319,6 +319,10 @@ class FinancialAnalyzer:
     def _detect_shell_companies(self):
         """Detect potential shell company indicators"""
         # Look for accounts with high in-degree and out-degree but low balance
+
+        # ⚡ Bolt: Cache cyclic nodes using lazy evaluation to avoid calling simple_cycles O(N * (V+E)*C) in loop
+        cyclic_nodes = None
+
         for node in self.graph.nodes():
             in_degree = self.graph.in_degree(node)
             out_degree = self.graph.out_degree(node)
@@ -327,8 +331,14 @@ class FinancialAnalyzer:
             if in_degree >= 10 and out_degree >= 10:
                 # Check if it's part of circular trading
                 try:
-                    cycles = list(nx.simple_cycles(self.graph))
-                    node_in_cycles = any(node in cycle for cycle in cycles)
+                    # Lazy evaluation of cyclic nodes O(V+E)
+                    if cyclic_nodes is None:
+                        sccs = list(nx.strongly_connected_components(self.graph))
+                        cyclic_nodes = {n for scc in sccs if len(scc) > 1 for n in scc}
+                        # Add self-loops
+                        cyclic_nodes.update(u for u, v in self.graph.edges() if u == v)
+
+                    node_in_cycles = node in cyclic_nodes
                     
                     if node_in_cycles:
                         total_throughput = self._calculate_node_throughput(node)

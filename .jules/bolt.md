@@ -1,0 +1,4 @@
+
+## 2025-03-01 - Avoid nx.simple_cycles inside node iteration
+**Learning:** Found a critical performance bottleneck in `FinancialAnalyzer._detect_shell_companies` where `nx.simple_cycles(graph)` ($O((V+E)*C)$) was being called inside a loop over all graph nodes. This caused severe $O(N \cdot (V+E) \cdot C)$ performance degradation for larger financial graphs where $N$ is the number of nodes, $V$ is vertices, $E$ is edges, and $C$ is the number of cycles.
+**Action:** When you only need to check if a node is part of *any* cycle rather than finding the exact path of the cycle, pre-compute cycle membership outside the loop using `nx.strongly_connected_components(graph)`, which runs in $O(V+E)$ time. Then perform $O(1)$ set lookups (`node in nodes_in_cycles`) inside the node iteration loop. Used lazy evaluation to avoid running the check if no nodes meet the criteria.

@@ -170,7 +170,7 @@ class FinancialAnalyzer:
                 for path in paths[:5]:  # Limit to 5 paths
                     path_amount = self._calculate_path_amount(path)
                     total += path_amount
-            except:
+            except Exception:
                 continue
         return total
     
@@ -185,7 +185,6 @@ class FinancialAnalyzer:
     def _detect_structuring(self):
         """Detect structuring (just below reporting threshold)"""
         reporting_threshold = 100000  # INR
-        structuring_window = 7  # days
         
         # Group transactions by account and date
         account_daily = defaultdict(lambda: defaultdict(list))
@@ -363,7 +362,7 @@ class FinancialAnalyzer:
                             confidence_score=0.70
                         )
                         self.anomalies.append(alert)
-                except:
+                except Exception:
                     continue
     
     def _calculate_node_throughput(self, node: str) -> float:

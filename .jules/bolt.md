@@ -1,0 +1,3 @@
+## 2024-05-24 - [Optimize cycle detection in shell company analysis]
+**Learning:** Found a major performance bottleneck specific to this codebase's architecture: `FinancialAnalyzer._detect_shell_companies` calls `nx.simple_cycles` inside a node iteration loop. This results in an $O(V \times (V+E) \times C)$ complexity, causing severe performance degradation for large transaction graphs.
+**Action:** Replace `nx.simple_cycles` inside loops with global metrics like `nx.strongly_connected_components` computed once ($O(V+E)$) outside the loop to significantly optimize pathfinding in graph-based anomaly detection.

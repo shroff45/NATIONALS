@@ -1,0 +1,3 @@
+## 2024-05-24 - Optimize Shell Company Detection
+**Learning:** In `backend/app/services/financial_service.py`, detecting shell companies involved checking if nodes are part of a cycle. The original implementation called `list(nx.simple_cycles(self.graph))` inside a node iteration loop. Finding all simple cycles in a directed graph is O((V+E)*C) and executing it inside a loop results in catastrophic performance degradation.
+**Action:** When graph cycles need to be checked for multiple nodes, compute the nodes involved in cycles ONCE using `nx.strongly_connected_components` (for components with > 1 node) and `nx.selfloop_edges`. This reduces the complexity to O(V+E) and allows for O(1) membership checks within the loop.

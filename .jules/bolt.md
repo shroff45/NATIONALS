@@ -1,0 +1,3 @@
+## 2024-05-18 - Avoid Graph Algorithms in Node Iteration Loops
+**Learning:** Calling computationally expensive graph algorithms like `nx.simple_cycles` inside loops that iterate over nodes (e.g. `for node in self.graph.nodes()`) can cause massive performance degradation (O(N * (V+E)*C)). This is a critical pattern in graph-based services like `FinancialAnalyzer`.
+**Action:** Always compute global metrics or cycle indicators outside the node loop. Use `nx.strongly_connected_components` (and `nx.selfloop_edges`) outside the loop to identify cycle participation in O(V+E) time, and check the pre-computed set within the loop.

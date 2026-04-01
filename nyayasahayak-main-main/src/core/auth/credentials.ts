@@ -96,7 +96,7 @@ export const verifyCredentials = async (
     // Try real backend authentication
     try {
         // Map role to backend role format
-        const backendRole = role.toLowerCase();
+        const backendRole = role ? role.toLowerCase() : 'citizen';
         
         // Build request data
         const requestData: any = {

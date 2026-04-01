@@ -3,7 +3,7 @@ import React, { useEffect, useRef } from 'react';
 import { Case } from '../../features/main/types';
 import { gsap } from 'gsap';
 import AnimatedPageWrapper from '../../features/main/components/common/AnimatedPageWrapper';
-import { getLocalizedNumber } from '../../features/main/lib/utils';
+import { getLocalizedNumber } from '../utils/utils';
 
 interface JusticeTimelineProps {
     t: (key: string) => string;
@@ -44,7 +44,7 @@ const JusticeTimeline: React.FC<JusticeTimelineProps> = ({ t, selectedCase, lang
 
     }, [selectedCase]);
 
-    const formatNum = (n: number | string) => getLocalizedNumber(n, language);
+    const formatNum = (n: number | string) => getLocalizedNumber(Number(n), language);
 
     const renderContent = () => {
         if (!selectedCase) {

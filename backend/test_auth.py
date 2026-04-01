@@ -36,7 +36,7 @@ def test_login():
         print(f"Login Failed: {e}")
         return None
 
-def test_protected_route(token):
+def run_test_protected_route(token):
     print("\nTesting Protected Route (Know Your Rights)...")
     headers = {"Authorization": f"Bearer {token}"}
     payload = {"query": "What are my rights if arrested?", "language": "en", "category": "arrest"}

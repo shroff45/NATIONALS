@@ -1,0 +1,3 @@
+## 2024-04-02 - [Graph Cycles inside loops]
+**Learning:** Calling exponential-time graph algorithms like `networkx.simple_cycles` inside an O(N) loop iterating over nodes causes massive O(N * (V+E)*C) performance degradation. It creates a severe bottleneck that halts the service for even moderate graph sizes.
+**Action:** When identifying cycle memberships for individual nodes, compute all nodes involved in cycles ONCE using `networkx.strongly_connected_components` (components > 1) and `networkx.selfloop_edges` which runs in O(V+E) time, and check membership against a pre-calculated set inside loops instead.

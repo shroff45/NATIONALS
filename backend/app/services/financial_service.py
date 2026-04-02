@@ -5,14 +5,13 @@ NetworkX-based financial crime detection
 import uuid
 import networkx as nx
 from datetime import datetime, timedelta
-from typing import List, Dict, Set, Tuple
+from typing import List, Dict
 from collections import defaultdict
 
 from app.schemas.financial import (
-    Transaction, Account, AnomalyAlert, AnomalyType, RiskLevel,
+    AnomalyAlert, AnomalyType, RiskLevel,
     NetworkNode, NetworkEdge, FinancialNetwork, InvestigationLead,
-    FinancialAnalysisRequest, FinancialAnalysisResponse,
-    TransactionPattern
+    FinancialAnalysisRequest, FinancialAnalysisResponse
 )
 
 
@@ -119,7 +118,7 @@ class FinancialAnalyzer:
                             confidence_score=0.85
                         )
                         self.anomalies.append(alert)
-        except Exception as e:
+        except Exception:
             pass  # Handle graph cycles error
     
     def _calculate_cycle_amount(self, cycle: List[str]) -> float:
@@ -318,6 +317,20 @@ class FinancialAnalyzer:
     
     def _detect_shell_companies(self):
         """Detect potential shell company indicators"""
+        # ⚡ Bolt Optimization: Compute nodes in cycles ONCE outside the loop
+        # using O(V+E) strongly connected components instead of O((V+E)*C) simple_cycles inside loop
+        try:
+            nodes_in_cycles = set()
+            # Any component with > 1 node has a cycle
+            for scc in nx.strongly_connected_components(self.graph):
+                if len(scc) > 1:
+                    nodes_in_cycles.update(scc)
+            # Add self-loops (which are cycles of length 1)
+            for u, v in nx.selfloop_edges(self.graph):
+                nodes_in_cycles.add(u)
+        except Exception:
+            nodes_in_cycles = set()
+
         # Look for accounts with high in-degree and out-degree but low balance
         for node in self.graph.nodes():
             in_degree = self.graph.in_degree(node)
@@ -326,11 +339,8 @@ class FinancialAnalyzer:
             # Shell company pattern: Many connections, circular flow
             if in_degree >= 10 and out_degree >= 10:
                 # Check if it's part of circular trading
-                try:
-                    cycles = list(nx.simple_cycles(self.graph))
-                    node_in_cycles = any(node in cycle for cycle in cycles)
-                    
-                    if node_in_cycles:
+                if node in nodes_in_cycles:
+                    try:
                         total_throughput = self._calculate_node_throughput(node)
                         
                         alert = AnomalyAlert(
@@ -338,7 +348,7 @@ class FinancialAnalyzer:
                             type=AnomalyType.SHELL_COMPANY,
                             risk_level=RiskLevel.CRITICAL,
                             title="Potential Shell Company Activity",
-                            description=f"Account shows shell company patterns: high connectivity with circular flows",
+                            description="Account shows shell company patterns: high connectivity with circular flows",
                             affected_accounts=[node],
                             amount_involved=total_throughput,
                             evidence={
@@ -350,8 +360,8 @@ class FinancialAnalyzer:
                             confidence_score=0.70
                         )
                         self.anomalies.append(alert)
-                except:
-                    continue
+                    except Exception:
+                        continue
     
     def _calculate_node_throughput(self, node: str) -> float:
         """Calculate total money flowing through node"""

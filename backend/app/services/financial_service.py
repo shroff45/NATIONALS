@@ -5,13 +5,14 @@ NetworkX-based financial crime detection
 import uuid
 import networkx as nx
 from datetime import datetime, timedelta
-from typing import List, Dict
+from typing import List, Dict, Set, Tuple
 from collections import defaultdict
 
 from app.schemas.financial import (
-    AnomalyAlert, AnomalyType, RiskLevel,
+    Transaction, Account, AnomalyAlert, AnomalyType, RiskLevel,
     NetworkNode, NetworkEdge, FinancialNetwork, InvestigationLead,
-    FinancialAnalysisRequest, FinancialAnalysisResponse
+    FinancialAnalysisRequest, FinancialAnalysisResponse,
+    TransactionPattern
 )
 
 
@@ -118,7 +119,7 @@ class FinancialAnalyzer:
                             confidence_score=0.85
                         )
                         self.anomalies.append(alert)
-        except Exception:
+        except Exception as e:
             pass  # Handle graph cycles error
     
     def _calculate_cycle_amount(self, cycle: List[str]) -> float:
@@ -348,7 +349,7 @@ class FinancialAnalyzer:
                             type=AnomalyType.SHELL_COMPANY,
                             risk_level=RiskLevel.CRITICAL,
                             title="Potential Shell Company Activity",
-                            description="Account shows shell company patterns: high connectivity with circular flows",
+                            description=f"Account shows shell company patterns: high connectivity with circular flows",
                             affected_accounts=[node],
                             amount_involved=total_throughput,
                             evidence={

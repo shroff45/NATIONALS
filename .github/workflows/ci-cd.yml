@@ -70,7 +70,7 @@ jobs:
       run: npm ci
     
     - name: Run linting
-      run: npm run lint
+      run: npx eslint .
     
     - name: Build
       run: npm run build

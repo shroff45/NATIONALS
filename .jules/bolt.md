@@ -1,0 +1,3 @@
+## 2024-04-03 - [Cache expensive graph algorithms outside node iterations]
+**Learning:** Avoid calling expensive graph algorithms (like `networkx.simple_cycles`) inside node iterations in the Financial Trail Analyzer (`backend/app/services/financial_service.py`). Finding all simple cycles is computationally intensive ($O((V+E) \cdot C)$), and performing this inside a node iteration loop causes severe O(N * (V+E)*C) performance degradation.
+**Action:** Cache these results outside the loop using lazy evaluation (calculating it only once when the first relevant node candidate is found) to prevent unnecessary repeated computation.

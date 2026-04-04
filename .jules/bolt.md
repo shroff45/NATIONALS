@@ -1,0 +1,3 @@
+## 2024-05-30 - O(N*M) Node Lookup Optimization in Financial Analyzer
+**Learning:** The Financial Trail Analyzer was reconstructing network nodes by iterating over `request.accounts` for each node in the graph, resulting in O(N*M) time complexity. For large datasets, this linear search bottleneck significantly impacts performance.
+**Action:** Pre-mapped account details using a dictionary (`account_map = {a.account_number: a for a in request.accounts}`) before iterating over graph nodes. This reduces algorithmic complexity to O(N + M) by replacing the linear search with an O(1) hash map lookup. Always prefer dictionary lookups over linear list iteration when mapping associations.

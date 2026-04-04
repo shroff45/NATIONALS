@@ -13,6 +13,7 @@ export interface UserProfile {
     id: string; // Aadhar Token or Badge ID
     avatar: string;
     role: UserRole;
+    email?: string;
     location?: string;
     station?: string;     // For Police persona
     courtId?: string;     // For Judge persona

@@ -3,8 +3,8 @@ Expert Implementation: Financial Trail Analyzer (Skill 02)
 Algorithm: Graph - DFS for Cycle Detection (Circular Trading), Adjacency List for Network Analysis.
 """
 import uuid
-from typing import List, Dict, Set, Optional, Tuple
-from datetime import datetime, timedelta
+from typing import List
+from datetime import datetime
 from collections import defaultdict
 
 from app.core.architecture import BaseService, InMemoryRepository
@@ -12,7 +12,7 @@ from app.schemas.financial import (
     FinancialAnalysisResponse, FinancialAnalysisRequest,
     FinancialNetwork, NetworkNode, NetworkEdge,
     AnomalyAlert, AnomalyType, RiskLevel,
-    Transaction, Account, InvestigationLead
+    Transaction, InvestigationLead
 )
 
 class FinancialGraph:
@@ -87,7 +87,6 @@ class FinancialService(BaseService[FinancialAnalysisResponse, str]):
         for cycle in unique_cycles:
             # Reconstruct cycle details
             cycle_nodes = list(cycle)
-            amount_est = 0 
             # (Simplified estimation logic)
             
             anomalies.append(AnomalyAlert(
@@ -133,9 +132,10 @@ class FinancialService(BaseService[FinancialAnalysisResponse, str]):
         edges = []
         
         # Create Nodes
+        account_map = {a.account_number: a for a in request.accounts}
         for acc_id in graph.nodes:
             # Find account details if provided
-            acc_details = next((a for a in request.accounts if a.account_number == acc_id), None)
+            acc_details = account_map.get(acc_id)
             nodes.append(NetworkNode(
                 id=acc_id,
                 label=acc_details.account_holder if acc_details else f"Unknown ({acc_id})",

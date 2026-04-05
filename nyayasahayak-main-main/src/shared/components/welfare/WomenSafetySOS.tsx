@@ -5,12 +5,12 @@
 import React, { useState, useEffect } from 'react';
 import { Phone, MapPin, Shield, AlertTriangle, X, Heart, Users, MessageCircle } from 'lucide-react';
 
-interface WomenSafetySOS {
+interface WomenSafetySOSProps {
     isOpen: boolean;
     onClose: () => void;
 }
 
-const WomenSafetySOS: React.FC<WomenSafetySOS> = ({ isOpen, onClose }) => {
+const WomenSafetySOS: React.FC<WomenSafetySOSProps> = ({ isOpen, onClose }) => {
     const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null);
     const [isSending, setIsSending] = useState(false);
     const [alertSent, setAlertSent] = useState(false);

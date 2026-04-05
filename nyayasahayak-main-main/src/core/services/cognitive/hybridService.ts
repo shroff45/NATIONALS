@@ -242,7 +242,7 @@ const partsToText = (parts: Part[] | string): string => {
 
 export const hybridService = {
     predictCaseOutcome: (sanitizedCase: Case, language: string) =>
-        withErrorRecovery(async () => {
+        withErrorRecovery<PredictionResult>(async () => {
             if (AI_PROVIDER === 'OPENAI') {
                 return await predictCaseOutcomeOpenAI(sanitizedCase, language);
             }
@@ -250,7 +250,7 @@ export const hybridService = {
         }, fallbackPrediction),
 
     analyzeDocuments: (parts: Part[]) =>
-        withErrorRecovery(async () => {
+        withErrorRecovery<DocumentAnalysisResult>(async () => {
             if (AI_PROVIDER === 'OPENAI') {
                 const text = partsToText(parts);
                 return await analyzeDocumentsOpenAI(text);
@@ -267,7 +267,7 @@ export const hybridService = {
     },
 
     generateQuantumFingerprint: (content: string | Part[], language: string) =>
-        withErrorRecovery(async () => {
+        withErrorRecovery<QuantumFingerprintResult>(async () => {
             if (AI_PROVIDER === 'OPENAI') {
                 const text = partsToText(content as Part[]); // Cast mainly for safe handling
                 return await generateQuantumFingerprintOpenAI(text, language);

@@ -3,8 +3,8 @@ Expert Implementation: Financial Trail Analyzer (Skill 02)
 Algorithm: Graph - DFS for Cycle Detection (Circular Trading), Adjacency List for Network Analysis.
 """
 import uuid
-from typing import List, Dict, Set, Optional, Tuple
-from datetime import datetime, timedelta
+from typing import List
+from datetime import datetime
 from collections import defaultdict
 
 from app.core.architecture import BaseService, InMemoryRepository
@@ -12,7 +12,7 @@ from app.schemas.financial import (
     FinancialAnalysisResponse, FinancialAnalysisRequest,
     FinancialNetwork, NetworkNode, NetworkEdge,
     AnomalyAlert, AnomalyType, RiskLevel,
-    Transaction, Account, InvestigationLead
+    Transaction, InvestigationLead
 )
 
 class FinancialGraph:
@@ -87,7 +87,6 @@ class FinancialService(BaseService[FinancialAnalysisResponse, str]):
         for cycle in unique_cycles:
             # Reconstruct cycle details
             cycle_nodes = list(cycle)
-            amount_est = 0 
             # (Simplified estimation logic)
             
             anomalies.append(AnomalyAlert(
@@ -109,12 +108,15 @@ class FinancialService(BaseService[FinancialAnalysisResponse, str]):
         for txn in request.transactions:
             flows[(txn.from_account, txn.to_account)].append(txn)
             
-        for (src, dst), txns in flows.items():
+        # Iterate over .values() to avoid tuple unpacking overhead
+        for txns in flows.values():
             # Check for multiple transactions within short window just below threshold
             # Simplified: just count > 3 txns in period
             if len(txns) >= 3:
                 total_flow = sum(t.amount for t in txns)
                 if total_flow > request.threshold_amount:
+                    src = txns[0].from_account
+                    dst = txns[0].to_account
                     anomalies.append(AnomalyAlert(
                         id=str(uuid.uuid4()),
                         type=AnomalyType.STRUCTURING,
@@ -132,10 +134,13 @@ class FinancialService(BaseService[FinancialAnalysisResponse, str]):
         nodes = []
         edges = []
         
+        # O(N+M) pre-mapped dictionary for account details lookup
+        account_map = {a.account_number: a for a in request.accounts} if request.accounts else {}
+
         # Create Nodes
         for acc_id in graph.nodes:
-            # Find account details if provided
-            acc_details = next((a for a in request.accounts if a.account_number == acc_id), None)
+            # Find account details using O(1) dictionary lookup instead of O(N) list scan
+            acc_details = account_map.get(acc_id)
             nodes.append(NetworkNode(
                 id=acc_id,
                 label=acc_details.account_holder if acc_details else f"Unknown ({acc_id})",

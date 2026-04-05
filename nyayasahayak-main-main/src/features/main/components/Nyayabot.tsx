@@ -6,7 +6,7 @@ import { contentModeration } from '../services/contentModeration';
 import { ChatMessage, User } from '../types';
 import Spinner from './common/Spinner';
 import { gsap } from 'gsap';
-import { fileToBase64 } from '../lib/utils';
+import { fileToBase64 } from '../../../shared/utils/utils';
 import AnimatedPageWrapper from './common/AnimatedPageWrapper';
 import { marked } from 'marked';
 import { sqliteChatService } from '../../../core/services/storage/SqliteChatService';
@@ -262,12 +262,16 @@ const Nyayabot: React.FC<NyayabotProps> = ({ t, messages, setMessages, currentUs
             );
 
             const response = await geminiService.chatWithNyayabot(userMessage, fileParts, newMessages);
-            const groundingChunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks;
+            const responseAny = response as any;
+            const groundingChunks = responseAny.candidates?.[0]?.groundingMetadata?.groundingChunks;
             const sources = groundingChunks?.map((chunk: any) => chunk.web.uri);
 
-            const modelResponse: ChatMessage = { role: 'model', content: response.text || '', sources };
+            const textResponse = typeof response.text === 'function' ? response.text() : response.text;
+            const finalContent = textResponse || '';
+
+            const modelResponse: ChatMessage = { role: 'model', content: finalContent, sources };
             setMessages([...newMessages, modelResponse]);
-            saveMessageToDb('model', response.text || '');
+            saveMessageToDb('model', finalContent);
 
         } catch (error: any) {
             console.error("Error chatting with Nyayabot:", error);

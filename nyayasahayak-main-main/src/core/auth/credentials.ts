@@ -96,7 +96,7 @@ export const verifyCredentials = async (
     // Try real backend authentication
     try {
         // Map role to backend role format
-        const backendRole = role.toLowerCase();
+        const backendRole = role?.toLowerCase() || 'citizen';
         
         // Build request data
         const requestData: any = {
@@ -138,7 +138,7 @@ export const verifyCredentials = async (
                     courtId: metadata?.courtId,
                     department: metadata?.department,
                     tokens
-                };
+                } as unknown as UserProfile & { tokens?: { access_token: string; refresh_token: string } };
             }
         } catch (loginError: any) {
             // If login fails, try signup (for demo purposes)
@@ -163,7 +163,7 @@ export const verifyCredentials = async (
                             courtId: metadata?.courtId,
                             department: metadata?.department,
                             tokens
-                        };
+                        } as unknown as UserProfile & { tokens?: { access_token: string; refresh_token: string } };
                     }
                 } catch (signupError) {
                     console.error('Signup failed:', signupError);

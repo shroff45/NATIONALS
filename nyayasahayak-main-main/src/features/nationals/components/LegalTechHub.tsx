@@ -3,7 +3,7 @@ import React, { useState, useRef } from 'react';
 import { geminiService } from '../../main/services/geminiService';
 import Spinner from './common/Spinner';
 import { Part } from '@google/genai';
-import { fileToBase64 } from '../lib/utils';
+import { fileToBase64 } from '../../../shared/utils/utils';
 import AnimatedPageWrapper from './common/AnimatedPageWrapper';
 
 interface LegalTechHubProps {

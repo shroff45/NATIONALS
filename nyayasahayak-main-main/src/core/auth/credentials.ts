@@ -73,7 +73,7 @@ export const verifyCredentials = async (
         badgeNumber?: string;
         judgeId?: string;
     }
-): Promise<UserProfile & { tokens?: { access_token: string; refresh_token: string } } | null> => {
+): Promise<UserProfile & { email?: string; tokens?: { access_token: string; refresh_token: string } } | null> => {
     // Normalize inputs
     const cleanId = identifier.trim().toLowerCase();
     const cleanPass = password.trim();
@@ -96,7 +96,7 @@ export const verifyCredentials = async (
     // Try real backend authentication
     try {
         // Map role to backend role format
-        const backendRole = role.toLowerCase();
+        const backendRole = (role || 'citizen').toLowerCase();
         
         // Build request data
         const requestData: any = {

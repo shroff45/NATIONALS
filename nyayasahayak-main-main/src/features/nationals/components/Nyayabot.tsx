@@ -6,7 +6,7 @@ import { contentModeration } from '../../main/services/contentModeration';
 import { ChatMessage, User } from '../core/types';
 import Spinner from './common/Spinner';
 import { gsap } from 'gsap';
-import { fileToBase64 } from '../lib/utils';
+import { fileToBase64 } from '@shared/utils/utils';
 import AnimatedPageWrapper from './common/AnimatedPageWrapper';
 import { marked } from 'marked';
 
@@ -221,10 +221,13 @@ const Nyayabot: React.FC<NyayabotProps> = ({ t, messages, setMessages, currentUs
             );
 
             const response = await geminiService.chatWithNyayabot(userMessage, fileParts, newMessages);
-            const groundingChunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks;
-            const sources = groundingChunks?.map((chunk: any) => chunk.web.uri);
+            const responseData = response as any;
+            const groundingChunks = responseData.candidates?.[0]?.groundingMetadata?.groundingChunks;
+            const sources = groundingChunks?.map((chunk: any) => chunk.web?.uri).filter(Boolean);
 
-            const modelResponse: ChatMessage = { role: 'model', content: response.text || '', sources };
+            const textResponse = typeof response.text === 'function' ? response.text() : (response.text || '');
+
+            const modelResponse: ChatMessage = { role: 'model', content: textResponse, sources };
             setMessages([...newMessages, modelResponse]);
         } catch (error: any) {
             console.error("Error chatting with Nyayabot:", error);

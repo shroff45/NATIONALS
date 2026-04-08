@@ -133,9 +133,11 @@ class FinancialService(BaseService[FinancialAnalysisResponse, str]):
         edges = []
         
         # Create Nodes
+        # Pre-map accounts for O(1) lookups instead of O(N*M) list comprehensions
+        accounts_map = {a.account_number: a for a in request.accounts} if request.accounts else {}
         for acc_id in graph.nodes:
             # Find account details if provided
-            acc_details = next((a for a in request.accounts if a.account_number == acc_id), None)
+            acc_details = accounts_map.get(acc_id)
             nodes.append(NetworkNode(
                 id=acc_id,
                 label=acc_details.account_holder if acc_details else f"Unknown ({acc_id})",

@@ -104,39 +104,38 @@ class CaseLinkerService:
         """Detect automated patterns in subgraph"""
         alerts = []
         
-        # Check for Common Suspect
-        suspects = [n for n, d in subgraph.nodes(data=True) if d.get("type") == "Suspect"]
-        for suspect in suspects:
-            degree = subgraph.degree(suspect)
-            if degree >= 2:
-                alerts.append(PatternAlert(
-                    id=str(uuid.uuid4()),
-                    pattern_type=PatternType.RECURRING_SUSPECT,
-                    title=f"Serial Offender Detected: {self.graph.nodes[suspect].get('label')}",
-                    description=f"Suspect linked to {degree} cases in this cluster",
-                    linked_cases=[n for n in subgraph.neighbors(suspect) if self.graph.nodes[n].get("type") == "Case"],
-                    suspects_involved=[suspect],
-                    confidence_score=0.9,
-                    detected_at=datetime.now(),
-                    recommended_action="Interrogate suspect regarding all linked cases"
-                ))
-                
-        # Check for Common MO
-        mos = [n for n, d in subgraph.nodes(data=True) if d.get("type") == "MO"]
-        for mo in mos:
-            degree = subgraph.degree(mo)
-            if degree >= 2:
-                alerts.append(PatternAlert(
-                    id=str(uuid.uuid4()),
-                    pattern_type=PatternType.MODUS_OPERANDI,
-                    title=f"MO Pattern: {self.graph.nodes[mo].get('label')}",
-                    description=f"Distinctive MO observed in multiple investigations",
-                    linked_cases=[n for n in subgraph.neighbors(mo) if self.graph.nodes[n].get("type") == "Case"],
-                    suspects_involved=[],
-                    confidence_score=0.75,
-                    detected_at=datetime.now(),
-                    recommended_action="Combine investigation teams"
-                ))
+        # Single-pass iteration to detect both 'Suspect' and 'MO' patterns
+        for n, data in subgraph.nodes(data=True):
+            node_type = data.get("type")
+
+            if node_type == "Suspect":
+                degree = subgraph.degree(n)
+                if degree >= 2:
+                    alerts.append(PatternAlert(
+                        id=str(uuid.uuid4()),
+                        pattern_type=PatternType.RECURRING_SUSPECT,
+                        title=f"Serial Offender Detected: {self.graph.nodes[n].get('label')}",
+                        description=f"Suspect linked to {degree} cases in this cluster",
+                        linked_cases=[neighbor for neighbor in subgraph.neighbors(n) if self.graph.nodes[neighbor].get("type") == "Case"],
+                        suspects_involved=[n],
+                        confidence_score=0.9,
+                        detected_at=datetime.now(),
+                        recommended_action="Interrogate suspect regarding all linked cases"
+                    ))
+            elif node_type == "MO":
+                degree = subgraph.degree(n)
+                if degree >= 2:
+                    alerts.append(PatternAlert(
+                        id=str(uuid.uuid4()),
+                        pattern_type=PatternType.MODUS_OPERANDI,
+                        title=f"MO Pattern: {self.graph.nodes[n].get('label')}",
+                        description=f"Distinctive MO observed in multiple investigations",
+                        linked_cases=[neighbor for neighbor in subgraph.neighbors(n) if self.graph.nodes[neighbor].get("type") == "Case"],
+                        suspects_involved=[],
+                        confidence_score=0.75,
+                        detected_at=datetime.now(),
+                        recommended_action="Combine investigation teams"
+                    ))
                 
         return alerts
 

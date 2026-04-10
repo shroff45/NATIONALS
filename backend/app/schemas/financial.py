@@ -117,6 +117,7 @@ class FinancialAnalysisRequest(BaseModel):
 
 
 class FinancialAnalysisResponse(BaseModel):
+    id: Optional[str] = None
     case_id: str
     analysis_id: str
     network: FinancialNetwork

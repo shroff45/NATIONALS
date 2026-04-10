@@ -133,9 +133,11 @@ class FinancialService(BaseService[FinancialAnalysisResponse, str]):
         edges = []
         
         # Create Nodes
+        # ⚡ Bolt: Optimize account lookup from O(N*M) to O(N+M) using a dictionary map
+        account_map = {acc.account_number: acc for acc in request.accounts}
         for acc_id in graph.nodes:
             # Find account details if provided
-            acc_details = next((a for a in request.accounts if a.account_number == acc_id), None)
+            acc_details = account_map.get(acc_id)
             nodes.append(NetworkNode(
                 id=acc_id,
                 label=acc_details.account_holder if acc_details else f"Unknown ({acc_id})",
@@ -168,9 +170,11 @@ class FinancialService(BaseService[FinancialAnalysisResponse, str]):
                 estimated_amount=anomalies[0].amount_involved
             ))
 
+        analysis_id = str(uuid.uuid4())
         response = FinancialAnalysisResponse(
+            id=analysis_id, # For BaseService compatibility
             case_id=request.case_id,
-            analysis_id=str(uuid.uuid4()),
+            analysis_id=analysis_id,
             network=FinancialNetwork(nodes=nodes, edges=edges),
             anomalies=anomalies,
             leads=leads,

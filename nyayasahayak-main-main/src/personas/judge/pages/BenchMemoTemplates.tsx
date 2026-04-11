@@ -19,9 +19,12 @@ const BenchMemoTemplates: React.FC = () => {
 
     const [filterCategory, setFilterCategory] = useState('All');
 
-    const filteredTemplates = filterCategory === 'All'
-        ? templates
-        : templates.filter(t => t.category === filterCategory);
+    // Bolt: Memoize array filtering to prevent O(N) recalculation on every render
+    const filteredTemplates = React.useMemo(() => {
+        return filterCategory === 'All'
+            ? templates
+            : templates.filter(t => t.category === filterCategory);
+    }, [templates, filterCategory]);
 
     return (
         <div className="space-y-6">

@@ -5,7 +5,7 @@ const LegalKnowledgeBank: React.FC = () => {
     const [activeTab, setActiveTab] = useState<'BNS' | 'BNSS' | 'BSA'>('BNS');
     const [searchQuery, setSearchQuery] = useState('');
 
-    const laws = {
+    const laws = React.useMemo(() => ({
         BNS: [
             { section: '103', title: 'Punishment for Murder', desc: 'Replaces IPC 302. Capital punishment or life imprisonment.' },
             { section: '304', title: 'Snatching', desc: 'New defined offence. Imprisonment up to 3 years.' },
@@ -19,12 +19,16 @@ const LegalKnowledgeBank: React.FC = () => {
         BSA: [
             { section: '61', title: 'Electronic Evidence', desc: 'Admissibility of digital records as primary evidence.' },
         ]
-    };
+    }), []);
 
-    const filteredLaws = laws[activeTab].filter(law =>
-        law.section.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        law.title.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    // Bolt: Memoize filter and hoist string operation to prevent unnecessary O(N) operations per render
+    const filteredLaws = React.useMemo(() => {
+        const lowerSearch = searchQuery.toLowerCase();
+        return laws[activeTab].filter(law =>
+            law.section.toLowerCase().includes(lowerSearch) ||
+            law.title.toLowerCase().includes(lowerSearch)
+        );
+    }, [laws, activeTab, searchQuery]);
 
     return (
         <div className="space-y-6 max-w-7xl mx-auto">

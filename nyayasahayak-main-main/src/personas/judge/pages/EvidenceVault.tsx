@@ -12,10 +12,14 @@ const EvidenceVault: React.FC = () => {
     const [selectedCaseId, setSelectedCaseId] = useState<string | null>(null);
     const [searchQuery, setSearchQuery] = useState('');
 
-    const filteredCases = MOCK_CASES.filter(c =>
-        c.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        c.cnr.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    // Bolt: Memoized filter and hoisted searchQuery to prevent repeated toLowerCase() calls in O(N) loops
+    const filteredCases = React.useMemo(() => {
+        const lowerSearch = searchQuery.toLowerCase();
+        return MOCK_CASES.filter(c =>
+            c.title.toLowerCase().includes(lowerSearch) ||
+            c.cnr.toLowerCase().includes(lowerSearch)
+        );
+    }, [searchQuery]);
 
     const selectedCase = MOCK_CASES.find(c => c.id === selectedCaseId);
 

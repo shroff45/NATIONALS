@@ -197,6 +197,7 @@ const JudgeBoard: React.FC = () => {
     const [checkedItems, setCheckedItems] = useState<Set<string>>(new Set());
 
     // Sort cases intelligently - MUST be defined before handleKeyDown
+    // Bolt: UseMemo already exists here, which is great.
     const sortedCases = useMemo(() => {
         let filtered = filterType === 'ALL'
             ? [...MOCK_CASES]

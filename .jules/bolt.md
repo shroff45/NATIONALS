@@ -1,0 +1,3 @@
+## 2024-04-11 - [UseMemo Optimization for Component Arrays]
+**Learning:** Found several components where `filter` was recalculating on every render without `useMemo`. When dealing with hardcoded array data (`MOCK_CASES`) in React functional components, wrapping the filtering logic in `useMemo` avoids redundant computation, especially with string manipulation like `toLowerCase()` and `includes()`. The `OrdersHistory` page had a severe performance edge case calculating stats in the return block instead of `useMemo` as well.
+**Action:** Always wrap `array.filter` and `array.map` that relies on state variables in a `useMemo` block with the proper dependency array. Extracted string `toLowerCase()` calls out of loops for maximum performance.

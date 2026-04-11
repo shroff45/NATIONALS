@@ -54,10 +54,11 @@ export const chatWithNyayabotOpenAI = async (message: string, ragContext?: strin
     // Add recent history
     const recentHistory = history.slice(-10); // Keep last 10 messages
     recentHistory.forEach(msg => {
-        if (msg.role === 'user' || msg.role === 'assistant') { // OpenAI uses 'assistant', our app uses 'model' sometimes?
+        const msgRoleStr = msg.role as string;
+        if (msgRoleStr === 'user' || msgRoleStr === 'assistant' || msgRoleStr === 'model') {
             // App uses 'model' for Gemini, 'assistant' is standard for OpenAI
-            const role = msg.role === 'model' ? 'assistant' : msg.role;
-            messages.push({ role: role, content: msg.content });
+            const role = msgRoleStr === 'model' ? 'assistant' : msgRoleStr;
+            messages.push({ role: role as 'user' | 'assistant' | 'system', content: msg.content });
         }
     });
 

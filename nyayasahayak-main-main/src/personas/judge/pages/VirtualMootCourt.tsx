@@ -2,7 +2,7 @@
 // NyayaSahayak - Virtual Moot Court: Immersive 3D Courtroom Experience
 // Features: 3D CSS perspective, animated speech bubbles, character podiums
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import {
     Scale, Play, Pause, RotateCcw,
     Brain, Gavel, FileText, AlertTriangle,
@@ -596,6 +596,11 @@ const VirtualMootCourt: React.FC = () => {
         timestamp: string;
         evidence?: string;
     }>>([]);
+
+    // ⚡ Bolt: Memoized transcript filtering to prevent redundant O(N) operations on every tick of the simulation
+    const prosecutionTranscript = useMemo(() => transcript.filter(t => t.speaker === 'prosecution'), [transcript]);
+    const defenseTranscript = useMemo(() => transcript.filter(t => t.speaker === 'defense'), [transcript]);
+
     const [judgeDecision, setJudgeDecision] = useState<{
         verdict: 'prosecution' | 'defense' | null;
         reasoning: string;
@@ -1145,12 +1150,12 @@ const VirtualMootCourt: React.FC = () => {
                                     ref={transcriptRef}
                                     className="flex-1 max-h-64 overflow-y-auto p-3 space-y-2"
                                 >
-                                    {transcript.filter(t => t.speaker === 'prosecution').length === 0 ? (
+                                    {prosecutionTranscript.length === 0 ? (
                                         <p className="text-slate-500 text-center py-8 italic text-lg">
                                             {language === 'hi' ? 'सुनवाई शुरू होने की प्रतीक्षा...' : 'Awaiting hearing to begin...'}
                                         </p>
                                     ) : (
-                                        transcript.filter(t => t.speaker === 'prosecution').map((entry, idx) => (
+                                        prosecutionTranscript.map((entry: any, idx: number) => (
                                             <div key={entry.id} className="bg-red-950/30 border border-red-800/30 rounded-xl p-4">
                                                 <div className="flex items-center justify-between mb-2">
                                                     <span className="text-sm font-bold text-red-400">
@@ -1180,12 +1185,12 @@ const VirtualMootCourt: React.FC = () => {
                                     </h4>
                                 </div>
                                 <div className="flex-1 max-h-64 overflow-y-auto p-3 space-y-2">
-                                    {transcript.filter(t => t.speaker === 'defense').length === 0 ? (
+                                    {defenseTranscript.length === 0 ? (
                                         <p className="text-slate-500 text-center py-8 italic text-lg">
                                             {language === 'hi' ? 'सुनवाई शुरू होने की प्रतीक्षा...' : 'Awaiting hearing to begin...'}
                                         </p>
                                     ) : (
-                                        transcript.filter(t => t.speaker === 'defense').map((entry, idx) => (
+                                        defenseTranscript.map((entry: any, idx: number) => (
                                             <div key={entry.id} className="bg-green-950/30 border border-green-800/30 rounded-xl p-4">
                                                 <div className="flex items-center justify-between mb-2">
                                                     <span className="text-sm font-bold text-green-400">

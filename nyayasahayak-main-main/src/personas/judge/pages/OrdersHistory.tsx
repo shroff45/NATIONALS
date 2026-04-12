@@ -1,7 +1,7 @@
 // src/personas/judge/pages/OrdersHistory.tsx
 // NyayaSahayak Hybrid v2.0.0 - Judge Orders History Page
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
     FileText,
     Calendar,
@@ -77,14 +77,19 @@ const OrdersHistory: React.FC = () => {
     const [filterType, setFilterType] = useState<string>('all');
     const [filterStatus, setFilterStatus] = useState<string>('all');
 
-    const filteredOrders = MOCK_ORDERS.filter(order => {
-        const matchesSearch = order.caseTitle.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            order.cnr.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            order.parties.toLowerCase().includes(searchQuery.toLowerCase());
-        const matchesType = filterType === 'all' || order.orderType === filterType;
-        const matchesStatus = filterStatus === 'all' || order.status === filterStatus;
-        return matchesSearch && matchesType && matchesStatus;
-    });
+    // ⚡ Bolt: Memoized order filtering and hoisted toLowerCase() out of the map loop
+    // to prevent O(N) redundant string operations on every render
+    const filteredOrders = useMemo(() => {
+        const lowerSearchQuery = searchQuery.toLowerCase();
+        return MOCK_ORDERS.filter(order => {
+            const matchesSearch = order.caseTitle.toLowerCase().includes(lowerSearchQuery) ||
+                order.cnr.toLowerCase().includes(lowerSearchQuery) ||
+                order.parties.toLowerCase().includes(lowerSearchQuery);
+            const matchesType = filterType === 'all' || order.orderType === filterType;
+            const matchesStatus = filterStatus === 'all' || order.status === filterStatus;
+            return matchesSearch && matchesType && matchesStatus;
+        });
+    }, [searchQuery, filterType, filterStatus]);
 
     const getStatusColor = (status: Order['status']) => {
         switch (status) {

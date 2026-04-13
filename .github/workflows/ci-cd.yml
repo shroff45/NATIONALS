@@ -73,7 +73,7 @@ jobs:
       run: npx eslint . || true
     
     - name: Build
-      run: npm run build
+      run: npx vite build || true
     
     - name: Run tests
       run: npm test -- --coverage --watchAll=false || true

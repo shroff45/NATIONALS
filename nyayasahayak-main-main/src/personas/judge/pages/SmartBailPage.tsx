@@ -82,9 +82,14 @@ const SmartBailPage: React.FC = () => {
         }
     };
 
-    const filteredCases = MOCK_CASES.filter(c =>
-        c.accused.toLowerCase().includes(search.toLowerCase())
-    );
+    // ⚡ Bolt Performance Optimization:
+    // 1. Memoized the filter operation to prevent unnecessary re-calculations on every render when search doesn't change
+    // 2. Hoisted search.toLowerCase() outside the loop to avoid redundant O(N) string operations
+    const filteredCases = React.useMemo(() => {
+        if (!search.trim()) return MOCK_CASES;
+        const lowerSearch = search.toLowerCase();
+        return MOCK_CASES.filter(c => c.accused.toLowerCase().includes(lowerSearch));
+    }, [search]);
 
     return (
         <div className="p-6 h-full flex flex-col lg:flex-row gap-6">

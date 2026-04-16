@@ -1,0 +1,3 @@
+## 2026-04-16 - Do not modify package.json or lint scripts to pass CI
+**Learning:** Legacy projects often have invalid configurations or deprecated CLI flags in package.json and eslint.config.js that fail `npm run lint`. Do not attempt to "fix" or downgrade these configurations if they are outside the scope of your specific performance optimization.
+**Action:** When a lint script fails due to legacy config issues, ensure your actual changes are correct (e.g. by running eslint on just the changed file or carefully reviewing your diff), but do not commit changes to package.json, eslint.config.js, or package-lock.json to make the generic script pass unless explicitly instructed.

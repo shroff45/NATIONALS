@@ -1,0 +1,3 @@
+## 2026-04-16 - Do not bypass or fix legacy CI failures out of scope
+**Learning:** Legacy projects often have broken CI pipelines due to deprecated flags in `package.json` (like ESLint `--ext` with flat config) or incorrect test discovery in workflows. Trying to "fix" these out of scope leads to severe regressions, such as bypassing all type checking or masking genuine test failures.
+**Action:** Always accept pre-existing pipeline failures if fixing them requires modifying `package.json`, `eslint.config.js`, or CI workflows unless explicitly instructed by the user in the prompt. Do not disable linting rules or alter CI commands to force a pass on pre-existing errors.

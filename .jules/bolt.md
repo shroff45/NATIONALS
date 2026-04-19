@@ -1,0 +1,3 @@
+## 2025-04-19 - [Consolidate Array Iterations in React Components]
+**Learning:** In highly dynamic React dashboards (like PoliceDashboard) that display multiple aggregate statistics from a single array of items, developers often chain `.filter().length` calls for each statistic. This results in an O(K*N) time complexity on every render, where K is the number of stats and N is the number of items.
+**Action:** When calculating multiple statistics or subsets from the same data source, use a single `.reduce()` pass to compute all metrics simultaneously, reducing the complexity to O(N). Memoize the result with `useMemo` to prevent recalculation on unrelated state updates. Never perform inline `.filter().length` calculations inside the JSX return.

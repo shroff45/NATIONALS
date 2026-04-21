@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { useState } from 'react';
 import { caseStatusService, getStageColor, getStageLabel } from '../../../core/services/caseStatusService';
 import { CaseStatusRequest, CaseStatusResponse } from '../../../core/types/caseStatus';

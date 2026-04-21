@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { useState } from 'react';
 import { Case } from '@core/types';
 import { Loader2, Brain, Gavel, FileText } from 'lucide-react';

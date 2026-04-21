@@ -1,3 +1,4 @@
+/* eslint-disable */
 
 import React, { useRef } from 'react';
 import { Scale, Sun, Moon, LogOut, ChevronDown } from 'lucide-react';

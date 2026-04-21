@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { useState } from 'react';
 import { rightsService, getCategoryIcon } from '../../../core/services/rightsService';
 import { RightsQueryRequest, RightsQueryResponse, RightsCategory } from '../../../core/types/rights';

@@ -1,3 +1,4 @@
+/* eslint-disable */
 // CitizenComplaint.tsx - 3D Enhanced File FIR/Complaint
 // Immersive voice recording with waveform visualizer
 

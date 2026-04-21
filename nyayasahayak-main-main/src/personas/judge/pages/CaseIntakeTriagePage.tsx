@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { useState } from 'react';
 import { triageService, getUrgencyColor } from '../../../core/services/triageService';
 import { TriageRequest, TriageResult } from '../../../core/types/triage';

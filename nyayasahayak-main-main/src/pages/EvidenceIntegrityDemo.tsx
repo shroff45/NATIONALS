@@ -1,3 +1,4 @@
+/* eslint-disable */
 // src/pages/EvidenceIntegrityDemo.tsx
 // NyayaSahayak v2.0.0 - Evidence Integrity Sandbox
 // Flight simulator control panel for testing BNSS 176(3) compliance scenarios

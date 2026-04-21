@@ -74,32 +74,36 @@ const PoliceDashboard: React.FC = () => {
         return () => clearInterval(interval);
     }, []);
 
-    // Calculate stats
+    // ⚡ Bolt: Calculate stats (Optimized: O(N) single pass instead of O(K*N) multiple filters)
     const complianceStats = useMemo(() => {
-        const activeCases = cases.filter(c => !c.chargeSheetFiled);
-        const critical = activeCases.filter(c => c.status === 'CRITICAL').length;
-        const warning = activeCases.filter(c => c.status === 'WARNING').length;
-        const onTrack = activeCases.filter(c => c.status === 'ON_TRACK').length;
-        const filed = cases.filter(c => c.chargeSheetFiled).length;
-        return { critical, warning, onTrack, filed };
+        return cases.reduce((acc, c) => {
+            if (c.chargeSheetFiled) {
+                acc.filed++;
+            } else {
+                if (c.status === 'CRITICAL') acc.critical++;
+                else if (c.status === 'WARNING') acc.warning++;
+                else if (c.status === 'ON_TRACK') acc.onTrack++;
+            }
+            return acc;
+        }, { critical: 0, warning: 0, onTrack: 0, filed: 0 });
     }, [cases]);
 
-    // Filtered cases based on search and status
+    // ⚡ Bolt: Filtered cases based on search and status (Optimized: Single pass)
     const filteredCases = useMemo(() => {
-        let filtered = cases.filter(c => !c.chargeSheetFiled);
+        // Optimize: hoist query.toLowerCase() out of the filter function
+        const query = searchQuery ? searchQuery.toLowerCase() : '';
 
-        if (searchQuery) {
-            const query = searchQuery.toLowerCase();
-            filtered = filtered.filter(c =>
-                c.firNumber.toLowerCase().includes(query) ||
-                c.ioName.toLowerCase().includes(query) ||
-                c.section.toLowerCase().includes(query)
-            );
-        }
+        const filtered = cases.filter(c => {
+            if (c.chargeSheetFiled) return false;
+            if (statusFilter !== 'ALL' && c.status !== statusFilter) return false;
 
-        if (statusFilter !== 'ALL') {
-            filtered = filtered.filter(c => c.status === statusFilter);
-        }
+            if (query) {
+                return c.firNumber.toLowerCase().includes(query) ||
+                       c.ioName.toLowerCase().includes(query) ||
+                       c.section.toLowerCase().includes(query);
+            }
+            return true;
+        });
 
         // Sort by priority: CRITICAL first, then WARNING, then ON_TRACK
         return filtered.sort((a, b) => {
@@ -111,7 +115,7 @@ const PoliceDashboard: React.FC = () => {
     const stats = [
         {
             label: 'Active FIRs',
-            value: String(cases.filter(c => !c.chargeSheetFiled).length),
+            value: String(complianceStats.critical + complianceStats.warning + complianceStats.onTrack),
             color: 'text-emerald-400',
             bg: 'bg-emerald-500/20',
             border: 'border-emerald-500/30',

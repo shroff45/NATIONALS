@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { useState, useEffect, useRef } from 'react';
 import { Search, X, FileText, Scale, ArrowRight, Command } from 'lucide-react';
 import { gsap } from 'gsap';

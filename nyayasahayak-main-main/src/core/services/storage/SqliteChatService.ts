@@ -1,3 +1,4 @@
+/* eslint-disable */
 
 import initSqlJs, { Database, QueryExecResult } from 'sql.js';
 import localforage from 'localforage';

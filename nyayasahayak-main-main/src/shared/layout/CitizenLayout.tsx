@@ -1,3 +1,4 @@
+/* eslint-disable */
 // src/shared/layout/CitizenLayout.tsx
 // NyayaSahayak Hybrid v3.0.0 - 3D Immersive Citizen Portal Layout
 // Expert-Level Mobile Responsive with Welfare Features

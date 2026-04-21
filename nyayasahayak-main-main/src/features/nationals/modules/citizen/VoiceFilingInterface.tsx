@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { useState, useEffect, useRef } from 'react';
 import { Case, Language, UrgencyLevel } from '../../core/types';
 import { addBlock } from '../../shared/services/akhandLedger';

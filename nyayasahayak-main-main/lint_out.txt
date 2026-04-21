@@ -1,0 +1,308 @@
+
+> nyayasahayak-hybrid@2.0.0 lint
+> eslint . --report-unused-disable-directives --max-warnings 0
+
+
+/app/nyayasahayak-main-main/public/sw.js
+  1:1  error  Unused eslint-disable directive (no problems were reported from 'no-restricted-globals')
+
+/app/nyayasahayak-main-main/src/App.backup.tsx
+   1:17  error  'useState' is defined but never used. Allowed unused vars must match /^[A-Z_]/u           @typescript-eslint/no-unused-vars
+  28:11  error  'navigate' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  @typescript-eslint/no-unused-vars
+
+/app/nyayasahayak-main-main/src/App.tsx
+   1:17  error  'useState' is defined but never used. Allowed unused vars must match /^[A-Z_]/u           @typescript-eslint/no-unused-vars
+  60:11  error  'navigate' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  @typescript-eslint/no-unused-vars
+
+/app/nyayasahayak-main-main/src/core/context/ToastContext.tsx
+  1:44  error  'useState' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  @typescript-eslint/no-unused-vars
+
+/app/nyayasahayak-main-main/src/core/services/registryService.ts
+  12:51  error  'filingType' is defined but never used  @typescript-eslint/no-unused-vars
+
+/app/nyayasahayak-main-main/src/core/services/security/piiService.ts
+  48:58  error  Unnecessary escape character: \/  no-useless-escape
+
+/app/nyayasahayak-main-main/src/core/services/storage/SqliteChatService.ts
+  33:30  error  'file' is defined but never used  @typescript-eslint/no-unused-vars
+
+/app/nyayasahayak-main-main/src/features/citizen/pages/SecureChat.tsx
+  17:24  error    'setReceiverId' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u                   @typescript-eslint/no-unused-vars
+  26:8   warning  React Hook useEffect has a missing dependency: 'loadHistory'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/app/nyayasahayak-main-main/src/features/citizen/pages/VoiceGrievance.tsx
+  23:30  error  'BlobPart' is not defined  no-undef
+
+/app/nyayasahayak-main-main/src/features/judge/pages/UrgencyMatrixPage.tsx
+   76:20  error  'setFilter' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  @typescript-eslint/no-unused-vars
+  158:55  error  'idx' is defined but never used                                                            @typescript-eslint/no-unused-vars
+
+/app/nyayasahayak-main-main/src/features/main/components/Header.tsx
+  21:31  error  'NodeJS' is not defined  no-undef
+
+/app/nyayasahayak-main-main/src/features/main/components/Nyayabot.tsx
+  157:8   warning  React Hook useEffect has a missing dependency: 'setMessages'. Either include it or remove the dependency array. If 'setMessages' changes too often, find the parent component that defines it and wrap that definition in useCallback  react-hooks/exhaustive-deps
+  279:8   warning  React Hook useCallback has a missing dependency: 'input'. Either include it or remove the dependency array                                                                                                                             react-hooks/exhaustive-deps
+  314:50  error    Empty block statement                                                                                                                                                                                                                  no-empty
+  408:63  error    Empty block statement                                                                                                                                                                                                                  no-empty
+  489:45  error    Unnecessary escape character: \#                                                                                                                                                                                                       no-useless-escape
+  489:47  error    Unnecessary escape character: \*                                                                                                                                                                                                       no-useless-escape
+  489:49  error    Unnecessary escape character: \_                                                                                                                                                                                                       no-useless-escape
+  489:51  error    Unnecessary escape character: \`                                                                                                                                                                                                       no-useless-escape
+  489:53  error    Unnecessary escape character: \[                                                                                                                                                                                                       no-useless-escape
+  489:57  error    Unnecessary escape character: \(                                                                                                                                                                                                       no-useless-escape
+  489:59  error    Unnecessary escape character: \)                                                                                                                                                                                                       no-useless-escape
+  489:61  error    Unnecessary escape character: \>                                                                                                                                                                                                       no-useless-escape
+  489:63  error    Unnecessary escape character: \-                                                                                                                                                                                                       no-useless-escape
+
+/app/nyayasahayak-main-main/src/features/main/components/QuantumFingerprinting.tsx
+  15:30  error  'React' is not defined  no-undef
+
+/app/nyayasahayak-main-main/src/features/main/components/SmartSearch.tsx
+  64:8  warning  React Hook useEffect has a missing dependency: 'mockData'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/app/nyayasahayak-main-main/src/features/main/components/about/About3DScene.tsx
+  242:30  warning  The ref value 'containerRef.current' will likely have changed by the time this effect cleanup function runs. If this ref points to a node rendered by React, copy 'containerRef.current' to a variable inside the effect, and use that variable in the cleanup function  react-hooks/exhaustive-deps
+
+/app/nyayasahayak-main-main/src/features/main/components/about/AboutCTA.tsx
+  22:49  error  '_t' is defined but never used  @typescript-eslint/no-unused-vars
+
+/app/nyayasahayak-main-main/src/features/main/components/about/AboutFeatures.tsx
+  33:56  error  't' is defined but never used  @typescript-eslint/no-unused-vars
+
+/app/nyayasahayak-main-main/src/features/main/components/about/AboutRoles.tsx
+  30:53  error  '_t' is defined but never used  @typescript-eslint/no-unused-vars
+
+/app/nyayasahayak-main-main/src/features/main/components/about/AboutStats.tsx
+  30:53  error  '_t' is defined but never used  @typescript-eslint/no-unused-vars
+
+/app/nyayasahayak-main-main/src/features/main/components/about/AboutTech.tsx
+  25:51  error  '_t' is defined but never used  @typescript-eslint/no-unused-vars
+
+/app/nyayasahayak-main-main/src/features/main/components/ui/TargetCursor.tsx
+   21:31  error    'NodeListOf' is not defined                                                                                                                                                                                                                                                        no-undef
+  262:62  error    'EventListener' is not defined                                                                                                                                                                                                                                                     no-undef
+  269:69  error    'EventListener' is not defined                                                                                                                                                                                                                                                     no-undef
+  280:31  warning  The ref value 'activeStrengthRef.current' will likely have changed by the time this effect cleanup function runs. If this ref points to a node rendered by React, copy 'activeStrengthRef.current' to a variable inside the effect, and use that variable in the cleanup function  react-hooks/exhaustive-deps
+
+/app/nyayasahayak-main-main/src/features/main/services/piiService.ts
+  48:58  error  Unnecessary escape character: \/  no-useless-escape
+
+/app/nyayasahayak-main-main/src/features/nationals/components/GraphVisualizationPanel.tsx
+  22:8  warning  React Hook useEffect has an unnecessary dependency: 'containerRef.current'. Either exclude it or remove the dependency array. Mutable values like 'containerRef.current' aren't valid dependencies because mutating them doesn't re-render the component  react-hooks/exhaustive-deps
+
+/app/nyayasahayak-main-main/src/features/nationals/components/Header.tsx
+  20:11  warning  The 'tabs' array makes the dependencies of useEffect Hook (at line 88) change on every render. To fix this, wrap the initialization of 'tabs' in its own useMemo() Hook  react-hooks/exhaustive-deps
+
+/app/nyayasahayak-main-main/src/features/nationals/components/Nyayabot.tsx
+  271:50  error  Empty block statement             no-empty
+  365:63  error  Empty block statement             no-empty
+  446:45  error  Unnecessary escape character: \#  no-useless-escape
+  446:47  error  Unnecessary escape character: \*  no-useless-escape
+  446:49  error  Unnecessary escape character: \_  no-useless-escape
+  446:51  error  Unnecessary escape character: \`  no-useless-escape
+  446:53  error  Unnecessary escape character: \[  no-useless-escape
+  446:57  error  Unnecessary escape character: \(  no-useless-escape
+  446:59  error  Unnecessary escape character: \)  no-useless-escape
+  446:61  error  Unnecessary escape character: \>  no-useless-escape
+  446:63  error  Unnecessary escape character: \-  no-useless-escape
+
+/app/nyayasahayak-main-main/src/features/nationals/components/QuantumFingerprinting.tsx
+  15:30  error  'React' is not defined  no-undef
+
+/app/nyayasahayak-main-main/src/features/nationals/components/ui/TargetCursor.tsx
+   21:31  error    'NodeListOf' is not defined                                                                                                                                                                                                                                                        no-undef
+  262:62  error    'EventListener' is not defined                                                                                                                                                                                                                                                     no-undef
+  269:69  error    'EventListener' is not defined                                                                                                                                                                                                                                                     no-undef
+  280:31  warning  The ref value 'activeStrengthRef.current' will likely have changed by the time this effect cleanup function runs. If this ref points to a node rendered by React, copy 'activeStrengthRef.current' to a variable inside the effect, and use that variable in the cleanup function  react-hooks/exhaustive-deps
+
+/app/nyayasahayak-main-main/src/features/nationals/modules/citizen/CitizenDashboard.tsx
+  130:78  error  '_t' is defined but never used      @typescript-eslint/no-unused-vars
+  130:89  error  '_theme' is defined but never used  @typescript-eslint/no-unused-vars
+
+/app/nyayasahayak-main-main/src/features/nationals/modules/citizen/VoiceFilingInterface.tsx
+  59:8  warning  React Hook useEffect has a missing dependency: 'isListening'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/app/nyayasahayak-main-main/src/features/nationals/modules/judge/JudgeDashboard.tsx
+  109:35  error  'React' is not defined  no-undef
+
+/app/nyayasahayak-main-main/src/features/nationals/modules/police/SmartFIR.tsx
+  22:31  error  '_text' is defined but never used  @typescript-eslint/no-unused-vars
+
+/app/nyayasahayak-main-main/src/features/police/pages/CrimeScene3D.tsx
+    1:17  error    'useRef' is defined but never used. Allowed unused vars must match /^[A-Z_]/u                                         @typescript-eslint/no-unused-vars
+    1:44  error    'useEffect' is defined but never used. Allowed unused vars must match /^[A-Z_]/u                                      @typescript-eslint/no-unused-vars
+    3:18  error    'useFrame' is defined but never used. Allowed unused vars must match /^[A-Z_]/u                                       @typescript-eslint/no-unused-vars
+    4:31  error    'useCursor' is defined but never used. Allowed unused vars must match /^[A-Z_]/u                                      @typescript-eslint/no-unused-vars
+  451:8   warning  React Hook React.useEffect has a missing dependency: 'currentTime'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/app/nyayasahayak-main-main/src/modules/judge/features/CaseTriage.tsx
+  7:32  error  '_caseData' is defined but never used  @typescript-eslint/no-unused-vars
+  7:48  error  '_lang' is defined but never used      @typescript-eslint/no-unused-vars
+
+/app/nyayasahayak-main-main/src/pages/EvidenceIntegrityDemo.tsx
+  231:30  error  'setSharedCompliance' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  @typescript-eslint/no-unused-vars
+
+/app/nyayasahayak-main-main/src/pages/TestDashboard.tsx
+  17:8  warning  React Hook useEffect has a missing dependency: 'checkBackendHealth'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/app/nyayasahayak-main-main/src/personas/admin/pages/AdminDashboard.tsx
+  117:11  error  'selectedDistrictData' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  @typescript-eslint/no-unused-vars
+
+/app/nyayasahayak-main-main/src/personas/admin/pages/DocumentAnalysisPage.tsx
+  1:17  error  'useState' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  @typescript-eslint/no-unused-vars
+
+/app/nyayasahayak-main-main/src/personas/admin/pages/RegistryBatchProcessing.tsx
+  9:24  error  'updateToast' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  @typescript-eslint/no-unused-vars
+
+/app/nyayasahayak-main-main/src/personas/admin/pages/RegistryTemplates.tsx
+  35:23  error  'setTemplates' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  @typescript-eslint/no-unused-vars
+
+/app/nyayasahayak-main-main/src/personas/admin/pages/ResourceAllocatorPage.tsx
+  1:17  error  'useState' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  @typescript-eslint/no-unused-vars
+
+/app/nyayasahayak-main-main/src/personas/citizen/components/EFirSignatureTimer.tsx
+  38:5   error    'informantName' is defined but never used                                                                                                                                                                                                       @typescript-eslint/no-unused-vars
+  43:11  warning  The 'expiryTime' object construction makes the dependencies of useCallback Hook (at line 82) change on every render. Move it inside the useCallback callback. Alternatively, wrap the initialization of 'expiryTime' in its own useMemo() Hook  react-hooks/exhaustive-deps
+
+/app/nyayasahayak-main-main/src/personas/citizen/pages/CasePredictorPage.tsx
+    1:27  error  'useEffect' is defined but never used. Allowed unused vars must match /^[A-Z_]/u   @typescript-eslint/no-unused-vars
+  109:13  error  't' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  @typescript-eslint/no-unused-vars
+
+/app/nyayasahayak-main-main/src/personas/citizen/pages/CaseStatusTrackerPage.tsx
+  17:98  error  Empty block statement  no-empty
+  24:94  error  Empty block statement  no-empty
+
+/app/nyayasahayak-main-main/src/personas/citizen/pages/CaseTrack.tsx
+  44:24  error  'updateToast' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u       @typescript-eslint/no-unused-vars
+  50:12  error  'notFound' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u          @typescript-eslint/no-unused-vars
+  54:12  error  'timeRemaining' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u     @typescript-eslint/no-unused-vars
+  54:27  error  'setTimeRemaining' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  @typescript-eslint/no-unused-vars
+
+/app/nyayasahayak-main-main/src/personas/citizen/pages/CitizenComplaint.tsx
+  4:27  error  'useEffect' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  @typescript-eslint/no-unused-vars
+
+/app/nyayasahayak-main-main/src/personas/citizen/pages/CitizenDashboard.tsx
+  130:78  error  '_t' is defined but never used      @typescript-eslint/no-unused-vars
+  130:89  error  '_theme' is defined but never used  @typescript-eslint/no-unused-vars
+
+/app/nyayasahayak-main-main/src/personas/citizen/pages/EFilingWizard.tsx
+  46:13  error  't' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  @typescript-eslint/no-unused-vars
+
+/app/nyayasahayak-main-main/src/personas/citizen/pages/EligibilityCheckerPage.tsx
+  64:13  error  't' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  @typescript-eslint/no-unused-vars
+
+/app/nyayasahayak-main-main/src/personas/citizen/pages/KnowYourRightsPage.tsx
+  20:94  error  Empty block statement  no-empty
+  27:90  error  Empty block statement  no-empty
+
+/app/nyayasahayak-main-main/src/personas/citizen/pages/LegalAidFinderPage.tsx
+  17:99  error  Empty block statement  no-empty
+  23:91  error  Empty block statement  no-empty
+
+/app/nyayasahayak-main-main/src/personas/citizen/pages/VoiceFilingInterface.tsx
+  65:8  warning  React Hook useEffect has a missing dependency: 'isListening'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/app/nyayasahayak-main-main/src/personas/judge/components/DraftJudgmentPanel.tsx
+  23:5  error  'onCreateBail' is defined but never used  @typescript-eslint/no-unused-vars
+
+/app/nyayasahayak-main-main/src/personas/judge/components/HashVerifier.tsx
+  18:10  error  'computeFileHash' is defined but never used. Allowed unused vars must match /^[A-Z_]/u           @typescript-eslint/no-unused-vars
+  36:5   error  'evidenceId' is defined but never used                                                           @typescript-eslint/no-unused-vars
+  44:12  error  'manualHashInput' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  @typescript-eslint/no-unused-vars
+
+/app/nyayasahayak-main-main/src/personas/judge/pages/BenchMemoTemplates.tsx
+  13:23  error  'setTemplates' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  @typescript-eslint/no-unused-vars
+
+/app/nyayasahayak-main-main/src/personas/judge/pages/CaseIntakeTriagePage.tsx
+  22:96  error  Empty block statement  no-empty
+  29:92  error  Empty block statement  no-empty
+
+/app/nyayasahayak-main-main/src/personas/judge/pages/CourtCalendar.tsx
+  5:25  error  'setCurrentDate' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  @typescript-eslint/no-unused-vars
+
+/app/nyayasahayak-main-main/src/personas/judge/pages/JudgeWellness.tsx
+  69:23  error  'NodeJS' is not defined  no-undef
+
+/app/nyayasahayak-main-main/src/personas/judge/pages/JudgmentValidatorPage.tsx
+  15:103  error  Empty block statement  no-empty
+  21:95   error  Empty block statement  no-empty
+
+/app/nyayasahayak-main-main/src/personas/judge/pages/SentencingPrecedents.tsx
+  1:17  error  'useState' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  @typescript-eslint/no-unused-vars
+
+/app/nyayasahayak-main-main/src/personas/judge/pages/VirtualMootCourt.tsx
+  605:34  error  'NodeJS' is not defined  no-undef
+  606:30  error  'NodeJS' is not defined  no-undef
+
+/app/nyayasahayak-main-main/src/personas/police/components/Section63CertificateGenerator.tsx
+  32:5  error  'fileName' is defined but never used  @typescript-eslint/no-unused-vars
+  33:5  error  'fileSize' is defined but never used  @typescript-eslint/no-unused-vars
+
+/app/nyayasahayak-main-main/src/personas/police/pages/CaseLinker.tsx
+   1:27  error  'useEffect' is defined but never used. Allowed unused vars must match /^[A-Z_]/u                  @typescript-eslint/no-unused-vars
+   1:38  error  'useRef' is defined but never used. Allowed unused vars must match /^[A-Z_]/u                     @typescript-eslint/no-unused-vars
+  35:11  error  'getStrengthColor' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  @typescript-eslint/no-unused-vars
+
+/app/nyayasahayak-main-main/src/personas/police/pages/ChargeSheetBuilder.tsx
+  149:64  error  'idx' is defined but never used  @typescript-eslint/no-unused-vars
+
+/app/nyayasahayak-main-main/src/personas/police/pages/CrimeScene3D.tsx
+  1:38  error  'useRef' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  @typescript-eslint/no-unused-vars
+
+/app/nyayasahayak-main-main/src/personas/police/pages/EvidenceHasher.tsx
+  1:27  error  'useEffect' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  @typescript-eslint/no-unused-vars
+
+/app/nyayasahayak-main-main/src/personas/police/pages/EvidenceLocker.tsx
+    1:27  error  'useEffect' is defined but never used. Allowed unused vars must match /^[A-Z_]/u                  @typescript-eslint/no-unused-vars
+   21:12  error  'isDetailsLoading' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  @typescript-eslint/no-unused-vars
+  171:84  error  'idx' is defined but never used                                                                   @typescript-eslint/no-unused-vars
+
+/app/nyayasahayak-main-main/src/personas/police/pages/InvestigationPlanner.tsx
+  25:12  error  'isLoading' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  @typescript-eslint/no-unused-vars
+
+/app/nyayasahayak-main-main/src/personas/police/pages/PoliceDashboard.tsx
+  75:8  warning  React Hook useEffect has a missing dependency: 'handleRefresh'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/app/nyayasahayak-main-main/src/personas/police/pages/SerialOffenderAnalysis.tsx
+  13:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  @typescript-eslint/no-unused-vars
+
+/app/nyayasahayak-main-main/src/personas/police/pages/WarrantManagerPage.tsx
+  22:8  warning  React Hook useEffect has a missing dependency: 'loadWarrants'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/app/nyayasahayak-main-main/src/shared/components/3d/JusticeOrb.tsx
+  5:36  error  'useCallback' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  @typescript-eslint/no-unused-vars
+
+/app/nyayasahayak-main-main/src/shared/components/3d/ParticleHeader.tsx
+  118:8  warning  React Hook useEffect has a missing dependency: 'colors'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/app/nyayasahayak-main-main/src/shared/components/welfare/WomenSafetySOS.tsx
+  13:7  error  'WomenSafetySOS' is already defined  no-redeclare
+
+/app/nyayasahayak-main-main/src/shared/layout/CitizenLayout.backup.tsx
+  112:8  warning  React Hook useEffect has missing dependencies: 'showAccessibility', 'showCybercrime', and 'showEmergencyContacts'. Either include them or remove the dependency array  react-hooks/exhaustive-deps
+
+/app/nyayasahayak-main-main/src/shared/layout/CitizenLayout.tsx
+  116:8  warning  React Hook useEffect has missing dependencies: 'showAccessibility', 'showCybercrime', and 'showEmergencyContacts'. Either include them or remove the dependency array  react-hooks/exhaustive-deps
+
+/app/nyayasahayak-main-main/src/shared/layout/LandingPage.tsx
+  11:13  error  'loginWithGoogle' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  @typescript-eslint/no-unused-vars
+
+/app/nyayasahayak-main-main/src/shared/modules/Nyayabot.tsx
+  293:50  error  Empty block statement             no-empty
+  387:63  error  Empty block statement             no-empty
+  468:45  error  Unnecessary escape character: \#  no-useless-escape
+  468:47  error  Unnecessary escape character: \*  no-useless-escape
+  468:49  error  Unnecessary escape character: \_  no-useless-escape
+  468:51  error  Unnecessary escape character: \`  no-useless-escape
+  468:53  error  Unnecessary escape character: \[  no-useless-escape
+  468:57  error  Unnecessary escape character: \(  no-useless-escape
+  468:59  error  Unnecessary escape character: \)  no-useless-escape
+  468:61  error  Unnecessary escape character: \>  no-useless-escape
+  468:63  error  Unnecessary escape character: \-  no-useless-escape
+
+/app/nyayasahayak-main-main/src/shared/utils/mockApi.ts
+  39:18  error  'NodeJS' is not defined  no-undef
+
+✖ 145 problems (126 errors, 19 warnings)
+  1 error and 0 warnings potentially fixable with the `--fix` option.

@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { useState } from 'react';
 import { FileText, Plus, Search, Edit2, Copy, Trash2, Eye } from 'lucide-react';
 

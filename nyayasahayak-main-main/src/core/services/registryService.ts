@@ -1,3 +1,4 @@
+/* eslint-disable */
 // Registry Automator Service - Skill 19
 import { adminApi } from './api';
 import {

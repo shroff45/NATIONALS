@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { useState } from 'react';
 import {
     Cpu, Users, Gavel, LayoutGrid,

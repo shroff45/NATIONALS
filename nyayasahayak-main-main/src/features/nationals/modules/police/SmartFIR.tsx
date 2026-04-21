@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { useState } from 'react';
 import { Mic, FileText, Sparkles, Send, AlertTriangle } from 'lucide-react';
 

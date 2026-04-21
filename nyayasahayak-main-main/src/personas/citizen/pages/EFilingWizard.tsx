@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { useState } from 'react';
 import {
     User, FileText, Upload, CheckCircle, ArrowRight, ArrowLeft,

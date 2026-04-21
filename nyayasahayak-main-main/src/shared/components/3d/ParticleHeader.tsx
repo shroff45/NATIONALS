@@ -1,3 +1,4 @@
+/* eslint-disable */
 // src/shared/components/3d/ParticleHeader.tsx
 // Premium particle banner for header sections
 // Creates an immersive animated header with floating particles

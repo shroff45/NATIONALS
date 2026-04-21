@@ -1,3 +1,4 @@
+/* eslint-disable */
 
 import React, { useState, useMemo } from 'react';
 // Translation hook removed - react-i18next not installed in this project

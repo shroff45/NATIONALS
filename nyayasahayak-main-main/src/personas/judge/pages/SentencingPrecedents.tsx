@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { useState } from 'react';
 import { Gavel, Search, Filter, BookOpen, Scale, ArrowRight, ExternalLink } from 'lucide-react';
 

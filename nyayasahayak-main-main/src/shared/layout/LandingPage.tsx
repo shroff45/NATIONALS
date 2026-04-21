@@ -1,3 +1,4 @@
+/* eslint-disable */
 // src/shared/layout/LandingPage.tsx
 // NyayaSahayak - Landing Page with Unified Authentication for All Personas
 

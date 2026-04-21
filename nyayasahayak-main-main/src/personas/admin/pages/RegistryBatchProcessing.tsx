@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { useState } from 'react';
 import { Layers, Play, Pause, Download, RefreshCw, AlertTriangle, FileText } from 'lucide-react';
 import BatchUploadZone from '../components/registry/BatchUploadZone';

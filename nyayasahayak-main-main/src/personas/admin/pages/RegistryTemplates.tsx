@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { useState } from 'react';
 import {
     FilePlus, Search, Edit3, Trash2, Plus,

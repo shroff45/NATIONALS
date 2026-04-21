@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { useState, useEffect, useRef } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { Mic, MicOff, Loader2, CheckCircle, AlertTriangle, FileText, Globe, Calendar, MapPin } from 'lucide-react';

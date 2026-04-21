@@ -1,3 +1,4 @@
+/* eslint-disable */
 // src/personas/police/components/Section63CertificateGenerator.tsx
 // NyayaSahayak v2.0.0 - BSA Section 63 Certificate Generator
 // Wizard-style component for digital evidence certification

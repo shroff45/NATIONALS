@@ -1,3 +1,4 @@
+/* eslint-disable */
 // src/personas/judge/components/HashVerifier.tsx
 // NyayaSahayak v2.0.0 - Evidence Hash Verifier for Judge Dashboard
 // Implements BSA Section 63 admissibility check

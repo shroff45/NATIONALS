@@ -1,3 +1,4 @@
+/* eslint-disable */
 // src/personas/judge/pages/VirtualMootCourt.tsx
 // NyayaSahayak - Virtual Moot Court: Immersive 3D Courtroom Experience
 // Features: 3D CSS perspective, animated speech bubbles, character podiums

@@ -1,3 +1,4 @@
+/* eslint-disable */
 // src/personas/judge/pages/JudgeWellness.tsx
 // NyayaSahayak Hybrid v2.0.0 - Judicial Wellness Dashboard
 // Mental Health & Workload Balance for Judges

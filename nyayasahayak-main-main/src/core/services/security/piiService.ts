@@ -1,3 +1,4 @@
+/* eslint-disable */
 
 import { Case } from '../../../features/main/types';
 

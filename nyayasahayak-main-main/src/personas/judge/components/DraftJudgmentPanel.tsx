@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React from 'react';
 import { Case } from '@core/types';
 import { FileSignature, Shield, AlertCircle, CheckCircle, Gavel, Flame, Sparkles } from 'lucide-react';

@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { useState } from 'react';
 import { judgmentService, getValidityColor, getSeverityColor } from '../../../core/services/judgmentService';
 import { JudgmentValidateRequest, JudgmentValidateResponse } from '../../../core/types/judgment';

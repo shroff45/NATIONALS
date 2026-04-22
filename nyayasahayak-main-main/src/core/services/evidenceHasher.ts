@@ -39,7 +39,7 @@ export const computeFileHash = async (
     const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
 
     // Use WordArray for incremental hashing
-    let hashAccumulator = CryptoJS.algo.SHA256.create();
+    const hashAccumulator = CryptoJS.algo.SHA256.create();
     let bytesProcessed = 0;
 
     for (let chunkIndex = 0; chunkIndex < totalChunks; chunkIndex++) {

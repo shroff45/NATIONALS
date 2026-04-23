@@ -2,7 +2,7 @@
 // NyayaSahayak Hybrid v2.0.0 - Case Queue Page
 // Standalone case queue without external prop dependencies
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
     ListFilter, Clock,
     Search, ChevronRight
@@ -34,12 +34,20 @@ const CaseQueuePage: React.FC = () => {
     const [filter, setFilter] = useState<string>('ALL');
     const [selectedCase, setSelectedCase] = useState<QueueCase | null>(null);
 
-    const filteredCases = MOCK_QUEUE.filter(c => {
-        const matchesSearch = c.title.toLowerCase().includes(search.toLowerCase()) ||
-            c.cnr.toLowerCase().includes(search.toLowerCase());
-        const matchesFilter = filter === 'ALL' || c.type === filter;
-        return matchesSearch && matchesFilter;
-    });
+    // ⚡ Bolt Performance Optimization
+    // Wrap filtering logic in useMemo to prevent unnecessary re-computations on every render.
+    // Hoist `search.toLowerCase()` to avoid O(N) redundant string operations during filtering.
+    // Impact: Reduces CPU cycles during re-renders by eliminating redundant O(N) array filtering
+    // and lowering constant factor by lifting string conversion out of the loop.
+    const filteredCases = useMemo(() => {
+        const searchTerm = search.toLowerCase();
+        return MOCK_QUEUE.filter(c => {
+            const matchesSearch = c.title.toLowerCase().includes(searchTerm) ||
+                c.cnr.toLowerCase().includes(searchTerm);
+            const matchesFilter = filter === 'ALL' || c.type === filter;
+            return matchesSearch && matchesFilter;
+        });
+    }, [search, filter]);
 
     const getPriorityColor = (priority: string) => {
         switch (priority) {

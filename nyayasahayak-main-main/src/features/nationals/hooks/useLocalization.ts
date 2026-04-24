@@ -2,7 +2,7 @@
 import { useCallback } from 'react';
 import { translations } from '../constants/localization';
 import type { Translations } from '../constants/localization';
-import { getLocalizedNumber } from '../lib/utils';
+import { getLocalizedNumber } from '../../../shared/utils/utils';
 
 export type Language = keyof Translations;
 
@@ -12,7 +12,7 @@ export const useLocalization = (language: Language) => {
     }, [language]);
 
     const formatNumber = useCallback((num: number | string) => {
-        return getLocalizedNumber(num, language);
+        return getLocalizedNumber(Number(num) || 0, language);
     }, [language]);
 
     return { t, formatNumber };

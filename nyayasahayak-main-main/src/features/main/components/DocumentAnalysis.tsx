@@ -3,7 +3,7 @@ import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { geminiService } from '../services/geminiService';
 import { legalParser } from '../services/legalParser';
 import { DocumentAnalysisResult, HistoryItem, QuantumFingerprintResult } from '../types';
-import { fileToBase64 } from '../lib/utils';
+import { fileToBase64 } from '../../../shared/utils/utils';
 import Spinner from './common/Spinner';
 import { Part } from '@google/genai';
 import { gsap } from 'gsap';
@@ -68,7 +68,9 @@ const DocumentIntegrityView: React.FC<{ t: (key: string) => string; logActivity:
                         }
 
                         const apiResult = await geminiService.generateQuantumFingerprint(payload, 'en');
-                        setGenerationResult(apiResult);
+                        if (apiResult) {
+                            setGenerationResult(apiResult);
+                        }
                         logActivity('QUANTUM_FINGERPRINT_GENERATED', t('history_quantum_fingerprinted_generic'));
                     } catch (error) { console.error(error); } finally { setIsGenerating(false); setStatusText(''); }
                 })();
@@ -214,10 +216,12 @@ const DocumentAnalysis: React.FC<DocumentAnalysisProps> = ({ t, logActivity }) =
         try {
             const fileParts = await Promise.all(files.map(async f => ({ inlineData: { mimeType: f.type, data: await fileToBase64(f) } })));
             const res = await geminiService.analyzeDocuments(fileParts);
-            setResult(res);
-            if (res.summary) {
-                setHighlightedSummary(legalParser.highlightLegalTerms(res.summary));
-                logActivity('DOCUMENT_ANALYZED', t('history_doc_analyzed').replace('{files}', files.map(f => f.name).join(', ')));
+            if (res) {
+                setResult(res);
+                if (res.summary) {
+                    setHighlightedSummary(legalParser.highlightLegalTerms(res.summary));
+                    logActivity('DOCUMENT_ANALYZED', t('history_doc_analyzed').replace('{files}', files.map(f => f.name).join(', ')));
+                }
             }
         } catch (e) { console.error(e); } finally { setIsLoading(false); }
     }, [files, t, logActivity]);

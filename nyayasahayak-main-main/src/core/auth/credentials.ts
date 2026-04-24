@@ -62,7 +62,7 @@ interface LoginResponse {
 }
 
 export const verifyCredentials = async (
-    role: UserRole,
+    role: UserRole | null,
     identifier: string,
     password: string,
     metadata?: {
@@ -73,7 +73,7 @@ export const verifyCredentials = async (
         badgeNumber?: string;
         judgeId?: string;
     }
-): Promise<UserProfile & { tokens?: { access_token: string; refresh_token: string } } | null> => {
+): Promise<UserProfile & { email?: string; tokens?: { access_token: string; refresh_token: string } } | null> => {
     // Normalize inputs
     const cleanId = identifier.trim().toLowerCase();
     const cleanPass = password.trim();

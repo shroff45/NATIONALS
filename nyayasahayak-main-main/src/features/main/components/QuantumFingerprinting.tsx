@@ -37,7 +37,9 @@ const QuantumFingerprinting: React.FC<QuantumFingerprintingProps> = ({ t, select
                 (async () => {
                     try {
                         const apiResult = await geminiService.generateQuantumFingerprint(selectedCase.summary, 'en');
-                        setGenerationResult(apiResult);
+                        if (apiResult) {
+                            setGenerationResult(apiResult);
+                        }
                         const caseNum = selectedCase.caseNumber || 'Unknown';
                         logActivity('QUANTUM_FINGERPRINT_GENERATED', t('history_quantum_fingerprinted').replace('{caseNumber}', String(caseNum)));
                     } catch (error) {

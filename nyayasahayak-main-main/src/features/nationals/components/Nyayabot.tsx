@@ -6,7 +6,7 @@ import { contentModeration } from '../../main/services/contentModeration';
 import { ChatMessage, User } from '../core/types';
 import Spinner from './common/Spinner';
 import { gsap } from 'gsap';
-import { fileToBase64 } from '../lib/utils';
+import { fileToBase64 } from '../../../shared/utils/utils';
 import AnimatedPageWrapper from './common/AnimatedPageWrapper';
 import { marked } from 'marked';
 

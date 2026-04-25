@@ -318,12 +318,21 @@ const JudgeBoard: React.FC = () => {
     };
 
     // Stats
-    const urgentCount = MOCK_CASES.filter(c => c.priority === 'URGENT').length;
-    const highRiskCount = MOCK_CASES.filter(c => c.adjournmentRisk === 'HIGH').length;
-    const bnssAlertCount = MOCK_CASES.filter(c => {
-        const status = getBNSSStatus(c);
-        return status === 'CRITICAL' || status === 'WARNING';
-    }).length;
+    // ⚡ Bolt Optimization: Replace multiple filter passes with a single reduce loop and memoize
+    const boardStats = useMemo(() => {
+        return MOCK_CASES.reduce((acc, c) => {
+            if (c.priority === 'URGENT') acc.urgent++;
+            if (c.adjournmentRisk === 'HIGH') acc.highRisk++;
+            const status = getBNSSStatus(c);
+            if (status === 'CRITICAL' || status === 'WARNING') acc.bnssAlerts++;
+            return acc;
+        }, { urgent: 0, highRisk: 0, bnssAlerts: 0 });
+    }, []);
+
+    // Reintroduce backwards compatible variable names to prevent crashes
+    const urgentCount = boardStats.urgent;
+    const highRiskCount = boardStats.highRisk;
+    const bnssAlertCount = boardStats.bnssAlerts;
 
     // Three-State: Analyze Case (Legal Syllogism Engine)
     const handleAnalyzeCase = async (caseData: BoardCase) => {

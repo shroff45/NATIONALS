@@ -1,7 +1,7 @@
 // src/personas/judge/pages/OrdersHistory.tsx
 // NyayaSahayak Hybrid v2.0.0 - Judge Orders History Page
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
     FileText,
     Calendar,
@@ -77,14 +77,29 @@ const OrdersHistory: React.FC = () => {
     const [filterType, setFilterType] = useState<string>('all');
     const [filterStatus, setFilterStatus] = useState<string>('all');
 
-    const filteredOrders = MOCK_ORDERS.filter(order => {
-        const matchesSearch = order.caseTitle.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            order.cnr.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            order.parties.toLowerCase().includes(searchQuery.toLowerCase());
-        const matchesType = filterType === 'all' || order.orderType === filterType;
-        const matchesStatus = filterStatus === 'all' || order.status === filterStatus;
-        return matchesSearch && matchesType && matchesStatus;
-    });
+    // ⚡ Bolt: Memoize filtered results to prevent O(N) recalculations on every render
+    const filteredOrders = useMemo(() => {
+        // ⚡ Bolt: Hoist search normalization outside the loop (O(1) instead of O(N))
+        const lowerSearch = searchQuery.toLowerCase();
+
+        return MOCK_ORDERS.filter(order => {
+            const matchesSearch = !lowerSearch ||
+                order.caseTitle.toLowerCase().includes(lowerSearch) ||
+                order.cnr.toLowerCase().includes(lowerSearch) ||
+                order.parties.toLowerCase().includes(lowerSearch);
+            const matchesType = filterType === 'all' || order.orderType === filterType;
+            const matchesStatus = filterStatus === 'all' || order.status === filterStatus;
+            return matchesSearch && matchesType && matchesStatus;
+        });
+    }, [searchQuery, filterType, filterStatus]);
+
+    // ⚡ Bolt: Calculate stats in a single O(N) pass instead of three separate O(N) filter loops
+    const statusStats = useMemo(() => {
+        return MOCK_ORDERS.reduce((acc, order) => {
+            acc[order.status] = (acc[order.status] || 0) + 1;
+            return acc;
+        }, {} as Record<Order['status'], number>);
+    }, []);
 
     const getStatusColor = (status: Order['status']) => {
         switch (status) {
@@ -232,15 +247,15 @@ const OrdersHistory: React.FC = () => {
             {/* Stats Footer */}
             <div className="grid grid-cols-3 gap-4">
                 <div className="bg-gradient-to-br from-green-500/10 to-emerald-500/10 border border-green-500/20 rounded-xl p-4 text-center">
-                    <p className="text-2xl font-bold text-green-400">{MOCK_ORDERS.filter(o => o.status === 'Published').length}</p>
+                    <p className="text-2xl font-bold text-green-400">{statusStats['Published'] || 0}</p>
                     <p className="text-xs text-slate-400">Published</p>
                 </div>
                 <div className="bg-gradient-to-br from-amber-500/10 to-orange-500/10 border border-amber-500/20 rounded-xl p-4 text-center">
-                    <p className="text-2xl font-bold text-amber-400">{MOCK_ORDERS.filter(o => o.status === 'Pending Review').length}</p>
+                    <p className="text-2xl font-bold text-amber-400">{statusStats['Pending Review'] || 0}</p>
                     <p className="text-xs text-slate-400">Pending Review</p>
                 </div>
                 <div className="bg-gradient-to-br from-slate-500/10 to-gray-500/10 border border-slate-500/20 rounded-xl p-4 text-center">
-                    <p className="text-2xl font-bold text-slate-400">{MOCK_ORDERS.filter(o => o.status === 'Archived').length}</p>
+                    <p className="text-2xl font-bold text-slate-400">{statusStats['Archived'] || 0}</p>
                     <p className="text-xs text-slate-400">Archived</p>
                 </div>
             </div>

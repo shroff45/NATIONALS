@@ -92,9 +92,9 @@ const PatrolMap: React.FC = () => {
         if (mapRef.current) return;
 
         // Safety check for existing Leaflet instance on container
-        // @ts-ignore
+        // @ts-expect-error - _leaflet_id is not in standard DOM element types
         if (mapContainerRef.current._leaflet_id) {
-            // @ts-ignore
+            // @ts-expect-error - _leaflet_id is not in standard DOM element types
             mapContainerRef.current._leaflet_id = null;
         }
 

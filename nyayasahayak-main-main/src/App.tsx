@@ -57,9 +57,6 @@ class AppErrorBoundary extends React.Component<
 // Login Wrapper to adapt parameters
 const SignInWrapper = () => {
     const { loginWithProfile } = useAuth();
-    const navigate = useNavigate(); // Need to import useNavigate? App.tsx uses it in imports? No, it imports BrowserRouter as Router etc.
-    // Wait, App.tsx imports: import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
-    // I need useNavigate.
 
     // Mock translation function
     const t = (key: string) => {
@@ -77,12 +74,14 @@ const SignInWrapper = () => {
         return translations[key] || key;
     };
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handleSignIn = (user: any) => {
         // user from SignIn.tsx has { email, name, role }
         loginWithProfile({
             name: user.name,
             id: user.email,
             avatar: `https://api.dicebear.com/7.x/initials/svg?seed=${user.name}`,
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             role: user.role.toUpperCase() as any // Cast to UserRole
         });
         // Navigation is handled by AuthContext or ProtectedRoute redirection usually, 
@@ -139,13 +138,11 @@ const FIRHistoryPage = React.lazy(() => import('./personas/police/pages/FIRHisto
 const JudgeBoardPage = React.lazy(() => import('./personas/judge/pages/JudgeBoard'));
 const UrgencyMatrixPage = React.lazy(() => import('./features/judge/pages/UrgencyMatrixPage'));
 const VirtualCourtPage = React.lazy(() => import('./features/judge/pages/VirtualCourtPage'));
-const CaseQueuePage = React.lazy(() => import('./personas/judge/pages/CaseQueuePage'));
 const CaseTriageWrapper = React.lazy(() => import('./features/common/wrappers/CaseTriageWrapper'));
 const EnhancedJudgeDashboard = React.lazy(() => import('./personas/judge/pages/JudgeDashboard'));
 const AdjournmentRiskWrapper = React.lazy(() => import('./features/common/wrappers/AdjournmentRiskWrapper'));
 const CaseMapperWrapper = React.lazy(() => import('./features/common/wrappers/CaseMapperWrapper'));
 const JusticeTimelineWrapper = React.lazy(() => import('./features/common/wrappers/JusticeTimelineWrapper'));
-const DocumentAnalysisWrapper = React.lazy(() => import('./features/common/wrappers/DocumentAnalysisWrapper'));
 const SmartBailPage = React.lazy(() => import('./personas/judge/pages/SmartBailPage'));
 const OrdersHistoryPage = React.lazy(() => import('./personas/judge/pages/OrdersHistory'));
 const JudgeWellnessPage = React.lazy(() => import('./personas/judge/pages/JudgeWellness'));

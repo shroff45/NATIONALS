@@ -9,7 +9,7 @@ def log(test_name, status, details=""):
     symbol = "✅" if status == "PASS" else "❌"
     print(f"{symbol} {test_name}: {status} {details}")
 
-def test_health():
+def run_test_health():
     try:
         url = f"{BASE_URL}/health"
         resp = requests.get(url)
@@ -26,7 +26,7 @@ def test_health():
         log("Health Check", "FAIL", f"Exception: {e}")
     return False
 
-def test_registry_scrutiny():
+def run_test_registry_scrutiny():
     try:
         url = f"{API_V1}/admin/registry/test-scrutiny"
         # The prompt curl command sends POST with no body, just headers
@@ -44,7 +44,7 @@ def test_registry_scrutiny():
         log("Registry Scrutiny", "FAIL", f"Exception: {e}")
     return False
 
-def test_registry_fees():
+def run_test_registry_fees():
     try:
         url = f"{API_V1}/admin/registry/calculate-fees"
         payload = {
@@ -66,7 +66,7 @@ def test_registry_fees():
         log("Registry Fees", "FAIL", f"Exception: {e}")
     return False
 
-def test_listing_pending():
+def run_test_listing_pending():
     try:
         url = f"{API_V1}/admin/listing/court/COURT-01/pending-cases"
         resp = requests.get(url)
@@ -91,7 +91,7 @@ def test_listing_pending():
         log("Listing Pending Cases", "FAIL", f"Exception: {e}")
     return False
 
-def test_listing_optimize():
+def run_test_listing_optimize():
     try:
         url = f"{API_V1}/admin/listing/test-optimize"
         # Prompt uses query param: ?court_id=COURT-01
@@ -112,11 +112,11 @@ def test_listing_optimize():
 def main():
     print("🚀 Starting Backend API Tests...")
     results = [
-        test_health(),
-        test_registry_scrutiny(),
-        test_registry_fees(),
-        test_listing_pending(),
-        test_listing_optimize()
+        run_test_health(),
+        run_test_registry_scrutiny(),
+        run_test_registry_fees(),
+        run_test_listing_pending(),
+        run_test_listing_optimize()
     ]
     
     passed = results.count(True)

@@ -62,7 +62,8 @@ interface LoginResponse {
 }
 
 export const verifyCredentials = async (
-    role: UserRole,
+    role: string,
+    role: string,
     identifier: string,
     password: string,
     metadata?: {

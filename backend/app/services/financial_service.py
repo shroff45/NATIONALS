@@ -3,16 +3,16 @@ Financial Analyzer Service - Skill 02
 NetworkX-based financial crime detection
 """
 import uuid
+import itertools
 import networkx as nx
 from datetime import datetime, timedelta
-from typing import List, Dict, Set, Tuple
+from typing import List, Dict
 from collections import defaultdict
 
 from app.schemas.financial import (
-    Transaction, Account, AnomalyAlert, AnomalyType, RiskLevel,
+    AnomalyAlert, AnomalyType, RiskLevel,
     NetworkNode, NetworkEdge, FinancialNetwork, InvestigationLead,
-    FinancialAnalysisRequest, FinancialAnalysisResponse,
-    TransactionPattern
+    FinancialAnalysisRequest, FinancialAnalysisResponse
 )
 
 
@@ -167,8 +167,10 @@ class FinancialAnalyzer:
         total = 0
         for target in targets:
             try:
-                paths = list(nx.all_simple_paths(self.graph, source, target, cutoff=5))
-                for path in paths[:5]:  # Limit to 5 paths
+                # ⚡ Bolt Optimization: Use itertools.islice for lazy evaluation of simple paths.
+                # nx.all_simple_paths can take exponential time if fully materialized.
+                paths_iter = nx.all_simple_paths(self.graph, source, target, cutoff=5)
+                for path in itertools.islice(paths_iter, 5):  # Limit to 5 paths lazily
                     path_amount = self._calculate_path_amount(path)
                     total += path_amount
             except:
@@ -318,6 +320,10 @@ class FinancialAnalyzer:
     
     def _detect_shell_companies(self):
         """Detect potential shell company indicators"""
+        # ⚡ Bolt Optimization: Lazily compute cycles once instead of recalculating
+        # in the loop for every node with high degree.
+        cached_cycles = None
+
         # Look for accounts with high in-degree and out-degree but low balance
         for node in self.graph.nodes():
             in_degree = self.graph.in_degree(node)
@@ -327,8 +333,10 @@ class FinancialAnalyzer:
             if in_degree >= 10 and out_degree >= 10:
                 # Check if it's part of circular trading
                 try:
-                    cycles = list(nx.simple_cycles(self.graph))
-                    node_in_cycles = any(node in cycle for cycle in cycles)
+                    if cached_cycles is None:
+                        cached_cycles = list(nx.simple_cycles(self.graph))
+
+                    node_in_cycles = any(node in cycle for cycle in cached_cycles)
                     
                     if node_in_cycles:
                         total_throughput = self._calculate_node_throughput(node)
@@ -446,10 +454,9 @@ class FinancialAnalyzer:
     def _calculate_metrics(self) -> Dict:
         """Calculate analysis metrics"""
         total_volume = sum(t.amount for t in self.transactions)
-        unique_accounts = len(set(
-            [t.from_account for t in self.transactions] +
-            [t.to_account for t in self.transactions]
-        ))
+
+        # ⚡ Bolt Optimization: Graph nodes already represent unique accounts
+        unique_accounts = self.graph.number_of_nodes()
         
         return {
             "total_transactions": len(self.transactions),

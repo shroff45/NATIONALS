@@ -1,0 +1,3 @@
+## 2024-05-24 - NetworkX Performance Bottlenecks with Simple Cycles and Simple Paths
+**Learning:** Dense graphs in backend services using `networkx` can lead to exponential time and memory consumption (e.g. `O(N * C)`) if operations like `nx.simple_cycles` or `nx.all_simple_paths` are fully materialized inside node iteration loops.
+**Action:** Always cache the results of expensive operations like `nx.simple_cycles` outside of any loops if the graph structure is static. For generators like `nx.all_simple_paths` that can return millions of paths, lazily evaluate them with `itertools.islice()` instead of wrapping them in `list()` directly.

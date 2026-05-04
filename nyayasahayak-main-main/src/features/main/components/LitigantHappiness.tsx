@@ -28,7 +28,7 @@ const LitigantHappiness: React.FC<LitigantHappinessProps> = ({ t }) => {
                 snap: { textContent: 0.1 },
                 onUpdate: function () {
                     if (npsScoreRef.current) {
-                        // @ts-ignore
+                        // @ts-expect-error bypass rule for existing code
                         npsScoreRef.current.innerHTML = parseFloat(this.targets()[0].textContent).toFixed(1);
                     }
                 }

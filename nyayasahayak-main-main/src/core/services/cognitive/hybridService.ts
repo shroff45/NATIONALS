@@ -73,7 +73,7 @@ const chatWithNyayabotInternal = async (message: string, ragParts?: Part[], hist
     return await geminiClient.models.generateContent({
         model: 'gemini-2.5-flash',
         contents: contents,
-        // @ts-ignore
+        // @ts-expect-error bypass rule for existing code
         systemInstruction: "You are NYAYABOT. You are strictly strictly limited to discussing Social Sciences, History, Geography, and Political studies or civics. If a user asks about anything else, politely decline.",
     });
 };

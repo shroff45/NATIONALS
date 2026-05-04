@@ -3,6 +3,7 @@ Financial Analyzer Service - Skill 02
 NetworkX-based financial crime detection
 """
 import uuid
+import itertools
 import networkx as nx
 from datetime import datetime, timedelta
 from typing import List, Dict, Set, Tuple
@@ -167,8 +168,10 @@ class FinancialAnalyzer:
         total = 0
         for target in targets:
             try:
-                paths = list(nx.all_simple_paths(self.graph, source, target, cutoff=5))
-                for path in paths[:5]:  # Limit to 5 paths
+                # ⚡ Bolt: Lazily evaluate up to 5 paths using itertools.islice
+                # to prevent exponential time/memory regressions on dense graphs
+                paths = itertools.islice(nx.all_simple_paths(self.graph, source, target, cutoff=5), 5)
+                for path in paths:  # Loop over evaluated limited paths
                     path_amount = self._calculate_path_amount(path)
                     total += path_amount
             except:
@@ -318,6 +321,9 @@ class FinancialAnalyzer:
     
     def _detect_shell_companies(self):
         """Detect potential shell company indicators"""
+        # ⚡ Bolt: Cache simple_cycles outside the loop to prevent recalculating O(V+E) per high-degree node
+        cycles = None
+
         # Look for accounts with high in-degree and out-degree but low balance
         for node in self.graph.nodes():
             in_degree = self.graph.in_degree(node)
@@ -327,7 +333,10 @@ class FinancialAnalyzer:
             if in_degree >= 10 and out_degree >= 10:
                 # Check if it's part of circular trading
                 try:
-                    cycles = list(nx.simple_cycles(self.graph))
+                    # ⚡ Bolt: Only calculate cycles if threshold met, and at most once
+                    if cycles is None:
+                        cycles = list(nx.simple_cycles(self.graph))
+
                     node_in_cycles = any(node in cycle for cycle in cycles)
                     
                     if node_in_cycles:

@@ -34,7 +34,7 @@ const SignIn: React.FC<SignInProps> = ({ onSignIn, t }) => {
                 email: response.data.user.email,
                 name: response.data.user.full_name,
                 role: response.data.user.role,
-                // @ts-ignore
+                // @ts-expect-error bypass rule for existing code
                 avatar: response.data.user.google_profile_picture || `https://api.dicebear.com/7.x/avataaars/svg?seed=${response.data.user.full_name}`
             });
         } catch (err: any) {
@@ -93,7 +93,7 @@ const SignIn: React.FC<SignInProps> = ({ onSignIn, t }) => {
                 email: userEmail,
                 name: userName,
                 role: userRole,
-                // @ts-ignore
+                // @ts-expect-error bypass rule for existing code
                 avatar: data.user?.google_profile_picture || `https://api.dicebear.com/7.x/avataaars/svg?seed=${userName}`
             });
 

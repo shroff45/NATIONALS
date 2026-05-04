@@ -92,9 +92,9 @@ const PatrolMap: React.FC = () => {
         if (mapRef.current) return;
 
         // Safety check for existing Leaflet instance on container
-        // @ts-ignore
+        // @ts-expect-error Safe override for map container ID
         if (mapContainerRef.current._leaflet_id) {
-            // @ts-ignore
+            // @ts-expect-error Safe override for map container ID
             mapContainerRef.current._leaflet_id = null;
         }
 

@@ -205,7 +205,6 @@ const CaseIntakeTriage: React.FC<CaseIntakeTriageProps> = ({ t, allCases, setAll
     const [isPiiModalOpen, setIsPiiModalOpen] = useState(false);
     const [detectedPii, setDetectedPii] = useState<{ [key: string]: string }>({});
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-    const [filteredCases, setFilteredCases] = useState<Case[]>(allCases);
     const [searchTerm, setSearchTerm] = useState('');
     const [activeCaseType, setActiveCaseType] = useState<CaseTypeFilter>('All');
     const [activePriority, setActivePriority] = useState<PriorityFilter>('All');
@@ -214,7 +213,7 @@ const CaseIntakeTriage: React.FC<CaseIntakeTriageProps> = ({ t, allCases, setAll
     // Notes State
     const [notes, setNotes] = useState('');
 
-    useEffect(() => {
+    const filteredCases = React.useMemo(() => {
         let cases = [...allCases];
         const lowercasedSearch = searchTerm.toLowerCase();
 
@@ -234,7 +233,7 @@ const CaseIntakeTriage: React.FC<CaseIntakeTriageProps> = ({ t, allCases, setAll
                 c.respondent.toLowerCase().includes(lowercasedSearch)
             );
         }
-        setFilteredCases(cases);
+        return cases;
     }, [searchTerm, activeCaseType, activePriority, allCases]);
 
     useEffect(() => {
@@ -303,36 +302,56 @@ const CaseIntakeTriage: React.FC<CaseIntakeTriageProps> = ({ t, allCases, setAll
     };
 
     // Calculate counts based on mutual filtering (Case Type <-> Priority)
-    const caseTypeFilters: { label: string; type: CaseTypeFilter; count: number }[] = [
-        { label: 'All', type: 'All' },
-        { label: 'Civil', type: 'Civil' },
-        { label: 'Criminal', type: 'Criminal' },
-        { label: 'Family', type: 'Family' },
-        { label: 'Divorce', type: 'Divorce' },
-        { label: 'PIL', type: 'PIL' },
-    ].map(f => ({
-        label: f.label,
-        type: f.type as CaseTypeFilter,
-        count: allCases.filter(c =>
-            (f.type === 'All' || c.caseType === f.type) &&
-            (activePriority === 'All' || c.priority === activePriority)
-        ).length
-    }));
+    const { caseTypeCounts, priorityCounts } = React.useMemo(() => {
+        return allCases.reduce(
+            (acc, c) => {
+                const caseTypeMatch = activeCaseType === 'All' || c.caseType === activeCaseType;
+                const priorityMatch = activePriority === 'All' || c.priority === activePriority;
 
-    const priorityFilters: { label: string; type: PriorityFilter; count: number; color: string }[] = [
-        { label: 'All', type: 'All', count: 0, color: 'bg-gray-100 dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300' },
-        { label: 'High', type: 'High', count: 0, color: 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800 text-red-700 dark:text-red-300' },
-        { label: 'Medium', type: 'Medium', count: 0, color: 'bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-300' },
-        { label: 'Low', type: 'Low', count: 0, color: 'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300' },
+                // Count for case types (must match activePriority)
+                if (priorityMatch) {
+                    acc.caseType[c.caseType] = (acc.caseType[c.caseType] || 0) + 1;
+                    acc.caseType['All'] = (acc.caseType['All'] || 0) + 1;
+                }
+
+                // Count for priorities (must match activeCaseType)
+                if (caseTypeMatch) {
+                    if (c.priority) {
+                        acc.priority[c.priority] = (acc.priority[c.priority] || 0) + 1;
+                    }
+                    acc.priority['All'] = (acc.priority['All'] || 0) + 1;
+                }
+
+                return acc;
+            },
+            {
+                caseType: { All: 0 } as Record<string, number>,
+                priority: { All: 0 } as Record<string, number>
+            }
+        );
+    }, [allCases, activeCaseType, activePriority]);
+
+    const caseTypeFilters: { label: string; type: CaseTypeFilter; count: number }[] = React.useMemo(() => [
+        { label: 'All', type: 'All' as CaseTypeFilter },
+        { label: 'Civil', type: 'Civil' as CaseTypeFilter },
+        { label: 'Criminal', type: 'Criminal' as CaseTypeFilter },
+        { label: 'Family', type: 'Family' as CaseTypeFilter },
+        { label: 'Divorce', type: 'Divorce' as CaseTypeFilter },
+        { label: 'PIL', type: 'PIL' as CaseTypeFilter },
     ].map(f => ({
-        label: f.label,
-        type: f.type as PriorityFilter,
-        color: f.color,
-        count: allCases.filter(c =>
-            (activeCaseType === 'All' || c.caseType === activeCaseType) &&
-            (f.type === 'All' || c.priority === f.type)
-        ).length
-    }));
+        ...f,
+        count: caseTypeCounts[f.type] || 0
+    })), [caseTypeCounts]);
+
+    const priorityFilters: { label: string; type: PriorityFilter; count: number; color: string }[] = React.useMemo(() => [
+        { label: 'All', type: 'All' as PriorityFilter, color: 'bg-gray-100 dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300' },
+        { label: 'High', type: 'High' as PriorityFilter, color: 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800 text-red-700 dark:text-red-300' },
+        { label: 'Medium', type: 'Medium' as PriorityFilter, color: 'bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-300' },
+        { label: 'Low', type: 'Low' as PriorityFilter, color: 'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300' },
+    ].map(f => ({
+        ...f,
+        count: priorityCounts[f.type] || 0
+    })), [priorityCounts]);
 
     // Complexity Color Logic
     const getComplexityColor = (score: number) => {

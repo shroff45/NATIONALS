@@ -45,7 +45,7 @@ export const piiService = {
 
         for (const [original, replacement] of Object.entries(piiToRedact)) {
             // Escape special regex characters from the original string to ensure it's treated as a literal.
-            const regex = new RegExp(original.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'g');
+            const regex = new RegExp(original.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&'), 'g');
             redactedSummary = redactedSummary.replace(regex, replacement);
             redactedTitle = redactedTitle.replace(regex, replacement);
             redactedPetitioner = redactedPetitioner.replace(regex, replacement);

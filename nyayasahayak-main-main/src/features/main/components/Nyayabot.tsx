@@ -311,7 +311,7 @@ const Nyayabot: React.FC<NyayabotProps> = ({ t, messages, setMessages, currentUs
 
             // 4. Stop all Output Audio Sources
             audioSourcesRef.current.forEach(source => {
-                try { source.stop(); } catch (e) { }
+                try { source.stop(); } catch (e) { /* ignore */ }
             });
             audioSourcesRef.current.clear();
 
@@ -405,7 +405,7 @@ const Nyayabot: React.FC<NyayabotProps> = ({ t, messages, setMessages, currentUs
                         // --- Handle Interruption ---
                         if (message.serverContent?.interrupted) {
                             audioSourcesRef.current.forEach(src => {
-                                try { src.stop(); } catch (e) { }
+                                try { src.stop(); } catch (e) { /* ignore */ }
                             });
                             audioSourcesRef.current.clear();
                             nextStartTimeRef.current = 0;

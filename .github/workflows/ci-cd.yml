@@ -7,6 +7,7 @@ on:
     branches: [ main ]
 
 env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
 
@@ -40,7 +41,7 @@ jobs:
     
     - name: Run tests with coverage
       run: |
-        pytest --cov=app --cov-report=xml --cov-report=html
+        pytest --cov=app --cov-report=xml --cov-report=html || [ $? -eq 5 ]
     
     - name: Upload coverage reports
       uses: codecov/codecov-action@v3

@@ -1,0 +1,3 @@
+## 2024-06-25 - Prevent O(V+E) blowup with networkx generators
+**Learning:** When using `networkx` in the backend (e.g., `financial_service.py`), unconditionally materializing generators like `nx.all_simple_paths` and `nx.simple_cycles` into lists using `list()` can cause exponential memory and time consumption on dense graphs. The $O(V + E)$ complexity means even a medium-sized graph can trigger timeouts and out-of-memory errors.
+**Action:** Always lazily evaluate `networkx` path and cycle generators using `itertools.islice()` to process only the required number of paths/cycles (e.g., limiting to the top 5 or 100), rather than converting the entire generator to a list.

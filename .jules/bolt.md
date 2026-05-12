@@ -1,0 +1,3 @@
+## 2024-05-24 - [NetworkX Generator Evaluation]
+**Learning:** [NetworkX generators like `nx.simple_cycles` and `nx.all_simple_paths` can be extremely expensive on dense graphs ($O(V+C)$). If called inside a loop and fully evaluated using `list()`, this creates severe performance bottlenecks, especially if most items are skipped or thrown away.]
+**Action:** [Use `itertools.islice` to lazily evaluate bounded numbers of paths (e.g., `islice(nx.all_simple_paths(...), 5)`). Materialize whole-graph evaluations like `nx.simple_cycles` *outside* loops conditionally, or use early returns/memoization to prevent repeat evaluations.]

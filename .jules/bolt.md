@@ -1,0 +1,3 @@
+## 2024-05-14 - [NetworkX Memory Optimizations]
+**Learning:** Dense graph pathfinding using `list(nx.all_simple_paths)` can cause exponential time and memory blowouts. Additionally, finding all simple cycles is an incredibly expensive $O((V+E) * C)$ operation that shouldn't be unconditionally computed inside loops evaluating individual nodes.
+**Action:** When working with NetworkX, always use lazy evaluation for paths (e.g., `itertools.islice`) when only a subset is needed. Furthermore, cache expensive graph-wide computations (like `nx.simple_cycles`) using a lazy cache (e.g., `cycles = None`) outside node-iteration loops to prevent redundant execution.

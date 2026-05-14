@@ -55,6 +55,7 @@
         "autoprefixer": "^10.4.17",
         "baseline-browser-mapping": "^2.9.19",
         "copy-webpack-plugin": "^13.0.1",
+        "eslint": "^9.14.0",
         "eslint-plugin-react-hooks": "^4.6.2",
         "eslint-plugin-react-refresh": "^0.4.26",
         "globals": "^13.24.0",

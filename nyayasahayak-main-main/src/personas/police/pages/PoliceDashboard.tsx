@@ -75,13 +75,19 @@ const PoliceDashboard: React.FC = () => {
     }, []);
 
     // Calculate stats
+    // ⚡ Bolt: Consolidated multiple array.filter().length passes into a single reduce iteration
+    // to improve performance during re-renders, reducing O(K*N) to O(N).
     const complianceStats = useMemo(() => {
-        const activeCases = cases.filter(c => !c.chargeSheetFiled);
-        const critical = activeCases.filter(c => c.status === 'CRITICAL').length;
-        const warning = activeCases.filter(c => c.status === 'WARNING').length;
-        const onTrack = activeCases.filter(c => c.status === 'ON_TRACK').length;
-        const filed = cases.filter(c => c.chargeSheetFiled).length;
-        return { critical, warning, onTrack, filed };
+        return cases.reduce((acc, c) => {
+            if (c.chargeSheetFiled) {
+                acc.filed++;
+            } else {
+                if (c.status === 'CRITICAL') acc.critical++;
+                else if (c.status === 'WARNING') acc.warning++;
+                else if (c.status === 'ON_TRACK') acc.onTrack++;
+            }
+            return acc;
+        }, { critical: 0, warning: 0, onTrack: 0, filed: 0 });
     }, [cases]);
 
     // Filtered cases based on search and status

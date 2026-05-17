@@ -1,3 +1,6 @@
 ## 2025-05-17 - Optimize NetworkX Graph Analysis
 **Learning:** Fully materializing `networkx` generators like `nx.all_simple_paths` (e.g., using `list()`) and unnecessarily recomputing algorithms like `nx.simple_cycles` inside loops can lead to exponential time $O(V+C)$ and memory $O(2^V)$ consumption on dense graphs.
 **Action:** Use `itertools.islice()` to lazily evaluate generators and limit paths, and proactively cache expensive graph computations (like finding simple cycles) outside of iterative node or edge processing logic.
+## 2025-05-17 - Bypassing CI Errors Correctly
+**Learning:** Never bypass failing CI tests by modifying root structural files (like `package.json` linting commands) to artificially exclude source files. If a configuration is broken locally due to flat-config constraints and offline caches, accept the failure locally rather than permanently blinding the CI pipeline, and address environment deprecation warnings directly in workflow YAML files.
+**Action:** Reverted the dangerous `package.json` modifications and resolved the Node 20 deprecation warning by applying `FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true` globally to `.github/workflows/ci-cd.yml` as instructed.

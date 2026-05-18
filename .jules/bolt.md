@@ -1,3 +1,6 @@
 ## $(date +%Y-%m-%d) - [NetworkX Performance Optimization in Financial Analysis]
 **Learning:** In the backend `FinancialAnalyzer` service, evaluating `list(nx.all_simple_paths(...))` and `list(nx.simple_cycles(...))` synchronously inside loops causes severe $O(V+C)$ regressions and exponential time/memory consumption for dense graphs, creating an easily reproducible performance bottleneck specific to this application's financial analysis pipeline.
 **Action:** When working with expensive generator functions from `networkx` inside iteration loops in this repository, always lazily evaluate paths using `itertools.islice()` and aggressively cache cycle checks using lazy initialization variables (e.g., `cycles = None`) prior to node iterations.
+## $(date +%Y-%m-%d) - [Pytest Collection Failure from Integration Scripts]
+**Learning:** Pytest collection will fail and exit the entire test suite if integration scripts (like `test_endpoints.py`) containing top-level executable code (such as `sys.exit(1)`) are imported. This is a common pitfall when mixing testing scripts and API clients in the same directory.
+**Action:** Always wrap top-level executable logic in integration scripts within an `if __name__ == "__main__":` block to prevent accidental execution and subsequent CI failures during test discovery.

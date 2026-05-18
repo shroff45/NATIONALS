@@ -1,0 +1,3 @@
+## $(date +%Y-%m-%d) - [NetworkX Performance Optimization in Financial Analysis]
+**Learning:** In the backend `FinancialAnalyzer` service, evaluating `list(nx.all_simple_paths(...))` and `list(nx.simple_cycles(...))` synchronously inside loops causes severe $O(V+C)$ regressions and exponential time/memory consumption for dense graphs, creating an easily reproducible performance bottleneck specific to this application's financial analysis pipeline.
+**Action:** When working with expensive generator functions from `networkx` inside iteration loops in this repository, always lazily evaluate paths using `itertools.islice()` and aggressively cache cycle checks using lazy initialization variables (e.g., `cycles = None`) prior to node iterations.

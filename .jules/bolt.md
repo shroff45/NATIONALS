@@ -1,0 +1,3 @@
+## 2024-05-20 - [NetworkX Generator Materialization Fix]
+**Learning:** In backend graph processing (`financial_service.py`), materializing the entire generator of `nx.all_simple_paths` into a list using `list()` before truncation causes an exponential blowup in memory and execution time for dense graphs. The architecture of `NetworkX` produces paths lazily, which is defeated by full list conversion.
+**Action:** When working with unbounded graph path generators, always use `itertools.islice()` to lazily evaluate only the paths required (e.g., `itertools.islice(nx.all_simple_paths(...), 5)`) to preserve the O(1) memory footprint and prevent severe performance regressions.

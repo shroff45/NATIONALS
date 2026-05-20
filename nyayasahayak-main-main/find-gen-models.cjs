@@ -1,3 +1,5 @@
+/* eslint-env node */
+/* global fetch */
 
 const fs = require('fs');
 let apiKey = process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY;

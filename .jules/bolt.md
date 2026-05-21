@@ -1,0 +1,3 @@
+## 2024-05-21 - Lazily Evaluating NetworkX Generators on Dense Graphs
+**Learning:** Materializing `networkx` path and cycle generators (like `nx.all_simple_paths` and `nx.simple_cycles`) fully into lists inside loops (e.g., `list(nx.all_simple_paths(...))`) causes catastrophic performance degradation and exponential time complexity on dense financial networks, as the number of paths/cycles can be extremely large.
+**Action:** Always lazily evaluate `networkx` generators using `itertools.islice(...)` (e.g., `list(itertools.islice(nx.all_simple_paths(...), 5))`) to limit the computation to the required number of items, and cache the results if they need to be reused across iterations.

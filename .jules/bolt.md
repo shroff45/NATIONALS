@@ -1,0 +1,3 @@
+## 2024-05-24 - [Avoid Exponential Complexity by Iterating NetworkX Generators Lazily]
+**Learning:** Evaluatng networkx path/cycle generators entirely into memory (`list(nx.all_simple_paths(...))` and `list(nx.simple_cycles(...))`) introduces severe O(N) constraints due to combinatorial explosion on dense graphs. Additionally, it makes it impossible to break out early.
+**Action:** When a cap is required, use `itertools.islice(generator, limit)` instead of slice on the evaluated `list(generator)[:limit]` to lazily evaluate only the requested amount of elements for simple paths/cycles in networkx.

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AppSettingsProvider } from './core/context/AppSettingsContext';
 import { AuthProvider, useAuth, ProtectedRoute } from './core/auth/AuthContext';
@@ -57,7 +57,7 @@ class AppErrorBoundary extends React.Component<
 // Login Wrapper to adapt parameters
 const SignInWrapper = () => {
     const { loginWithProfile } = useAuth();
-    const navigate = useNavigate(); // Need to import useNavigate? App.tsx uses it in imports? No, it imports BrowserRouter as Router etc.
+     // Need to import useNavigate? App.tsx uses it in imports? No, it imports BrowserRouter as Router etc.
     // Wait, App.tsx imports: import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
     // I need useNavigate.
 

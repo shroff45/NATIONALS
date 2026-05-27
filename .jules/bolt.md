@@ -8,3 +8,7 @@
 ## 2024-05-27 - Fixing Pytest collection errors on integration test scripts
 **Learning:** Top-level execution logic (like `sys.exit(1)`) in standalone integration testing scripts (e.g., `test_endpoints.py`) will trigger and prematurely abort the `pytest` collection process, causing the CI suite to fail completely. Furthermore, helper methods like `test_endpoint(name, url)` will be mistakenly collected as tests requiring fixtures.
 **Action:** Always protect top-level script execution with `if __name__ == '__main__':`, and rename helper methods from `test_` to `verify_` (e.g., `verify_endpoint`) to avoid accidental test collection.
+
+## 2024-05-27 - Fixing additional ESLint globals and frontend scripts
+**Learning:** Adding `eslint-env node` and explicitly declaring `global fetch` isn't fully supported in ESLint flat configs without the `globals` package setup. We need to pass `globals.node` directly into `eslint.config.js` to clear up NodeJS specific globals like `process` or `__dirname` without manually overriding per file.
+**Action:** Update `eslint.config.js` languageOptions to spread `globals.node`. Also updated scripts to prevent incorrect `test_` detection in scripts.

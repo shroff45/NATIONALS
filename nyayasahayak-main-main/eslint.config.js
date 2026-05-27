@@ -6,6 +6,8 @@ import tseslintPlugin from '@typescript-eslint/eslint-plugin'
 import tseslintParser from '@typescript-eslint/parser'
 
 export default [
+  { languageOptions: { globals: { ...globals.browser, process: "readonly" } } },
+  { languageOptions: { globals: { ...globals.browser, ...globals.node } } },
   { ignores: ['dist'] },
   js.configs.recommended,
   {

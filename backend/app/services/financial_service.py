@@ -3,6 +3,7 @@ Financial Analyzer Service - Skill 02
 NetworkX-based financial crime detection
 """
 import uuid
+import itertools
 import networkx as nx
 from datetime import datetime, timedelta
 from typing import List, Dict, Set, Tuple
@@ -167,8 +168,12 @@ class FinancialAnalyzer:
         total = 0
         for target in targets:
             try:
-                paths = list(nx.all_simple_paths(self.graph, source, target, cutoff=5))
-                for path in paths[:5]:  # Limit to 5 paths
+                # ⚡ Bolt Optimization: Lazily evaluate paths with islice
+                # Previous implementation `list(nx.all_simple_paths(...))` would calculate ALL
+                # possible paths (O(V!) worst case) before limiting to 5, which caused severe
+                # performance bottlenecks on dense graphs. Using itertools.islice halts the generator early.
+                paths_iter = itertools.islice(nx.all_simple_paths(self.graph, source, target, cutoff=5), 5)
+                for path in paths_iter:  # Limited to 5 paths lazily
                     path_amount = self._calculate_path_amount(path)
                     total += path_amount
             except:

@@ -1,0 +1,3 @@
+## 2024-05-29 - [Graph algorithm performance with networkx]
+**Learning:** Fully materializing recursive generator outputs like `list(nx.all_simple_paths(...))` before slicing can cause exponential memory exhaustion and extremely long execution times on dense graphs because it computes all paths O(V!). Unconditionally calculating expensive graph properties like `nx.simple_cycles` inside loops or when no node requires it leads to major performance regressions O(V + C).
+**Action:** Use `itertools.islice()` on `networkx` generators to lazily evaluate only the paths needed. Defer and cache expensive overall graph computations until an individual node actually triggers the need for it.

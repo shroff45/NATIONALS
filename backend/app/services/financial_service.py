@@ -4,6 +4,7 @@ NetworkX-based financial crime detection
 """
 import uuid
 import networkx as nx
+import itertools
 from datetime import datetime, timedelta
 from typing import List, Dict, Set, Tuple
 from collections import defaultdict
@@ -167,8 +168,10 @@ class FinancialAnalyzer:
         total = 0
         for target in targets:
             try:
-                paths = list(nx.all_simple_paths(self.graph, source, target, cutoff=5))
-                for path in paths[:5]:  # Limit to 5 paths
+                # ⚡ Bolt: Lazily evaluate paths with islice instead of materializing all paths
+                # to prevent exponential time/memory blowups on dense graphs.
+                paths = itertools.islice(nx.all_simple_paths(self.graph, source, target, cutoff=5), 5)
+                for path in paths:  # Limit to 5 paths
                     path_amount = self._calculate_path_amount(path)
                     total += path_amount
             except:

@@ -1,0 +1,3 @@
+## 2024-05-30 - NetworkX Path Generation
+**Learning:** The `nx.all_simple_paths` function in NetworkX returns a generator, but wrapping it in `list()` before slicing or limiting completely defeats its laziness. On dense financial transaction graphs, calculating paths up to length 5 can result in millions of combinations, causing severe OOM issues and slow response times if all are materialized just to pick the first few.
+**Action:** Always use `itertools.islice` when you only need a limited number of paths from NetworkX generators to evaluate them lazily, preserving memory and computing power.

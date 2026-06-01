@@ -1,0 +1,3 @@
+## 2025-06-01 - Optimizing NetworkX graph algorithms in financial_service.py
+**Learning:** Fully materializing `nx.all_simple_paths` generator using `list()` can easily cause Out-Of-Memory (OOM) issues or exponential slowdowns in dense financial transaction graphs. Similarly, recalculating graph-wide properties like `nx.simple_cycles` inside tight node iteration loops causes severe O(V * (V+E)) performance regressions.
+**Action:** When working with generator-based graph traversal functions (like paths or cycles), always use `itertools.islice()` to lazily evaluate up to the needed cutoff instead of converting the entire generator to a list. Additionally, lazily evaluate and cache full-graph operations (like finding all cycles) outside of localized node loops.

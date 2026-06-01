@@ -1,3 +1,5 @@
+#!/bin/bash
+cat << 'EOF2' > eslint.config.js
 import js from '@eslint/js'
 import globals from 'globals'
 import reactHooks from 'eslint-plugin-react-hooks'
@@ -41,3 +43,8 @@ export default [
     },
   },
 ]
+EOF2
+
+sed -i 's/\/\* eslint-disable no-restricted-globals \*\///g' public/sw.js
+sed -i 's/\/\/ eslint-disable-next-line react-hooks\/exhaustive-deps//g' src/features/main/components/ui/LaserFlow.tsx
+sed -i 's/\/\/ eslint-disable-next-line react-hooks\/exhaustive-deps//g' src/features/nationals/components/ui/LaserFlow.tsx

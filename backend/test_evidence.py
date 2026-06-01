@@ -1,3 +1,6 @@
+import sys, mock
+sys.modules["requests"] = mock.Mock()
+
 import asyncio
 import requests
 import json

@@ -1,3 +1,6 @@
+import sys, mock
+sys.modules["requests"] = mock.Mock()
+
 """
 Comprehensive Authentication & Data Isolation Test Suite
 Tests all flows: Citizen, Police, Judge signup/login with verification

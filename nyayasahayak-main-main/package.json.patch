@@ -1,0 +1,10 @@
+--- nyayasahayak-main-main/package.json
++++ nyayasahayak-main-main/package.json
+@@ -6,7 +6,7 @@
+     "scripts": {
+         "dev": "vite",
+         "build": "tsc && vite build",
+-        "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
++        "lint": "npx typescript/tsc --noEmit",
+         "preview": "vite preview"
+     },

@@ -5,7 +5,7 @@ import { PredictionResult, Case, DocumentAnalysisResult, ChatMessage, QuantumFin
 const OPENAI_API_KEY = import.meta.env.VITE_OPENAI_API_KEY;
 
 // Initialize Client
-// We use 'dangerouslyAllowBrowser: true' because this is a client-side demo. 
+// We use 'dangerouslyAllowBrowser: true' because this is a client-side demo.
 // In production, AI calls should go through a backend proxy.
 const openai = new OpenAI({
     apiKey: OPENAI_API_KEY || 'dummy_key',
@@ -54,9 +54,9 @@ export const chatWithNyayabotOpenAI = async (message: string, ragContext?: strin
     // Add recent history
     const recentHistory = history.slice(-10); // Keep last 10 messages
     recentHistory.forEach(msg => {
-        if ((msg.role as any) === 'user' || (msg.role as any) === 'assistant' || (msg.role as any) === 'model') {
+        if (msg.role === 'user' || msg.role === 'assistant') { // OpenAI uses 'assistant', our app uses 'model' sometimes?
             // App uses 'model' for Gemini, 'assistant' is standard for OpenAI
-            const role = (msg.role as any) === 'model' ? 'assistant' : msg.role;
+            const role = msg.role === 'model' ? 'assistant' : msg.role;
             messages.push({ role: role, content: msg.content });
         }
     });
@@ -74,10 +74,10 @@ export const chatWithNyayabotOpenAI = async (message: string, ragContext?: strin
     });
 
     // Normalize response to match Gemini's GenerateContentResponse structure roughly
-    // The app expects { text: string } or similar from the service wrapper usually, 
+    // The app expects { text: string } or similar from the service wrapper usually,
     // but hybridService.ts returns the raw Gemini response object for chat?
     // Let's check hybridService.ts signature: Promise<GenerateContentResponse>
-    // We might need to mock that structure or update the caller. 
+    // We might need to mock that structure or update the caller.
     // For now, let's return a structure that mimics what the UI expects.
     // Actually, looking at hybridService.chatWithNyayabotInternal, it returns `geminiClient.models.generateContent` result.
     // We should probably adapt this in hybridService, but let's return the text here.
@@ -115,7 +115,7 @@ export const analyzeArgumentOpenAI = async (argument: string): Promise<any> => {
 export const extractComplaintDetailsOpenAI = async (text: string): Promise<any> => {
     const prompt = `Analyze the following complaint text and extract key details into a JSON object.
     Text: ${text}
-    
+
     Output JSON Schema:
     {
         "summary": "Concise summary",

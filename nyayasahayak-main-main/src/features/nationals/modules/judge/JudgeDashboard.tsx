@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import {
     Gavel, AlertTriangle, Scale, Camera, Clock,
     MessageSquare, Heart, Activity, FileSignature, Shield, Flame, CheckCircle, TrendingUp, Calendar,
@@ -195,13 +195,15 @@ District Judge
         { id: 'WELLNESS', label: 'Wellness Check', icon: Heart },
     ];
 
-    const filteredCases = MOCK_CASES.filter(c =>
+    // ⚡ Bolt Performance Optimization: Memoize filtered list to prevent O(N) recalculation on every render
+    const filteredCases = useMemo(() => MOCK_CASES.filter(c =>
         (c.cnrNumber || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
         (c.complainant || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
         (c.respondent || '').toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    ), [searchQuery]);
 
-    const lawyerRisk = getLawyerRisk(selectedCase?.lawyerId);
+    // ⚡ Bolt Performance Optimization: Memoize lawyer risk calculation
+    const lawyerRisk = useMemo(() => getLawyerRisk(selectedCase?.lawyerId), [selectedCase?.lawyerId]);
 
     return (
         <div className="flex flex-col h-[calc(100vh-140px)] gap-4">

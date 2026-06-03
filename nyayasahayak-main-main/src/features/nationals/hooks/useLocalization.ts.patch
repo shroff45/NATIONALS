@@ -1,0 +1,11 @@
+--- nyayasahayak-main-main/src/features/nationals/hooks/useLocalization.ts
++++ nyayasahayak-main-main/src/features/nationals/hooks/useLocalization.ts
+@@ -12,7 +12,7 @@
+     }, [language]);
+
+     const formatNumber = useCallback((num: number | string) => {
+-        return getLocalizedNumber(num, language);
++        return getLocalizedNumber(typeof num === 'string' ? parseInt(num.replace(/\D/g, '')) || 0 : num, language);
+     }, [language]);
+
+     return { t, formatNumber };

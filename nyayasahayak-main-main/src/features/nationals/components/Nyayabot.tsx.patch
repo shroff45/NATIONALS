@@ -1,0 +1,15 @@
+--- nyayasahayak-main-main/src/features/nationals/components/Nyayabot.tsx
++++ nyayasahayak-main-main/src/features/nationals/components/Nyayabot.tsx
+@@ -221,11 +221,12 @@
+             );
+
+             const response = await geminiService.chatWithNyayabot(userMessage, fileParts, newMessages);
+-            const groundingChunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks;
++            const textResponse = typeof response.text === 'function' ? response.text() : (response.text || '');
++            const groundingChunks = (response as any).candidates?.[0]?.groundingMetadata?.groundingChunks;
+             const sources = groundingChunks?.map((chunk: any) => chunk.web.uri);
+
+-            const modelResponse: ChatMessage = { role: 'model', content: response.text || '', sources };
++            const modelResponse: ChatMessage = { role: 'model', content: textResponse, sources };
+             setMessages([...newMessages, modelResponse]);
+         } catch (error: any) {

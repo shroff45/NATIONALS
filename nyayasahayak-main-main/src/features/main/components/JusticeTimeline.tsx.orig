@@ -8,7 +8,7 @@ import { getLocalizedNumber } from '../lib/utils';
 interface JusticeTimelineProps {
     t: (key: string) => string;
     selectedCase: Case | null;
-    language?: string; 
+    language?: string;
 }
 
 const JusticeTimeline: React.FC<JusticeTimelineProps> = ({ t, selectedCase, language = 'en' }) => {
@@ -19,7 +19,7 @@ const JusticeTimeline: React.FC<JusticeTimelineProps> = ({ t, selectedCase, lang
 
         const events = timelineRef.current.querySelectorAll('.timeline-event');
         const line = timelineRef.current.querySelector('.timeline-line-path');
-        
+
         gsap.set(events, { opacity: 0, x: -30 });
         if (line) {
             gsap.set(line, { scaleY: 0, transformOrigin: 'top' });
@@ -33,7 +33,7 @@ const JusticeTimeline: React.FC<JusticeTimelineProps> = ({ t, selectedCase, lang
                 ease: 'power2.inOut'
             });
         }
-       
+
         tl.to(events, {
             opacity: 1,
             x: 0,
@@ -44,7 +44,7 @@ const JusticeTimeline: React.FC<JusticeTimelineProps> = ({ t, selectedCase, lang
 
     }, [selectedCase]);
 
-    const formatNum = (n: number | string) => getLocalizedNumber(typeof n === 'string' ? parseInt(n.replace(/\D/g, '')) || 0 : n, language);
+    const formatNum = (n: number | string) => getLocalizedNumber(n, language);
 
     const renderContent = () => {
         if (!selectedCase) {
@@ -59,7 +59,7 @@ const JusticeTimeline: React.FC<JusticeTimelineProps> = ({ t, selectedCase, lang
         const lastHearingDate = new Date(selectedCase.lastHearingDate);
         const today = new Date();
         const duration = Math.round((today.getTime() - filingDate.getTime()) / (1000 * 60 * 60 * 24));
-        
+
         // Mock benchmark: 2 years for this case type
         const projectedJudgmentDate = new Date(filingDate);
         projectedJudgmentDate.setFullYear(projectedJudgmentDate.getFullYear() + 2);

@@ -1,0 +1,11 @@
+--- JusticeTimeline.tsx
++++ JusticeTimeline.tsx
+@@ -44,7 +44,7 @@
+         <div className="space-y-4">
+             {cases.map((c) => (
+                 <div key={c.id} className="p-4 bg-slate-800 rounded-lg">
+-                    <h3 className="font-bold">{c.title} ({getLocalizedNumber(c.id, language)})</h3>
++                    <h3 className="font-bold">{c.title} ({getLocalizedNumber(typeof c.id === 'string' ? parseInt(c.id.replace(/\D/g, '')) || 0 : c.id, language)})</h3>
+                     <p className="text-sm text-slate-400">Status: {c.status}</p>
+                 </div>
+             ))}

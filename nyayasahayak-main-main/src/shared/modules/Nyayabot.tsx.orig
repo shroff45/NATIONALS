@@ -1,14 +1,19 @@
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { GoogleGenAI, LiveServerMessage, Modality, Blob as GenAIBlob, Part } from "@google/genai";
-import { geminiService } from '../../main/services/geminiService';
-import { contentModeration } from '../../main/services/contentModeration';
-import { ChatMessage, User } from '../core/types';
-import Spinner from './common/Spinner';
+import { geminiService } from '../../core/services/cognitive/geminiService';
+import { contentModeration } from '../../features/main/services/contentModeration';
+import { ChatMessage, User } from '../../features/main/types';
+import Spinner from '../../features/main/components/common/Spinner';
 import { gsap } from 'gsap';
-import { fileToBase64 } from '../lib/utils';
-import AnimatedPageWrapper from './common/AnimatedPageWrapper';
+import { fileToBase64 } from '../../features/main/lib/utils';
+import AnimatedPageWrapper from '../../features/main/components/common/AnimatedPageWrapper';
 import { marked } from 'marked';
+import DOMPurify from 'dompurify';
+import CryptoJS from 'crypto-js';
+
+// Encryption key for chat history (in production, derive from user credentials)
+const CHAT_ENCRYPTION_KEY = 'nyaya-chat-v2-2025';
 
 type LiveSession = Awaited<ReturnType<InstanceType<typeof GoogleGenAI>['live']['connect']>>;
 
@@ -120,21 +125,38 @@ const Nyayabot: React.FC<NyayabotProps> = ({ t, messages, setMessages, currentUs
         isRecordingRef.current = isRecording;
     }, [isRecording]);
 
-    // Load archived chats
+    // Load archived chats (with decryption)
     useEffect(() => {
         const saved = localStorage.getItem(`nyaya:archivedChats:${currentUser.email}`);
         if (saved) {
-            setArchivedChats(JSON.parse(saved));
+            try {
+                // Try to decrypt (new format)
+                const decrypted = CryptoJS.AES.decrypt(saved, CHAT_ENCRYPTION_KEY).toString(CryptoJS.enc.Utf8);
+                if (decrypted) {
+                    setArchivedChats(JSON.parse(decrypted));
+                } else {
+                    // Fallback: try parsing as plain JSON (legacy unencrypted data)
+                    setArchivedChats(JSON.parse(saved));
+                }
+            } catch {
+                // If decryption fails, try legacy format or clear
+                try {
+                    setArchivedChats(JSON.parse(saved));
+                } catch {
+                    localStorage.removeItem(`nyaya:archivedChats:${currentUser.email}`);
+                }
+            }
         }
     }, [currentUser]);
 
     const saveHistory = (chats: ArchivedChat[]) => {
         setArchivedChats(chats);
-        localStorage.setItem(`nyaya:archivedChats:${currentUser.email}`, JSON.stringify(chats));
+        // Encrypt before saving
+        const encrypted = CryptoJS.AES.encrypt(JSON.stringify(chats), CHAT_ENCRYPTION_KEY).toString();
+        localStorage.setItem(`nyaya:archivedChats:${currentUser.email}`, encrypted);
     };
 
     const archiveCurrentChat = () => {
-        // Only archive if there is at least one user message
         const hasUserMessage = messages.some(m => m.role === 'user');
         if (!hasUserMessage) return;
 
@@ -221,11 +243,10 @@ const Nyayabot: React.FC<NyayabotProps> = ({ t, messages, setMessages, currentUs
             );
 
             const response = await geminiService.chatWithNyayabot(userMessage, fileParts, newMessages);
-            const textResponse = typeof response.text === 'function' ? response.text() : (response.text || '');
-            const groundingChunks = (response as any).candidates?.[0]?.groundingMetadata?.groundingChunks;
+            const groundingChunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks;
             const sources = groundingChunks?.map((chunk: any) => chunk.web.uri);
 
-            const modelResponse: ChatMessage = { role: 'model', content: textResponse, sources };
+            const modelResponse: ChatMessage = { role: 'model', content: response.text || '', sources };
             setMessages([...newMessages, modelResponse]);
         } catch (error: any) {
             console.error("Error chatting with Nyayabot:", error);
@@ -313,7 +334,7 @@ const Nyayabot: React.FC<NyayabotProps> = ({ t, messages, setMessages, currentUs
 
             const ai = new GoogleGenAI({ apiKey: import.meta.env.GEMINI_API_KEY });
             const sessionPromise = ai.live.connect({
-                model: 'gemini-2.0-flash-exp',
+                model: 'gemini-2.5-flash-native-audio-latest',
                 callbacks: {
                     onopen: () => {
                         // Initialize Input Audio Context for Microphone
@@ -454,7 +475,9 @@ const Nyayabot: React.FC<NyayabotProps> = ({ t, messages, setMessages, currentUs
         if (!text) return { __html: '' };
         // Ensure breaks are handled correctly for chat messages
         const rawHtml = marked.parse(text, { breaks: true, gfm: true }) as string;
-        return { __html: rawHtml };
+        // Sanitize to prevent XSS attacks from potentially malicious AI responses
+        const sanitizedHtml = DOMPurify.sanitize(rawHtml);
+        return { __html: sanitizedHtml };
     };
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -472,7 +495,7 @@ const Nyayabot: React.FC<NyayabotProps> = ({ t, messages, setMessages, currentUs
         <AnimatedPageWrapper>
             <div className="flex h-full w-full max-w-full gap-0 overflow-hidden">
                 {/* Chat History Sidebar */}
-                <div className={`${showHistory ? 'w-72 translate-x-0 opacity-100' : 'w-0 -translate-x-10 opacity-0 pointer-events-none'} transition-all duration-300 ease-[cubic-bezier(0.25,0.8,0.25,1)] flex flex-col h-full border-r border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-900/50 backdrop-blur-lg`}>
+                <div className={`${showHistory ? 'w-72 translate-x-0 opacity-100' : 'w-0 -translate-x-10 opacity-0 pointer-events-none'} transition-all duration-300 ease-[cubic-bezier(0.25,0.8,0.25,1)] flex flex-col h-full border-r border-slate-700 bg-slate-900/80 backdrop-blur-xl`}>
                     <div className="p-5 flex justify-between items-center">
                         <h3 className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest">{t('chat_history')}</h3>
                         <button onClick={() => setShowHistory(false)} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
@@ -482,7 +505,7 @@ const Nyayabot: React.FC<NyayabotProps> = ({ t, messages, setMessages, currentUs
                     <div className="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-2">
                         {archivedChats.length > 0 ? (
                             archivedChats.map(chat => (
-                                <div key={chat.id} onClick={() => handleLoadChat(chat)} className="p-3.5 rounded-xl hover:bg-white dark:hover:bg-gray-800 cursor-pointer group transition-all border border-transparent hover:border-gray-200 dark:hover:border-gray-700 hover:shadow-sm">
+                                <div key={chat.id} onClick={() => handleLoadChat(chat)} className="p-3.5 rounded-xl hover:bg-slate-800 cursor-pointer group transition-all border border-transparent hover:border-slate-700 hover:shadow-sm">
                                     <p className="text-[10px] text-gray-400 uppercase tracking-wider font-bold mb-1">{new Date(chat.date).toLocaleDateString()}</p>
                                     <div className="flex justify-between items-center">
                                         <p className="text-sm text-gray-700 dark:text-gray-200 truncate font-medium leading-snug">{chat.title}</p>
@@ -537,19 +560,19 @@ const Nyayabot: React.FC<NyayabotProps> = ({ t, messages, setMessages, currentUs
                                         <i className="fas fa-balance-scale text-white text-sm"></i>
                                     </div>
                                 )}
-                                <div className={`px-6 py-4 rounded-[20px] max-w-2xl shadow-sm transition-all ${msg.role === 'user' ? 'bg-blue-600 text-white rounded-br-none shadow-blue-500/20' :
-                                    msg.role === 'model' ? 'bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 rounded-bl-none border border-gray-100 dark:border-gray-700 shadow-gray-200/50 dark:shadow-none' :
-                                        'bg-red-50 dark:bg-red-900/20 text-red-800 dark:text-red-200 border border-red-100 dark:border-red-900/30'
+                                <div className={`px-6 py-4 rounded-[20px] max-w-2xl shadow-sm transition-all ${msg.role === 'user' ? 'bg-emerald-600 text-white rounded-br-none shadow-emerald-500/20' :
+                                    msg.role === 'model' ? 'bg-slate-800 text-slate-100 rounded-bl-none border border-slate-700 shadow-lg' :
+                                        'bg-red-500/10 text-red-200 border border-red-900/30'
                                     }`}>
                                     {msg.role === 'model' ? (
-                                        <div className="markdown-content" dangerouslySetInnerHTML={renderBotMessage(msg.content || '')} />
+                                        <div className="markdown-content" dangerouslySetInnerHTML={renderBotMessage(msg.content)} />
                                     ) : (
                                         <p className="whitespace-pre-wrap leading-relaxed">{msg.content}</p>
                                     )}
 
                                     {msg.role === 'model' && msg.content && (
                                         <div className="mt-3 pt-2 border-t border-gray-100 dark:border-gray-700 flex items-center justify-between">
-                                            <button onClick={() => speak(msg.content || '')} className="text-gray-400 hover:text-blue-500 dark:text-gray-500 dark:hover:text-blue-400 transition-colors" title="Read Aloud">
+                                            <button onClick={() => speak(msg.content)} className="text-gray-400 hover:text-blue-500 dark:text-gray-500 dark:hover:text-blue-400 transition-colors" title="Read Aloud">
                                                 <i className="fas fa-volume-up"></i>
                                             </button>
                                             {/* Placeholder for Copy/Like/Dislike could go here */}
@@ -575,7 +598,7 @@ const Nyayabot: React.FC<NyayabotProps> = ({ t, messages, setMessages, currentUs
                                 <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center flex-shrink-0 shadow-lg">
                                     <i className="fas fa-balance-scale text-white text-sm"></i>
                                 </div>
-                                <div className="p-4 rounded-2xl rounded-bl-none bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 shadow-sm">
+                                <div className="p-4 rounded-2xl rounded-bl-none bg-slate-800 border border-slate-700 shadow-lg">
                                     <Spinner />
                                 </div>
                             </div>
@@ -583,11 +606,11 @@ const Nyayabot: React.FC<NyayabotProps> = ({ t, messages, setMessages, currentUs
                         <div className="h-4"></div> {/* Spacer */}
                     </div>
 
-                    <div className="p-6 pt-2 bg-gradient-to-t from-gray-50 via-gray-50 to-transparent dark:from-gray-900 dark:via-gray-900 z-10">
+                    <div className="p-6 pt-2 bg-gradient-to-t from-slate-900 via-slate-900/95 to-transparent z-10">
                         {ragFiles.length > 0 && (
-                            <div className="mb-3 p-3 bg-white dark:bg-gray-800 rounded-xl border border-blue-100 dark:border-blue-900/30 shadow-sm flex flex-wrap gap-2">
+                            <div className="mb-3 p-3 bg-slate-800 rounded-xl border border-purple-500/30 shadow-lg flex flex-wrap gap-2">
                                 {ragFiles.map(file => (
-                                    <div key={file.name} className="flex items-center gap-2 text-xs bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 px-3 py-1.5 rounded-lg border border-blue-100 dark:border-blue-800/50">
+                                    <div key={file.name} className="flex items-center gap-2 text-xs bg-purple-500/20 text-purple-300 px-3 py-1.5 rounded-lg border border-purple-500/30">
                                         <i className="fas fa-file-alt opacity-70"></i>
                                         <span className="truncate max-w-[150px]">{file.name}</span>
                                         <button onClick={() => removeFile(file.name)} className="ml-1 hover:text-red-500 transition-colors"><i className="fas fa-times"></i></button>
@@ -598,7 +621,7 @@ const Nyayabot: React.FC<NyayabotProps> = ({ t, messages, setMessages, currentUs
                                 </button>
                             </div>
                         )}
-                        <form onSubmit={handleSubmit} className="relative flex items-center gap-2 p-2 bg-white dark:bg-gray-800 rounded-2xl shadow-xl shadow-gray-200/50 dark:shadow-black/30 border border-gray-100 dark:border-gray-700">
+                        <form onSubmit={handleSubmit} className="relative flex items-center gap-2 p-2 bg-slate-800 rounded-2xl shadow-xl shadow-black/30 border border-slate-700">
                             <input ref={fileInputRef} type="file" multiple onChange={handleFileChange} className="hidden" />
 
                             <button type="button" onClick={() => fileInputRef.current?.click()} className="p-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-all" disabled={isLoading} title="Attach Files">

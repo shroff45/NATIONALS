@@ -44,7 +44,7 @@ const JusticeTimeline: React.FC<JusticeTimelineProps> = ({ t, selectedCase, lang
 
     }, [selectedCase]);
 
-    const formatNum = (n: number | string) => getLocalizedNumber(n, language);
+    const formatNum = (n: number | string) => getLocalizedNumber(typeof n === 'string' ? parseInt(n.replace(/\D/g, '')) || 0 : n, language);
 
     const renderContent = () => {
         if (!selectedCase) {

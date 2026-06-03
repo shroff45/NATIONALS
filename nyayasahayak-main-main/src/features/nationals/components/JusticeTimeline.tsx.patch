@@ -1,0 +1,11 @@
+--- nyayasahayak-main-main/src/features/nationals/components/JusticeTimeline.tsx
++++ nyayasahayak-main-main/src/features/nationals/components/JusticeTimeline.tsx
+@@ -44,7 +44,7 @@
+
+     }, [selectedCase]);
+
+-    const formatNum = (n: number | string) => getLocalizedNumber(n, language);
++    const formatNum = (n: number | string) => getLocalizedNumber(typeof n === 'string' ? parseInt(n.replace(/\D/g, '')) || 0 : n, language);
+
+     const renderContent = () => {
+         if (!selectedCase) {

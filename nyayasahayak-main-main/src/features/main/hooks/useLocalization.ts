@@ -12,7 +12,7 @@ export const useLocalization = (language: Language) => {
     }, [language]);
 
     const formatNumber = useCallback((num: number | string) => {
-        return getLocalizedNumber(num, language);
+        return getLocalizedNumber(typeof num === 'string' ? parseInt(num.replace(/\D/g, '')) || 0 : num, language);
     }, [language]);
 
     return { t, formatNumber };

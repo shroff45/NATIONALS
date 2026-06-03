@@ -1,0 +1,15 @@
+--- openaiProvider.ts
++++ openaiProvider.ts
+@@ -54,9 +54,9 @@
+             messages: history.map(msg => ({
+                 content: msg.content,
+                 // Map roles from our internal format to OpenAI format
+-                role: msg.role === 'model' || msg.role === 'system' ? 'assistant'
+-                    : msg.role === 'user' ? 'user'
+-                    : 'user' // default fallback
++                role: ((msg.role as any) === 'model' || (msg.role as any) === 'system') ? 'assistant'
++                    : ((msg.role as any) === 'user') ? 'user'
++                    : 'user' // default fallback
+             })),
+             temperature: options.temperature ?? 0.7,
+             max_tokens: options.maxOutputTokens ?? 1000,

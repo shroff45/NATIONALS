@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import {
     Gavel, AlertTriangle, Scale, Camera, Clock,
     MessageSquare, Heart, Activity, FileSignature, Shield, Flame, CheckCircle, TrendingUp, Calendar,
@@ -195,11 +195,14 @@ District Judge
         { id: 'WELLNESS', label: 'Wellness Check', icon: Heart },
     ];
 
-    const filteredCases = MOCK_CASES.filter(c =>
-        (c.cnrNumber || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (c.complainant || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (c.respondent || '').toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    // ⚡ Bolt: wrap in useMemo to prevent unnecessary array recalculation on re-renders
+    const filteredCases = useMemo(() => {
+        return MOCK_CASES.filter(c =>
+            (c.cnrNumber || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (c.complainant || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (c.respondent || '').toLowerCase().includes(searchQuery.toLowerCase())
+        );
+    }, [searchQuery]);
 
     const lawyerRisk = getLawyerRisk(selectedCase?.lawyerId);
 

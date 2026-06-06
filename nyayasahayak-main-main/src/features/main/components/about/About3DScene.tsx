@@ -233,13 +233,14 @@ const About3DScene: React.FC = () => {
         window.addEventListener('resize', handleResize);
 
         // Cleanup
+        const container = containerRef.current;
         return () => {
             window.removeEventListener('mousemove', handleMouseMove);
             window.removeEventListener('resize', handleResize);
             cancelAnimationFrame(frameRef.current);
 
-            if (rendererRef.current && containerRef.current) {
-                containerRef.current.removeChild(rendererRef.current.domElement);
+            if (rendererRef.current && container) {
+                container.removeChild(rendererRef.current.domElement);
                 rendererRef.current.dispose();
             }
         };

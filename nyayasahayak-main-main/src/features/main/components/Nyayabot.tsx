@@ -154,7 +154,7 @@ const Nyayabot: React.FC<NyayabotProps> = ({ t, messages, setMessages, currentUs
             }
         };
         initSqlite();
-    }, []);
+    }, [setMessages]);
 
     const saveMessageToDb = async (role: 'user' | 'model', content: string) => {
         try {
@@ -276,7 +276,7 @@ const Nyayabot: React.FC<NyayabotProps> = ({ t, messages, setMessages, currentUs
         } finally {
             setIsLoading(false);
         }
-    }, [ragFiles, t, messages, setMessages]);
+    }, [ragFiles, t, messages, setMessages, input]);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();

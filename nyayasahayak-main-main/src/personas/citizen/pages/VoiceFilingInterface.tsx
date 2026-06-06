@@ -62,7 +62,7 @@ const VoiceFilingInterface: React.FC = () => {
                 }
             };
         }
-    }, [language]);
+    }, [language, isListening]);
 
     const getLangCode = (lang: Language) => {
         switch (lang) {

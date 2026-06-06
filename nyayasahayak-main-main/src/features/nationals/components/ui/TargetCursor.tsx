@@ -261,6 +261,7 @@ const TargetCursor: React.FC<TargetCursorProps> = ({
 
         window.addEventListener('mouseover', enterHandler as EventListener);
 
+        const strengthRef = activeStrengthRef.current;
         return () => {
             if (tickerFnRef.current) {
                 gsap.ticker.remove(tickerFnRef.current);
@@ -277,7 +278,7 @@ const TargetCursor: React.FC<TargetCursorProps> = ({
             document.body.style.cursor = originalCursor;
             isActiveRef.current = false;
             targetCornerPositionsRef.current = null;
-            activeStrengthRef.current.current = 0;
+            strengthRef.current = 0;
         };
     }, [targetSelector, spinDuration, moveCursor, constants, hideDefaultCursor, isMobile, hoverDuration, parallaxOn]);
 

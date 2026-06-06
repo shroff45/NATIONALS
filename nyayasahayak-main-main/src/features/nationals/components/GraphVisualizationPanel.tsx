@@ -19,7 +19,7 @@ const GraphVisualizationPanel: React.FC<GraphVisualizationPanelProps> = ({ graph
                 height: 400
             });
         }
-    }, [containerRef.current]);
+    }, []);
 
     return (
         <div className="bg-white rounded-lg shadow p-4" ref={containerRef}>

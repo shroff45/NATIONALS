@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
     Send,
     Lock,
@@ -21,22 +21,22 @@ const SecureChatPage: React.FC = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     };
 
-    useEffect(() => {
-        loadHistory();
-    }, []);
-
-    useEffect(() => {
-        scrollToBottom();
-    }, [messages]);
-
-    const loadHistory = async () => {
+    const loadHistory = useCallback(async () => {
         try {
             const history = await chatService.getHistory(receiverId);
             setMessages(history);
         } catch (error) {
             console.error("Failed to load history", error);
         }
-    };
+    }, [receiverId]);
+
+    useEffect(() => {
+        loadHistory();
+    }, [loadHistory]);
+
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages]);
 
     const handleSend = async () => {
         if (!input.trim()) return;

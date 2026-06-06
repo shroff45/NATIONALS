@@ -1,5 +1,5 @@
 
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useMemo } from 'react';
 import { gsap } from 'gsap';
 import type { Language } from '../hooks/useLocalization';
 import type { Translations } from '../constants/localization';
@@ -17,13 +17,13 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab, language, setLanguage, t, onSignOut, theme, toggleTheme }) => {
 
-    const tabs = [
+    const tabs = useMemo(() => [
         t('tab_about'), t('tab_case_triage'), t('tab_document_analysis'), t('tab_nyayabot'), t('tab_legal_tech_hub'),
         t('tab_relationship_mapper'), t('tab_justice_timeline'), t('tab_judicial_wellness'),
         t('tab_litigant_happiness'), t('tab_history')
-    ];
+    ], [t]);
 
-    const tabKeyMap: { [key: string]: string } = {
+    const tabKeyMap: { [key: string]: string } = useMemo(() => ({
         [t('tab_case_triage')]: 'Case Triage',
         [t('tab_document_analysis')]: 'Document Analysis',
         [t('tab_nyayabot')]: 'NYAYABOT',
@@ -34,7 +34,7 @@ const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab, language, setL
         [t('tab_litigant_happiness')]: 'Litigant Happiness',
         [t('tab_about')]: 'About',
         [t('tab_history')]: 'History',
-    };
+    }), [t]);
 
     const realTabName = Object.keys(tabKeyMap).find(key => tabKeyMap[key] === activeTab) || activeTab;
 

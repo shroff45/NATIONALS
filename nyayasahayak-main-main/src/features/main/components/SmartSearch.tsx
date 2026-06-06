@@ -18,14 +18,6 @@ export const SmartSearch: React.FC = () => {
     const inputRef = useRef<HTMLInputElement>(null);
 
     // Mock Data
-    const mockData: SearchResult[] = [
-        { id: '1', type: 'CASE', title: 'State vs. Sharma', subtitle: 'Case #2998 • Theft • Hearing Tomorrow', icon: FileText },
-        { id: '2', type: 'STATUTE', title: 'IPC Section 379', subtitle: 'Punishment for theft', icon: Scale },
-        { id: '3', type: 'NAV', title: 'File New Complaint', subtitle: 'Voice Filing Interface', icon: Command },
-        { id: '4', type: 'CASE', title: 'Mehta vs. Union of India', subtitle: 'Case #1024 • Civil Dispute', icon: FileText },
-        { id: '5', type: 'STATUTE', title: 'IPC Section 302', subtitle: 'Punishment for murder', icon: Scale },
-    ];
-
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
             if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
@@ -52,6 +44,14 @@ export const SmartSearch: React.FC = () => {
     }, [isOpen]);
 
     useEffect(() => {
+        const mockData: SearchResult[] = [
+            { id: '1', type: 'CASE', title: 'State vs. Sharma', subtitle: 'Case #2998 • Theft • Hearing Tomorrow', icon: FileText },
+            { id: '2', type: 'STATUTE', title: 'IPC Section 379', subtitle: 'Punishment for theft', icon: Scale },
+            { id: '3', type: 'NAV', title: 'File New Complaint', subtitle: 'Voice Filing Interface', icon: Command },
+            { id: '4', type: 'CASE', title: 'Mehta vs. Union of India', subtitle: 'Case #1024 • Civil Dispute', icon: FileText },
+            { id: '5', type: 'STATUTE', title: 'IPC Section 302', subtitle: 'Punishment for murder', icon: Scale },
+        ];
+
         if (query.trim() === '') {
             setResults([]);
         } else {

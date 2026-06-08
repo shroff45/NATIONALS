@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Briefcase, Search, FileText, Shield, AlertTriangle } from 'lucide-react';
 import { VisualEvidencePanel } from '../../../shared/components/VisualEvidencePanel';
 
@@ -12,10 +12,16 @@ const EvidenceVault: React.FC = () => {
     const [selectedCaseId, setSelectedCaseId] = useState<string | null>(null);
     const [searchQuery, setSearchQuery] = useState('');
 
-    const filteredCases = MOCK_CASES.filter(c =>
-        c.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        c.cnr.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    // ⚡ Bolt: Memoize filtered cases to prevent recalculation on every render
+    // Hoist .toLowerCase() outside the filter loop for better performance
+    const filteredCases = useMemo(() => {
+        const searchLower = searchQuery.toLowerCase();
+        return MOCK_CASES.filter(c =>
+            searchLower === '' ||
+            c.title.toLowerCase().includes(searchLower) ||
+            c.cnr.toLowerCase().includes(searchLower)
+        );
+    }, [searchQuery]);
 
     const selectedCase = MOCK_CASES.find(c => c.id === selectedCaseId);
 

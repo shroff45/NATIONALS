@@ -17,6 +17,7 @@ export interface UserProfile {
     station?: string;     // For Police persona
     courtId?: string;     // For Judge persona
     department?: string;  // For Admin persona
+    email?: string;
 }
 
 // HMAC Secret Key - In production, this should be server-side validated

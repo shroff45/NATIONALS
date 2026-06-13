@@ -3,7 +3,7 @@ import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { geminiService } from '../services/geminiService';
 import { legalParser } from '../services/legalParser';
 import { DocumentAnalysisResult, HistoryItem, QuantumFingerprintResult } from '../types';
-import { fileToBase64 } from '../lib/utils';
+import { fileToBase64 } from '../../lib/utils';
 import Spinner from './common/Spinner';
 import { Part } from '@google/genai';
 import { gsap } from 'gsap';

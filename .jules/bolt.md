@@ -1,0 +1,3 @@
+## 2025-06-15 - [React Performance: Missing useMemo for Filtered Lists]
+**Learning:** In the React codebase, particularly in list components like `CaseQueuePage`, `EvidenceVault`, `SmartBailPage`, `BenchMemoTemplates`, and `OrdersHistory`, filtered lists are derived during every render without `useMemo`. This can cause unnecessary re-renders when unrelated state changes. Additionally, string methods like `toLowerCase()` are repeatedly called inside the filter callback instead of hoisting them.
+**Action:** When working on list components, use `useMemo` for derived arrays (e.g., `filteredCases`) with explicit dependency arrays, and hoist invariant operations (e.g., converting the search query to lowercase once before the filter iteration).

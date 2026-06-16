@@ -1,32 +1,31 @@
+/* eslint-env node */
 
-const fs = require('fs');
-let apiKey = process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY;
+require('dotenv').config();
+
+const apiKey = process.env.VITE_GEMINI_API_KEY;
 
 if (!apiKey) {
-    try {
-        const envContent = fs.readFileSync('.env', 'utf-8');
-        const match = envContent.match(/GEMINI_API_KEY=(.*)/);
-        if (match) apiKey = match[1].trim();
-    } catch (e) {
-        console.error("Error reading .env:", e.message);
-    }
+    console.error("VITE_GEMINI_API_KEY is missing from environment variables.");
+    process.exit(1);
 }
 
-if (!apiKey) { console.error("No Key found even in .env"); process.exit(1); }
+const url = `https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`;
 
-async function check() {
-    try {
-        const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`);
-        const data = await resp.json();
-        if (data.error) {
-            console.error(data.error);
-            return;
+fetch(url)
+    .then(response => response.json())
+    .then(data => {
+        console.log("Available Models:");
+        if (data.models) {
+            data.models.forEach(model => {
+                console.log(`- ${model.name}`);
+                console.log(`  Description: ${model.description}`);
+                console.log(`  Supported Generation Methods: ${model.supportedGenerationMethods.join(', ')}`);
+                console.log('---');
+            });
+        } else {
+            console.log("Unexpected response format:", data);
         }
-        console.log("Models supporting generateContent:");
-        const genModels = (data.models || []).filter(m => m.supportedGenerationMethods.includes("generateContent"));
-        genModels.forEach(m => console.log(`- ${m.name} (${m.displayName})`));
-    } catch (e) {
-        console.error(e);
-    }
-}
-check();
+    })
+    .catch(error => {
+        console.error("Error fetching models:", error);
+    });

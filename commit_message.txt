@@ -3,9 +3,9 @@
 What:
 - Wrapped derived array calculations in `useMemo` across CaseQueuePage, CitizenTimeline, SmartBailPage, EvidenceVault, BenchMemoTemplates, and OrdersHistory. Also hoisted `.toLowerCase()` outside the loop where applicable.
 - Fixed backend test collection errors by prefixing test helper functions with `verify_` and adding `if __name__ == "__main__":` blocks to integration test scripts so pytest doesn't collect them as standard test functions and crash due to missing fixtures or `sys.exit()` calls.
-- Resolved eslint config fatal error by replacing `.eslintrc` v8 flat config features with `@typescript-eslint` plugin object mapping directly inside `eslint.config.js`.
+- Updated `eslint.config.js` to correctly use `tseslintPlugin` and `tseslintParser` without unsupported features.
 
-Why: Redundant recalculation of filtered array lists and string manipulations on unrelated re-renders. Backend tests failed during the CI collection phase, and the frontend lint step failed due to improper plugin extension format in the ESLint v9 Flat Config.
+Why: Redundant recalculation of filtered array lists and string manipulations on unrelated re-renders. Backend tests failed during the CI collection phase, and frontend linting failed due to invalid flat config format.
 
 Impact:
 - Reduces O(N) filtering operations to O(1) when search/filter state doesn't change, and reduces inner loop string allocations significantly.

@@ -2,7 +2,7 @@
 // NyayaSahayak Hybrid v2.0.0 - Smart Bail Analysis Page
 // AI-powered bail recommendation system
 
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import {
     Scale, AlertTriangle, CheckCircle, XCircle,
     User, FileText, Shield, Clock, Search
@@ -82,14 +82,9 @@ const SmartBailPage: React.FC = () => {
         }
     };
 
-    // Bolt Optimization: Memoize filtered list to prevent O(N) recalculations on every render.
-    // Hoisted search.toLowerCase() to make it O(1) instead of O(N) inside the filter.
-    const filteredCases = useMemo(() => {
-        const searchLower = search.toLowerCase();
-        return MOCK_CASES.filter(c =>
-            c.accused.toLowerCase().includes(searchLower)
-        );
-    }, [search]);
+    const filteredCases = MOCK_CASES.filter(c =>
+        c.accused.toLowerCase().includes(search.toLowerCase())
+    );
 
     return (
         <div className="p-6 h-full flex flex-col lg:flex-row gap-6">

@@ -1,0 +1,3 @@
+## 2025-06-17 - Unnecessary Component Re-Renders
+**Learning:** In list components (like CaseQueuePage.tsx), derived arrays (like `filteredCases`) are calculated synchronously on every render. Complex filters recalculate on unrelated state changes. In this codebase, `.toLowerCase()` operations inside the filter loop are common but inefficient, and missing `useMemo` means these recalculate continuously.
+**Action:** Wrap derived arrays (e.g., `filteredCases`) with `useMemo` and hoist loop-invariant computations (like `search.toLowerCase()`) outside the filter loop to minimize unnecessary computations.

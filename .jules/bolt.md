@@ -1,0 +1,3 @@
+## 2024-06-18 - Missing Memoization in Frontend Filters
+**Learning:** React components (e.g., `CaseQueuePage.tsx`, `EvidenceVault.tsx`, `CitizenTimeline.tsx`, `SmartBailPage.tsx`) perform inline `.filter()` operations on arrays on every render without `useMemo`. This creates a new array reference every time the component renders, causing performance issues and unnecessary downstream re-renders.
+**Action:** Wrap derived arrays (like `filteredCases`) with `useMemo` and provide explicit dependencies (`[search]`, `[searchQuery, filter]`, etc.) to memoize the result. Additionally, move repetitive operations like `.toLowerCase()` outside the `.filter` callback to avoid recalculating the same string repeatedly.

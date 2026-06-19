@@ -1,0 +1,3 @@
+## 2025-02-14 - Missing useMemo in React Components
+**Learning:** I found multiple components like `CaseQueuePage`, `EvidenceVault`, `SmartBailPage`, `BenchMemoTemplates`, and `OrdersHistory` where derived data (`filteredCases`, `filteredTemplates`, `filteredOrders`) is calculated directly in the component body without `useMemo`. This leads to unnecessary recalculations of the filtered lists on every render, which is inefficient.
+**Action:** Always wrap derived lists that depend on state in `useMemo` and extract string conversions (like `.toLowerCase()`) outside the loop or inside the memoized block where appropriate to prevent unnecessary work during React rendering cycles.

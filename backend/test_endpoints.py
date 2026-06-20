@@ -28,9 +28,10 @@ success &= test_endpoint("Skill 20 (Listing) Test", f"{BASE_URL}/admin/listing/t
 success &= test_endpoint("Skill 19 (Registry) Test", f"{BASE_URL}/admin/registry/test-scrutiny", "POST")
 
 print("\n--- TEST SUMMARY ---")
-if success:
-    print("ALL TESTS PASSED")
-    sys.exit(0)
-else:
-    print("SOME TESTS FAILED")
-    sys.exit(1)
+if __name__ == "__main__":
+    if success:
+        print("ALL TESTS PASSED")
+        sys.exit(0)
+    else:
+        print("SOME TESTS FAILED")
+        sys.exit(1)

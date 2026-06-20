@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { FileText, Plus, Search, Edit2, Copy, Trash2, Eye } from 'lucide-react';
 
 interface Template {
@@ -19,9 +19,9 @@ const BenchMemoTemplates: React.FC = () => {
 
     const [filterCategory, setFilterCategory] = useState('All');
 
-    const filteredTemplates = filterCategory === 'All'
+    const filteredTemplates = useMemo(() => filterCategory === 'All'
         ? templates
-        : templates.filter(t => t.category === filterCategory);
+        : templates.filter(t => t.category === filterCategory), [filterCategory]);
 
     return (
         <div className="space-y-6">

@@ -1,0 +1,3 @@
+## 2026-06-23 - Optimization of Derived Arrays in Render Loop
+**Learning:** React re-evaluates all state during render. Unmemoized array filtering (e.g., `const filteredCases = ...filter(...)`) executes every time the component renders, even when unrelated state changes. Repeated operations inside the loop (like `.toLowerCase()`) degrade performance further when re-evaluated for each item.
+**Action:** Always wrap derived filtering logic in `useMemo` with explicit dependencies to prevent unnecessary re-computations during unrelated renders, and hoist repeated operations (like calling `.toLowerCase()` on the search query) outside the `.filter()` loop.

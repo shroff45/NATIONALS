@@ -1,7 +1,7 @@
 // CitizenTimeline.tsx - Citizen-Friendly Case Timeline
 // Allows citizens to view timeline of their cases
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { gsap } from 'gsap';
 import {
     Calendar,
@@ -83,10 +83,13 @@ const CitizenTimeline: React.FC = () => {
     const [isLoading, setIsLoading] = useState(false);
     const timelineRef = useRef<HTMLDivElement>(null);
 
-    const filteredCases = mockCitizenCases.filter(c =>
-        c.cnr.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        c.title.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    const filteredCases = useMemo(() => {
+        const lowerQuery = searchQuery.toLowerCase();
+        return mockCitizenCases.filter(c =>
+            c.cnr.toLowerCase().includes(lowerQuery) ||
+            c.title.toLowerCase().includes(lowerQuery)
+        );
+    }, [searchQuery]);
 
     useEffect(() => {
         if (!selectedCase || !timelineRef.current) return;

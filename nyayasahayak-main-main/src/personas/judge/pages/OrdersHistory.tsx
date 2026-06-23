@@ -1,7 +1,7 @@
 // src/personas/judge/pages/OrdersHistory.tsx
 // NyayaSahayak Hybrid v2.0.0 - Judge Orders History Page
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
     FileText,
     Calendar,
@@ -77,14 +77,17 @@ const OrdersHistory: React.FC = () => {
     const [filterType, setFilterType] = useState<string>('all');
     const [filterStatus, setFilterStatus] = useState<string>('all');
 
-    const filteredOrders = MOCK_ORDERS.filter(order => {
-        const matchesSearch = order.caseTitle.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            order.cnr.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            order.parties.toLowerCase().includes(searchQuery.toLowerCase());
-        const matchesType = filterType === 'all' || order.orderType === filterType;
-        const matchesStatus = filterStatus === 'all' || order.status === filterStatus;
-        return matchesSearch && matchesType && matchesStatus;
-    });
+    const filteredOrders = useMemo(() => {
+        const lowerSearch = searchQuery.toLowerCase();
+        return MOCK_ORDERS.filter(order => {
+            const matchesSearch = order.caseTitle.toLowerCase().includes(lowerSearch) ||
+                order.cnr.toLowerCase().includes(lowerSearch) ||
+                order.parties.toLowerCase().includes(lowerSearch);
+            const matchesType = filterType === 'all' || order.orderType === filterType;
+            const matchesStatus = filterStatus === 'all' || order.status === filterStatus;
+            return matchesSearch && matchesType && matchesStatus;
+        });
+    }, [searchQuery, filterType, filterStatus]);
 
     const getStatusColor = (status: Order['status']) => {
         switch (status) {

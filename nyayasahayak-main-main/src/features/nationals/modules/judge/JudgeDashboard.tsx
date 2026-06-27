@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import {
     Gavel, AlertTriangle, Scale, Camera, Clock,
     MessageSquare, Heart, Activity, FileSignature, Shield, Flame, CheckCircle, TrendingUp, Calendar,
@@ -195,11 +195,19 @@ District Judge
         { id: 'WELLNESS', label: 'Wellness Check', icon: Heart },
     ];
 
-    const filteredCases = MOCK_CASES.filter(c =>
-        (c.cnrNumber || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (c.complainant || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (c.respondent || '').toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    // ⚡ Bolt: Performance optimization
+    // What: Wrap `filteredCases` in `useMemo` and hoist `searchQuery.toLowerCase()` outside the loop.
+    // Why: Prevent unnecessary O(N) array filtering and string operations on every unrelated re-render (e.g., active tab changes, typing in draft).
+    // Impact: Eliminates redundant O(N) string transformations (`toLowerCase`) per item, drastically reducing re-render time for large lists.
+    // Measurement: React DevTools Profiler will show reduced render time in `JudgeDashboard` when state changes that do not depend on `searchQuery` occur.
+    const filteredCases = useMemo(() => {
+        const query = searchQuery.toLowerCase();
+        return MOCK_CASES.filter(c =>
+            (c.cnrNumber || '').toLowerCase().includes(query) ||
+            (c.complainant || '').toLowerCase().includes(query) ||
+            (c.respondent || '').toLowerCase().includes(query)
+        );
+    }, [searchQuery]);
 
     const lawyerRisk = getLawyerRisk(selectedCase?.lawyerId);
 

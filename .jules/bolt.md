@@ -1,0 +1,3 @@
+## 2026-06-28 - Optimize React list filtering using useMemo
+**Learning:** In React components like `CaseQueuePage.tsx` that render lists based on filter state, computing the derived array (e.g., `filteredCases`) on every render can cause performance issues if the list grows large. In this codebase's architecture, list components often recalculate derived arrays synchronously, leading to unnecessary re-renders when unrelated state (like `selectedCase`) changes.
+**Action:** Always wrap derived list computations in `useMemo` with explicit dependencies to prevent unnecessary re-calculations, and hoist repetitive operations like `.toLowerCase()` outside loops.

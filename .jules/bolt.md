@@ -1,0 +1,3 @@
+## 2025-01-20 - Memoizing derived arrays with useMemo for Lists
+**Learning:** In list components where clicking an item sets local state (like `selectedCase`), simple filtering logic like `filteredCases = MOCK_QUEUE.filter(...)` re-runs entirely on every click. The repeated `search.toLowerCase()` creates additional unnecessary string allocations inside loops.
+**Action:** Always wrap derived list arrays in `useMemo` when they depend only on specific filter states (like `search` and `filter`), and hoist loop-invariant computations (like `toLowerCase()`) outside the loop to minimize performance overhead during unrelated render cycles (e.g., selection changes).

@@ -96,21 +96,21 @@ export const verifyCredentials = async (
     // Try real backend authentication
     try {
         // Map role to backend role format
-        const backendRole = role.toLowerCase();
+        const backendRole = role!.toLowerCase();
         
         // Build request data
         const requestData: any = {
             email: cleanId.includes('@') ? cleanId : `${cleanId}@demo.local`,
             password: cleanPass,
-            role: backendRole,
+            role: backendRole!,
             full_name: metadata?.name || cleanId
         };
 
         // Add role-specific fields
-        if (role === 'POLICE') {
+        if (role! === 'POLICE') {
             requestData.badge_number = metadata?.badgeNumber || metadata?.judgeId || 'PENDING';
             requestData.station_id = metadata?.station || 'PENDING';
-        } else if (role === 'JUDGE') {
+        } else if (role! === 'JUDGE') {
             requestData.court_id = metadata?.courtId || 'PENDING';
         }
 
@@ -130,7 +130,7 @@ export const verifyCredentials = async (
 
                 return {
                     name: user.full_name,
-                    email: user.email,
+                    email: user.email as any,
                     id: String(user.id),
                     role: user.role.toUpperCase() as UserRole,
                     avatar: user.google_profile_picture || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.full_name}`,
@@ -155,7 +155,7 @@ export const verifyCredentials = async (
 
                         return {
                             name: user.full_name,
-                            email: user.email,
+                            email: user.email as any,
                             id: String(user.id),
                             role: user.role.toUpperCase() as UserRole,
                             avatar: user.google_profile_picture || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.full_name}`,

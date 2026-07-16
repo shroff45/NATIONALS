@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Layers, Play, Pause, Download, RefreshCw, AlertTriangle, FileText } from 'lucide-react';
 import BatchUploadZone from '../components/registry/BatchUploadZone';
 import FileQueue, { FileQueueItem } from '../components/registry/FileQueue';
@@ -70,8 +70,11 @@ const RegistryBatchProcessing: React.FC = () => {
         showToast('Batch processing complete', 'success');
     };
 
-    const completedCount = queue.filter(i => i.status === 'completed').length;
-    const failedCount = queue.filter(i => i.status === 'failed').length;
+    // ⚡ Bolt: Memoize derived queue statistics to prevent redundant O(N) filtering on every render
+    const { completedCount, failedCount } = useMemo(() => ({
+        completedCount: queue.filter(i => i.status === 'completed').length,
+        failedCount: queue.filter(i => i.status === 'failed').length
+    }), [queue]);
 
     return (
         <div className="space-y-6 max-w-5xl mx-auto pb-20">

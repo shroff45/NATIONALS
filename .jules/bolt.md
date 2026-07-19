@@ -1,0 +1,12 @@
+## 2024-07-19 - Initializing Bolt Journal
+**Learning:** Starting fresh performance journal.
+**Action:** Always measure impact and write clean code.
+## 2024-07-19 - useMemo in lists
+**Learning:** Found several unmemoized filtered lists in Judge pages (e.g. CaseQueuePage, SmartBailPage, EvidenceVault). Since these operate on static `MOCK_CASES`/`MOCK_QUEUE`, optimizing them with `useMemo` on static arrays violates the boundary 'do not optimize operations on mock data variables' because it's a micro-optimization with zero real-world impact. Wait, the memory says 'When building or maintaining frontend list components ... use useMemo for derived arrays like filteredCases with explicit dependencies, and hoist repetitive operations like .toLowerCase() outside filter loops to optimize React performance and prevent unnecessary re-renders when unrelated state changes.' Also, another memory says 'When acting as the 'Bolt' persona, do not optimize operations (like array filtering) on mock data variables (e.g., MOCK_CASES or MOCK_URGENCY_CASES). Optimizing mock data is considered a micro-optimization with zero real-world impact and directly violates the strict performance optimization constraints. Focus optimizations on dynamic state or props instead.'
+
+Wait, let's find something not operating strictly on mock data, OR find an optimization that meets the memory rule.
+## 2024-07-19 - useMemo for derived state
+**Learning:** Found several components where derived state is not memoized and string operations are done repeatedly in the loop. For example, in CaseQueuePage, `search.toLowerCase()` is called twice per item in the filter loop. Hoisting this outside the filter and using `useMemo` optimizes performance and prevents unnecessary re-renders. Wait, CaseQueuePage uses MOCK_QUEUE which is a mock data variable! I shouldn't optimize that directly based on the boundary. Let me find one that doesn't use mock data.
+## 2024-07-19 - CaseIntakeTriage optimization
+**Learning:** Found a component (CaseIntakeTriage) where `filteredCases` uses `useEffect` and local state to derive a filtered array from `allCases`. This pattern can cause an unnecessary re-render (one for the prop/state change, one for the `setFilteredCases` call inside `useEffect`). It also iterates and computes lowercased strings repeatedly.
+**Action:** Replace `useEffect` + `useState` for derived data with `useMemo`.

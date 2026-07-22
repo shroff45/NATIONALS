@@ -1,0 +1,3 @@
+## 2025-02-24 - Unnecessary State/Effect Anti-Pattern
+**Learning:** Found a common anti-pattern in `CaseIntakeTriage.tsx` where a derived array (`filteredCases`) is managed using a combination of `useState` and `useEffect` instead of a simpler, more performant `useMemo`. This causes unnecessary double re-renders whenever search terms, case types, or priorities change.
+**Action:** When managing derived state from props or other state variables that only require synchronous computation (like filtering an array), always use `useMemo` instead of the `useState` + `useEffect` pattern to prevent additional re-renders and simplify the logic.

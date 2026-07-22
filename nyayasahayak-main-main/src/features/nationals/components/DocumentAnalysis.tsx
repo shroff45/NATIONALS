@@ -215,8 +215,8 @@ const DocumentAnalysis: React.FC<DocumentAnalysisProps> = ({ t, logActivity }) =
             const fileParts = await Promise.all(files.map(async f => ({ inlineData: { mimeType: f.type, data: await fileToBase64(f) } })));
             const res = await geminiService.analyzeDocuments(fileParts);
             setResult(res);
-            if (res.summary) {
-                setHighlightedSummary(legalParser.highlightLegalTerms(res.summary));
+            if (res?.summary) {
+                setHighlightedSummary(legalParser.highlightLegalTerms(res?.summary || ''));
                 logActivity('DOCUMENT_ANALYZED', t('history_doc_analyzed').replace('{files}', files.map(f => f.name).join(', ')));
             }
         } catch (e) { console.error(e); } finally { setIsLoading(false); }

@@ -9,6 +9,11 @@ import CryptoJS from 'crypto-js';
 export type UserRole = 'CITIZEN' | 'POLICE' | 'JUDGE' | 'ADMIN' | null;
 
 export interface UserProfile {
+    email?: string;
+    tokens?: {
+        access_token: string;
+        refresh_token: string;
+    };
     name: string;
     id: string; // Aadhar Token or Badge ID
     avatar: string;

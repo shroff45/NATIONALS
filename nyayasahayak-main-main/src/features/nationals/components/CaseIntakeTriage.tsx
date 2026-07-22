@@ -261,10 +261,10 @@ const CaseIntakeTriage: React.FC<CaseIntakeTriageProps> = ({ t, allCases, setAll
     const proceedWithPrediction = async (caseToProcess: Case) => {
         const result = await geminiService.predictCaseOutcome(caseToProcess as any, language);
         setPrediction({
-            ...result,
-            outcome: result.priority,
+            ...(result || {}),
+            outcome: result?.priority || '',
             confidence: 0.85,
-            reasoning: [result.rationale]
+            reasoning: [result?.rationale || '']
         });
         setIsLoading(false);
     };

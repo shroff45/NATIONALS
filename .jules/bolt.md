@@ -1,0 +1,3 @@
+## 2024-05-24 - Unnecessary useEffect for derived state
+**Learning:** Found a common React anti-pattern in `CaseIntakeTriage.tsx`: using `useState` and `useEffect` to manage `filteredCases`. This causes unnecessary double re-renders (one for state update, one for effect trigger) and makes the code harder to read. This is a common pattern in the codebase that should be refactored to use `useMemo`.
+**Action:** Replace `useState` + `useEffect` combinations for derived state (like filtering arrays based on props/state) with a single `useMemo` hook. This prevents the extra render cycle and simplifies the dependency management.

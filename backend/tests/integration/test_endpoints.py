@@ -9,7 +9,7 @@ def verify_endpoint(name, url, method="GET", json_data=None):
             response = requests.get(url)
         else:
             response = requests.post(url, json=json_data)
-        
+
         if response.status_code == 200:
             print(f"✅ {name}: SUCCESS")
             return True

@@ -9,6 +9,14 @@ export default [
   { ignores: ['dist'] },
   js.configs.recommended,
   {
+    files: ['**/*.cjs'],
+    languageOptions: {
+      globals: {
+        ...globals.node
+      }
+    }
+  },
+  {
     files: ['**/*.{js,jsx,ts,tsx}'],
     plugins: {
       'react-hooks': reactHooks,

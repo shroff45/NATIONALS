@@ -1,0 +1,3 @@
+## 2024-05-24 - React Performance Anti-Pattern: Derived State with useState and useEffect
+**Learning:** Found a common anti-pattern in React applications where derived state (like filtered lists) is managed using `useState` and updated via `useEffect`. This causes unnecessary double re-renders whenever the dependencies change (first for the dependency state update, second for the effect's state update).
+**Action:** Always use `useMemo` to directly derive state from dependencies instead of maintaining it in a separate piece of state synchronized via `useEffect`. This reduces re-renders and simplifies component logic.

@@ -1,0 +1,3 @@
+## 2025-02-05 - [React Performance Anti-Pattern: useEffect for Derived State]
+**Learning:** In React, managing derived state (like `filteredCases`) using a combination of `useState` and `useEffect` causes unnecessary double re-renders. When the dependency state (e.g., `searchTerm`, `activeCaseType`) changes, it triggers a re-render, then the `useEffect` runs, updates the derived state (`filteredCases`), and triggers a second re-render.
+**Action:** Replace `useState` + `useEffect` for derived data with a direct `useMemo` hook. This ensures the derived value is calculated during the render phase and prevents the extra render cycle, improving performance.

@@ -1,0 +1,3 @@
+## 2024-05-24 - Eliminating Derived State Double Re-renders
+**Learning:** Found a common anti-pattern in the React components (e.g., `CaseIntakeTriage.tsx`) where derived state like `filteredCases` is managed using a combination of `useState` and `useEffect`. When the dependencies (like `searchTerm`) change, this causes a double re-render: once when the search term state updates, and again when the effect sets the new filtered array.
+**Action:** Always refactor derived state managed by `useState` + `useEffect` into a single `useMemo` hook. This ensures the derived array is yielded during the initial render pass, avoiding the secondary re-render entirely.

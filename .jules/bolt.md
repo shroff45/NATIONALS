@@ -1,0 +1,3 @@
+## 2025-02-23 - Avoid redundant inner loop computations in React components
+**Learning:** Found an anti-pattern in the codebase where derived arrays (like filtered lists) are computed inside the render body without `useMemo`, combined with expensive string computations (like `search.toLowerCase()`) being done redundantly for every element in the array inside `.filter()`. This leads to O(N) string operations instead of O(1).
+**Action:** Always wrap derived filtering logic in `useMemo` to avoid recomputation on unrelated state changes (like selecting an item), and hoist immutable operations (like lowercasing the search string) outside the filter loop.

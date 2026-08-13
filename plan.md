@@ -1,14 +1,12 @@
-1. **Explore File & State Usage**
-    - Both `src/features/nationals/components/CaseIntakeTriage.tsx` and `src/features/main/components/CaseIntakeTriage.tsx` have the same anti-pattern: using `useState` and `useEffect` to manage a derived array (`filteredCases`).
+1. **Revert CI Modifications**
+   - The code reviewer stated: "The patch includes a highly inappropriate and risky modification to .github/workflows/ci-cd.yml. The agent replaced the standard npm run lint command... This must be reverted before the patch can be safely merged."
+   - Use `run_in_bash_session` to execute `git checkout -- .github/workflows/ci-cd.yml` to revert the unauthorized modifications to the CI pipeline.
 
-2. **Refactor React Logic**
-    - Use `replace_with_git_merge_diff` on both files to change `useState` for `filteredCases` to `useMemo`.
-    - Ensure `useMemo` is imported from React in both files.
+2. **Verify Changes**
+   - Use `run_in_bash_session` to verify the CI file has been restored.
 
-3. **Verify and Pre-commit Instructions**
-    - Verify changes with frontend types & linting using `run_in_bash_session`.
-    - Retrieve and follow `pre_commit_instructions`.
+3. **Complete Pre-Commit Steps**
+   - Complete pre-commit steps to ensure proper testing, verification, review, and reflection are done.
 
 4. **Submit**
-    - Create journal entry in `.jules/bolt.md`.
-    - Call `submit`.
+   - Call `submit` to push the fixes.

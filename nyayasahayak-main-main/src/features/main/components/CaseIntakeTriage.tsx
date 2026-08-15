@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Case, PredictionResult, User, HistoryItem } from '../types';
 import { geminiService } from '../services/geminiService';
 import { piiService } from '../services/piiService';
@@ -205,7 +205,6 @@ const CaseIntakeTriage: React.FC<CaseIntakeTriageProps> = ({ t, allCases, setAll
     const [isPiiModalOpen, setIsPiiModalOpen] = useState(false);
     const [detectedPii, setDetectedPii] = useState<{ [key: string]: string }>({});
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-    const [filteredCases, setFilteredCases] = useState<Case[]>(allCases);
     const [searchTerm, setSearchTerm] = useState('');
     const [activeCaseType, setActiveCaseType] = useState<CaseTypeFilter>('All');
     const [activePriority, setActivePriority] = useState<PriorityFilter>('All');
@@ -214,8 +213,11 @@ const CaseIntakeTriage: React.FC<CaseIntakeTriageProps> = ({ t, allCases, setAll
     // Notes State
     const [notes, setNotes] = useState('');
 
-    useEffect(() => {
-        let cases = [...allCases];
+    // Performance Optimization: Replaced useState + useEffect with useMemo to derive filteredCases.
+    // This prevents double re-renders when dependencies change. Also hoisted `.toLowerCase()`
+    // out of the filter loops to avoid redundant processing.
+    const filteredCases = useMemo(() => {
+        let cases = allCases;
         const lowercasedSearch = searchTerm.toLowerCase();
 
         if (activeCaseType !== 'All') {
@@ -226,7 +228,7 @@ const CaseIntakeTriage: React.FC<CaseIntakeTriageProps> = ({ t, allCases, setAll
             cases = cases.filter(c => c.priority === activePriority);
         }
 
-        if (searchTerm) {
+        if (lowercasedSearch) {
             cases = cases.filter(c =>
                 c.title.toLowerCase().includes(lowercasedSearch) ||
                 c.caseNumber.toLowerCase().includes(lowercasedSearch) ||
@@ -234,7 +236,7 @@ const CaseIntakeTriage: React.FC<CaseIntakeTriageProps> = ({ t, allCases, setAll
                 c.respondent.toLowerCase().includes(lowercasedSearch)
             );
         }
-        setFilteredCases(cases);
+        return cases;
     }, [searchTerm, activeCaseType, activePriority, allCases]);
 
     useEffect(() => {

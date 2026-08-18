@@ -1,0 +1,3 @@
+## 2024-08-18 - Replacing React useState/useEffect with useMemo for Derived Arrays
+**Learning:** In React components like CaseIntakeTriage, managing a derived array (like filteredCases) by storing the original array and filter criteria in state variables, and then updating another state variable inside an effect, causes unnecessary double re-renders. When any dependency changes, the component renders once due to the dependency change, the effect runs, sets the new filtered list, and triggers a second render.
+**Action:** Always refactor derived arrays computed directly from props or state to use useMemo. This avoids the second render by directly yielding the derived array during the initial render phase based on the current state.

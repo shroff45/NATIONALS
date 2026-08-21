@@ -2,7 +2,7 @@
 import { useCallback } from 'react';
 import { translations } from '../constants/localization';
 import type { Translations } from '../constants/localization';
-import { getLocalizedNumber } from '../lib/utils';
+import { getLocalizedNumber } from '../../../shared/utils/formatters';
 
 export type Language = keyof Translations;
 

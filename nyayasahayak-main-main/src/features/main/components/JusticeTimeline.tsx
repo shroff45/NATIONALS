@@ -3,7 +3,7 @@ import React, { useEffect, useRef } from 'react';
 import { Case } from '../types';
 import { gsap } from 'gsap';
 import AnimatedPageWrapper from './common/AnimatedPageWrapper';
-import { getLocalizedNumber } from '../lib/utils';
+import { getLocalizedNumber } from '../../../shared/utils/formatters';
 
 interface JusticeTimelineProps {
     t: (key: string) => string;

@@ -1,0 +1,3 @@
+## 2024-08-23 - Avoid useState and useEffect for derived state
+**Learning:** In React, using `useEffect` to manage a derived state (like `filteredCases`) from other state variables (like `allCases`, `searchTerm`, etc.) and storing it with `useState` causes unnecessary double re-renders. When a dependency changes, the component re-renders once, then the `useEffect` triggers, updates the state, and causes a second re-render.
+**Action:** Replace `useState` + `useEffect` combinations for derived arrays with `useMemo`. This computes the value during the render phase, preventing double re-renders and improving performance.

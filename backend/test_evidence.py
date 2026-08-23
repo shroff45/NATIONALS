@@ -60,4 +60,4 @@ def verify_evidence_lifecycle():
         print(f"❌ Transfer Failed: {e}")
 
 if __name__ == "__main__":
-    test_evidence_lifecycle()
+    verify_evidence_lifecycle()

@@ -50,10 +50,10 @@ def verify_protected_route(token):
         return False
 
 if __name__ == "__main__":
-    if test_signup():
-        token = test_login()
+    if verify_signup():
+        token = verify_login()
         if token:
-            if test_protected_route(token):
+            if verify_protected_route(token):
                 print("\n✅ Full Flow Verification SUCCESS")
                 sys.exit(0)
     

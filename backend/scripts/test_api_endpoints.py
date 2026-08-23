@@ -112,11 +112,11 @@ def verify_listing_optimize():
 def main():
     print("🚀 Starting Backend API Tests...")
     results = [
-        test_health(),
-        test_registry_scrutiny(),
-        test_registry_fees(),
-        test_listing_pending(),
-        test_listing_optimize()
+        verify_health(),
+        verify_registry_scrutiny(),
+        verify_registry_fees(),
+        verify_listing_pending(),
+        verify_listing_optimize()
     ]
     
     passed = results.count(True)

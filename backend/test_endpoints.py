@@ -15,9 +15,10 @@ def verify_endpoint(name, url, method="GET", json_data=None):
             return True
         else:
             print(f"❌ {name}: FAILED ({response.status_code}) - {response.text[:100]}")
-            return False
+        return False
     except Exception as e:
         print(f"❌ {name}: ERROR - {str(e)}")
+        return False
 if __name__ == '__main__':
 
 

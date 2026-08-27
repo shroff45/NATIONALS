@@ -1,0 +1,3 @@
+## 2024-05-19 - CaseIntakeTriage useState+useEffect anti-pattern
+**Learning:** Found a common anti-pattern in `CaseIntakeTriage.tsx` where derived state (`filteredCases`) is managed using a combination of `useState` and `useEffect`. This forces unnecessary double re-renders whenever `allCases`, `searchTerm`, `activeCaseType`, or `activePriority` changes: one for the dependency change, and one for the state update.
+**Action:** Always refactor `useState` + `useEffect` combinations for derived arrays to use a single `useMemo` hook to compute the derived data directly and prevent the extra render cycle.

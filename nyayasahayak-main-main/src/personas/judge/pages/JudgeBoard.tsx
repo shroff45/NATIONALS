@@ -270,13 +270,13 @@ const JudgeBoard: React.FC = () => {
     };
 
     // Calculate BNSS compliance status
-    const getBNSSStatus = (case_: BoardCase) => {
+    const getBNSSStatus = useCallback((case_: BoardCase) => {
         if (case_.maxDays === 0) return null; // Civil case
         const remaining = case_.maxDays - case_.investigationDays;
         if (remaining <= 5) return 'CRITICAL';
         if (remaining <= 15) return 'WARNING';
         return 'OK';
-    };
+    }, []);
 
     const getPriorityColor = (priority: string) => {
         switch (priority) {
@@ -318,12 +318,23 @@ const JudgeBoard: React.FC = () => {
     };
 
     // Stats
-    const urgentCount = MOCK_CASES.filter(c => c.priority === 'URGENT').length;
-    const highRiskCount = MOCK_CASES.filter(c => c.adjournmentRisk === 'HIGH').length;
-    const bnssAlertCount = MOCK_CASES.filter(c => {
-        const status = getBNSSStatus(c);
-        return status === 'CRITICAL' || status === 'WARNING';
-    }).length;
+    // ⚡ Bolt: Memoize aggregate stats to prevent O(n) filtering x3 on every render (including typing in search or clicking filters)
+    const { urgentCount, highRiskCount, bnssAlertCount } = useMemo(() => {
+        let urgent = 0;
+        let highRisk = 0;
+        let bnssAlert = 0;
+
+        for (let i = 0; i < MOCK_CASES.length; i++) {
+            const c = MOCK_CASES[i];
+            if (c.priority === 'URGENT') urgent++;
+            if (c.adjournmentRisk === 'HIGH') highRisk++;
+
+            const status = getBNSSStatus(c);
+            if (status === 'CRITICAL' || status === 'WARNING') bnssAlert++;
+        }
+
+        return { urgentCount: urgent, highRiskCount: highRisk, bnssAlertCount: bnssAlert };
+    }, [getBNSSStatus]); // MOCK_CASES is static
 
     // Three-State: Analyze Case (Legal Syllogism Engine)
     const handleAnalyzeCase = async (caseData: BoardCase) => {

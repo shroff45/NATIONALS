@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Header from './components/Header';
 import SignIn from './components/SignIn';
 import CaseIntakeTriage from './components/CaseIntakeTriage';
@@ -120,7 +120,11 @@ const App: React.FC = () => {
 
 
     // --- Core Logic Functions ---
-    const logActivity = (type: HistoryItem['type'], details: string) => {
+    // ⚡ Bolt Performance Optimization:
+    // What: Added useCallback to logActivity to ensure referential stability.
+    // Why: When passed to child components like DocumentAnalysis and CaseIntakeTriage, this function caused unnecessary re-renders of the entire tree whenever it was recreated on unrelated state changes (e.g. breakTime timer updates).
+    // Impact: Prevents expensive re-renders in deep component trees, improving overall app responsiveness and saving CPU cycles.
+    const logActivity = useCallback((type: HistoryItem['type'], details: string) => {
         const newHistoryItem: HistoryItem = {
             id: new Date().toISOString() + Math.random(),
             timestamp: new Date().toISOString(),
@@ -128,24 +132,28 @@ const App: React.FC = () => {
             details,
         };
         setActivityHistory(prev => [newHistoryItem, ...prev]);
-    };
+    }, []);
 
-    const clearActivityHistory = () => {
+    // ⚡ Bolt Performance Optimization: Memoized clearActivityHistory to prevent unnecessary re-renders when passed down to History component.
+    const clearActivityHistory = useCallback(() => {
         setActivityHistory([]);
-    };
+    }, []);
 
-    const handleSignIn = (user: User) => {
+    // ⚡ Bolt Performance Optimization: Memoized handleSignIn for referential stability.
+    const handleSignIn = useCallback((user: User) => {
         localStorage.setItem('currentUser', JSON.stringify(user));
         setCurrentUser(user);
-    };
+    }, []);
 
-    const handleSignOut = () => {
+    // ⚡ Bolt Performance Optimization: Memoized handleSignOut for referential stability.
+    const handleSignOut = useCallback(() => {
         localStorage.removeItem('currentUser');
         setCurrentUser(null);
         setActiveTab('About');
-    };
+    }, []);
 
-    const handleSetChatHistory = (history: ChatMessage[]) => {
+    // ⚡ Bolt Performance Optimization: Memoized handleSetChatHistory to prevent the heavy Nyayabot component from re-rendering on unrelated MainApp state changes.
+    const handleSetChatHistory = useCallback((history: ChatMessage[]) => {
         setChatHistory(history);
         // Only log if it's a user message addition, not a clear or system reset
         if (history.length > chatHistory.length) {
@@ -154,7 +162,7 @@ const App: React.FC = () => {
                 logActivity('CHAT_MESSAGE', `Sent message: "${lastMessage.content.substring(0, 30)}..."`);
             }
         }
-    };
+    }, [chatHistory, logActivity]);
 
     // Timer Logic
     useEffect(() => {

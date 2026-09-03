@@ -198,7 +198,7 @@ const JudgeBoard: React.FC = () => {
 
     // Sort cases intelligently - MUST be defined before handleKeyDown
     const sortedCases = useMemo(() => {
-        let filtered = filterType === 'ALL'
+        const filtered = filterType === 'ALL'
             ? [...MOCK_CASES]
             : MOCK_CASES.filter(c => c.caseType === filterType);
 

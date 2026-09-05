@@ -122,4 +122,5 @@ const CaseRelationshipMapper: React.FC<CaseRelationshipMapperProps> = ({ t, sele
     );
 };
 
-export default CaseRelationshipMapper;
+// ⚡ Bolt: Wrapped in React.memo to prevent expensive GSAP animations and SVG repaints during unrelated parent re-renders. Reduces CPU usage spike during layout transitions.
+export default React.memo(CaseRelationshipMapper);

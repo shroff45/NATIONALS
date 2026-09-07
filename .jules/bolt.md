@@ -1,0 +1,3 @@
+## 2024-05-19 - [Performance Optimization in CaseIntakeTriage filtering]
+**Learning:** In the `CaseIntakeTriage` components, filtering the cases list was originally done using `useEffect`, pushing filtered case objects to local state. This triggers a re-render cycle whenever search text or filter options are changed, leading to unnecessary component updates in a frequently interacted filter interface.
+**Action:** Replaced `useEffect` filter logic with `useMemo` in `src/features/main/components/CaseIntakeTriage.tsx` and `src/features/nationals/components/CaseIntakeTriage.tsx`. This computes the filtered list during rendering synchronously without setting a new state value, preventing double renders and improving typing responsiveness significantly.

@@ -3,7 +3,7 @@ import sys
 
 BASE_URL = "http://localhost:8001/api/v1/auth"
 
-def verify_signup():
+def test_signup():
     print("Testing Signup...")
     payload = {
         "email": "test_script_user@example.com",
@@ -20,7 +20,7 @@ def verify_signup():
         print(f"Signup Failed: {e}")
         return False
 
-def verify_login():
+def test_login():
     print("\nTesting Login...")
     payload = {
         "email": "test_script_user@example.com",
@@ -36,7 +36,7 @@ def verify_login():
         print(f"Login Failed: {e}")
         return None
 
-def verify_protected_route(token):
+def test_protected_route(token):
     print("\nTesting Protected Route (Know Your Rights)...")
     headers = {"Authorization": f"Bearer {token}"}
     payload = {"query": "What are my rights if arrested?", "language": "en", "category": "arrest"}
@@ -50,10 +50,10 @@ def verify_protected_route(token):
         return False
 
 if __name__ == "__main__":
-    if verify_signup():
-        token = verify_login()
+    if test_signup():
+        token = test_login()
         if token:
-            if verify_protected_route(token):
+            if test_protected_route(token):
                 print("\n✅ Full Flow Verification SUCCESS")
                 sys.exit(0)
     

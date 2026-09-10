@@ -1,0 +1,3 @@
+## 2025-05-18 - Optimized React useMemo loop performance
+**Learning:** Replaced multiple O(n) `.filter()` array passes with a single O(n) loop to process arrays for stats calculation. Using standard for-loops and single passes over arrays can dramatically reduce computation overhead inside `useMemo` hooks, avoiding multiple iterations over the same large datasets.
+**Action:** When calculating multiple aggregated metrics based on the same array structure inside useMemo, combine multiple `.filter(...).length` statements into a single for-loop that maintains counting variables. This converts O(m*n) complexity into strictly O(n).

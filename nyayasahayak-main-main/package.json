@@ -6,7 +6,7 @@
     "scripts": {
         "dev": "vite",
         "build": "tsc && vite build",
-        "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+        "lint": "eslint . --report-unused-disable-directives --max-warnings 0",
         "preview": "vite preview"
     },
     "dependencies": {
@@ -42,6 +42,7 @@
         "uuid": "^9.0.1"
     },
     "devDependencies": {
+        "@eslint/js": "^8.57.1",
         "@types/crypto-js": "^4.2.2",
         "@types/dompurify": "^3.0.5",
         "@types/node": "^20.11.20",
@@ -55,6 +56,7 @@
         "autoprefixer": "^10.4.17",
         "baseline-browser-mapping": "^2.9.19",
         "copy-webpack-plugin": "^13.0.1",
+        "eslint": "^8.57.1",
         "eslint-plugin-react-hooks": "^4.6.2",
         "eslint-plugin-react-refresh": "^0.4.26",
         "globals": "^13.24.0",

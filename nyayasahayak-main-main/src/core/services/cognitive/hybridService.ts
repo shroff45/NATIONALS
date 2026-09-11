@@ -1,6 +1,6 @@
 import { GoogleGenAI, Type, GenerateContentResponse, Part } from "@google/genai";
 import { PredictionResult, Case, DocumentAnalysisResult, ChatMessage, QuantumFingerprintResult } from "../../types";
-import { withErrorRecovery } from "../../lib/withErrorRecovery";
+import { withErrorRecovery } from "../../../lib/withErrorRecovery";
 
 // --- Env Variables ---
 const GEMINI_API_KEY = import.meta.env.GEMINI_API_KEY || import.meta.env.VITE_GEMINI_API_KEY;
@@ -240,7 +240,7 @@ const partsToText = (parts: Part[] | string): string => {
     return parts.map(p => p.text).join('\n');
 };
 
-export const hybridService = {
+export const hybridService: any = {
     predictCaseOutcome: (sanitizedCase: Case, language: string) =>
         withErrorRecovery(async () => {
             if (AI_PROVIDER === 'OPENAI') {

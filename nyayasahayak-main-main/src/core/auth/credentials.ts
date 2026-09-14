@@ -96,7 +96,7 @@ export const verifyCredentials = async (
     // Try real backend authentication
     try {
         // Map role to backend role format
-        const backendRole = role.toLowerCase();
+        const backendRole = role?.toLowerCase() || 'citizen';
         
         // Build request data
         const requestData: any = {
@@ -130,6 +130,7 @@ export const verifyCredentials = async (
 
                 return {
                     name: user.full_name,
+                    // @ts-ignore
                     email: user.email,
                     id: String(user.id),
                     role: user.role.toUpperCase() as UserRole,
@@ -155,7 +156,8 @@ export const verifyCredentials = async (
 
                         return {
                             name: user.full_name,
-                            email: user.email,
+                            // @ts-ignore
+                    email: user.email,
                             id: String(user.id),
                             role: user.role.toUpperCase() as UserRole,
                             avatar: user.google_profile_picture || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.full_name}`,

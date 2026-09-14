@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Case } from '@core/types';
 import { Loader2, Brain, Gavel, FileText } from 'lucide-react';
 
@@ -22,6 +22,31 @@ const Spinner = () => <Loader2 className="animate-spin text-blue-600" />;
 
 
 // --- MAIN COMPONENT ---
+
+
+// ⚡ Bolt Optimization: Extracted CaseListItem to memoize it and avoid creating new closures in the parent render map
+const CaseListItem = React.memo(({ caseData, isSelected, onSelect }: { caseData: Case, isSelected: boolean, onSelect: (c: Case) => void }) => {
+    const handleClick = useCallback(() => {
+        onSelect(caseData);
+    }, [caseData, onSelect]);
+
+    return (
+        <div
+            onClick={handleClick}
+            className={`p-3 rounded-xl cursor-pointer border transition-all ${isSelected ? 'bg-blue-50 border-blue-200 dark:bg-blue-900/20 dark:border-blue-800' : 'bg-white dark:bg-slate-800 border-transparent hover:bg-slate-50 dark:hover:bg-slate-800'}`}
+        >
+            <div className="flex justify-between mb-1">
+                <span className="text-xs font-mono text-slate-500">{caseData.cnrNumber}</span>
+                <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${caseData.urgency === 'HIGH' ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600'}`}>{caseData.urgency}</span>
+            </div>
+            <h4 className="font-bold text-sm text-slate-800 dark:text-slate-200 truncate">{caseData.complainant} v. {caseData.respondent}</h4>
+            <div className="flex gap-2 mt-2">
+                <span className="text-[10px] bg-slate-100 dark:bg-slate-700 px-2 rounded text-slate-600 dark:text-slate-400">{caseData.caseType}</span>
+            </div>
+        </div>
+    );
+});
+
 interface CaseTriageProps {
     cases: Case[];
     onSelectCase: (c: Case) => void;
@@ -32,13 +57,21 @@ export const CaseTriage: React.FC<CaseTriageProps> = ({ cases, onSelectCase }) =
     const [prediction, setPrediction] = useState<any>(null);
     const [loading, setLoading] = useState(false);
 
-    const handlePredict = async () => {
+    // ⚡ Bolt Optimization: Memoize handlePredict to prevent recreation on every render
+    const handlePredict = useCallback(async () => {
         if (!selectedCase) return;
         setLoading(true);
         const result = await geminiService.predictCaseOutcome(selectedCase, 'en');
         setPrediction(result);
         setLoading(false);
-    };
+    }, [selectedCase]);
+
+    // ⚡ Bolt Optimization: Memoize case selection and extract CaseListItem component to prevent inline function recreation on every map iteration
+    const handleCaseSelect = useCallback((c: Case) => {
+        setSelectedCase(c);
+        onSelectCase(c);
+        setPrediction(null);
+    }, [onSelectCase]);
 
     return (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 h-full">
@@ -50,20 +83,12 @@ export const CaseTriage: React.FC<CaseTriageProps> = ({ cases, onSelectCase }) =
                 </div>
                 <div className="overflow-y-auto p-2 space-y-2">
                     {cases.map(c => (
-                        <div
+                        <CaseListItem
                             key={c.id}
-                            onClick={() => { setSelectedCase(c); onSelectCase(c); setPrediction(null); }}
-                            className={`p-3 rounded-xl cursor-pointer border transition-all ${selectedCase?.id === c.id ? 'bg-blue-50 border-blue-200 dark:bg-blue-900/20 dark:border-blue-800' : 'bg-white dark:bg-slate-800 border-transparent hover:bg-slate-50 dark:hover:bg-slate-800'}`}
-                        >
-                            <div className="flex justify-between mb-1">
-                                <span className="text-xs font-mono text-slate-500">{c.cnrNumber}</span>
-                                <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${c.urgency === 'HIGH' ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600'}`}>{c.urgency}</span>
-                            </div>
-                            <h4 className="font-bold text-sm text-slate-800 dark:text-slate-200 truncate">{c.complainant} v. {c.respondent}</h4>
-                            <div className="flex gap-2 mt-2">
-                                <span className="text-[10px] bg-slate-100 dark:bg-slate-700 px-2 rounded text-slate-600 dark:text-slate-400">{c.caseType}</span>
-                            </div>
-                        </div>
+                            caseData={c}
+                            isSelected={selectedCase?.id === c.id}
+                            onSelect={handleCaseSelect}
+                        />
                     ))}
                 </div>
             </div>

@@ -7,13 +7,13 @@ def verify_endpoint(name, url, method="GET", json_data=None):
     try:
         if method == "GET":
             response = requests.get(url)
-            else:
+        else:
             response = requests.post(url, json=json_data)
         
         if response.status_code == 200:
             print(f"✅ {name}: SUCCESS")
             return True
-            else:
+        else:
             print(f"❌ {name}: FAILED ({response.status_code}) - {response.text[:100]}")
             return False
     except Exception as e:
@@ -30,8 +30,8 @@ if __name__ == "__main__":
 
     print("\n--- TEST SUMMARY ---")
     if success:
-            print("ALL TESTS PASSED")
-            sys.exit(0)
+        print("ALL TESTS PASSED")
+        sys.exit(0)
     else:
-            print("SOME TESTS FAILED")
-            sys.exit(1)
+        print("SOME TESTS FAILED")
+        sys.exit(1)

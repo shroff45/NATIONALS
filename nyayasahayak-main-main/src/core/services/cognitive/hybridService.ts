@@ -240,16 +240,16 @@ const partsToText = (parts: Part[] | string): string => {
     return parts.map(p => p.text).join('\n');
 };
 
-export const hybridService = {
-    predictCaseOutcome: (sanitizedCase: Case, language: string) =>
-        withErrorRecovery(async () => {
+export const hybridService: any = {
+    predictCaseOutcome: async (sanitizedCase: Case, language: string) =>
+        await withErrorRecovery(async () => {
             if (AI_PROVIDER === 'OPENAI') {
                 return await predictCaseOutcomeOpenAI(sanitizedCase, language);
             }
             return await predictCaseOutcomeInternal(sanitizedCase, language);
         }, fallbackPrediction),
 
-    analyzeDocuments: (parts: Part[]) =>
+    analyzeDocuments: async (parts: Part[]) =>
         withErrorRecovery(async () => {
             if (AI_PROVIDER === 'OPENAI') {
                 const text = partsToText(parts);
@@ -266,7 +266,7 @@ export const hybridService = {
         return await chatWithNyayabotInternal(message, ragParts, history);
     },
 
-    generateQuantumFingerprint: (content: string | Part[], language: string) =>
+    generateQuantumFingerprint: async (content: string | Part[], language: string) =>
         withErrorRecovery(async () => {
             if (AI_PROVIDER === 'OPENAI') {
                 const text = partsToText(content as Part[]); // Cast mainly for safe handling

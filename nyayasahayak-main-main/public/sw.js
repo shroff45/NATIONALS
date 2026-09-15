@@ -1,4 +1,3 @@
-/* eslint-disable no-restricted-globals */
 const CACHE_NAME = 'nyaya-sahayak-v1';
 const URLS_TO_CACHE = [
     '/',

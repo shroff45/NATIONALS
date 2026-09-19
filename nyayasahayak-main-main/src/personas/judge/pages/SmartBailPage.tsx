@@ -82,9 +82,12 @@ const SmartBailPage: React.FC = () => {
         }
     };
 
-    const filteredCases = MOCK_CASES.filter(c =>
-        c.accused.toLowerCase().includes(search.toLowerCase())
-    );
+    // ⚡ Bolt: Memoize filtered cases to prevent recalculating on every re-render
+    const filteredCases = React.useMemo(() => {
+        return MOCK_CASES.filter(c =>
+            c.accused.toLowerCase().includes(search.toLowerCase())
+        );
+    }, [search]);
 
     return (
         <div className="p-6 h-full flex flex-col lg:flex-row gap-6">

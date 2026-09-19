@@ -28,7 +28,7 @@ class Case(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
     # Minimal fields for test
 
-def test_db():
+def verify_db():
     print("Creating tables...")
     try:
         Base.metadata.create_all(bind=engine)
@@ -72,4 +72,4 @@ def test_db():
         db.close()
 
 if __name__ == "__main__":
-    test_db()
+    verify_db()

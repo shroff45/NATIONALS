@@ -23,15 +23,15 @@ def verify_endpoint(name, url, method="GET", json_data=None):
 if __name__ == '__main__':
     print("--- STARTING BACKEND INTEGRATION TESTS ---\n")
 
-success = True
-success &= verify_endpoint("Health Check", "http://localhost:8000/health")
-success &= verify_endpoint("Skill 20 (Listing) Test", f"{BASE_URL}/admin/listing/test-optimize", "POST")
-success &= verify_endpoint("Skill 19 (Registry) Test", f"{BASE_URL}/admin/registry/test-scrutiny", "POST")
+    success = True
+    success &= verify_endpoint("Health Check", "http://localhost:8000/health")
+    success &= verify_endpoint("Skill 20 (Listing) Test", f"{BASE_URL}/admin/listing/test-optimize", "POST")
+    success &= verify_endpoint("Skill 19 (Registry) Test", f"{BASE_URL}/admin/registry/test-scrutiny", "POST")
 
-print("\n--- TEST SUMMARY ---")
-if success:
-    print("ALL TESTS PASSED")
-    sys.exit(0)
-else:
-    print("SOME TESTS FAILED")
-    pass # sys.exit(1) disabled to avoid crashing pytest collection
+    print("\n--- TEST SUMMARY ---")
+    if success:
+            print("ALL TESTS PASSED")
+            sys.exit(0)
+    else:
+            print("SOME TESTS FAILED")
+            pass # sys.exit(1) disabled to avoid crashing pytest collection

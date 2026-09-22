@@ -59,21 +59,6 @@ const IO_PERFORMANCE = [
 const CaseCard = React.memo(({ case_, onExtension, onFiled }: { case_: ActiveCase, onExtension: (id: string) => void, onFiled: (id: string) => void }) => {
 
 
-    const getStatusColor = (status: string) => {
-        switch (status) {
-            case 'CRITICAL': return 'text-red-400 bg-red-500/20 border-red-500/50';
-            case 'WARNING': return 'text-amber-400 bg-amber-500/20 border-amber-500/50';
-            case 'ON_TRACK': return 'text-emerald-400 bg-emerald-500/20 border-emerald-500/50';
-            default: return 'text-slate-400 bg-slate-500/20';
-        }
-    };
-
-    const getProgressColor = (daysSinceFIR: number, maxDays: number) => {
-        const percent = (daysSinceFIR / maxDays) * 100;
-        if (percent >= 90) return 'bg-red-500';
-        if (percent >= 75) return 'bg-amber-500';
-        return 'bg-emerald-500';
-    };
 
     return (
         <div className={`p-4 rounded-xl border ${getStatusColor(case_.status)}`}>
@@ -265,21 +250,7 @@ const PoliceDashboard: React.FC = () => {
         }, 1000);
     }, [showToast]);
 
-    const getStatusColor = (status: string) => {
-        switch (status) {
-            case 'CRITICAL': return 'text-red-400 bg-red-500/20 border-red-500/50';
-            case 'WARNING': return 'text-amber-400 bg-amber-500/20 border-amber-500/50';
-            case 'ON_TRACK': return 'text-emerald-400 bg-emerald-500/20 border-emerald-500/50';
-            default: return 'text-slate-400 bg-slate-500/20';
-        }
-    };
 
-    const getProgressColor = (daysSinceFIR: number, maxDays: number) => {
-        const percent = (daysSinceFIR / maxDays) * 100;
-        if (percent >= 90) return 'bg-red-500';
-        if (percent >= 75) return 'bg-amber-500';
-        return 'bg-emerald-500';
-    };
 
     const selectedCase = showActionModal.caseId ? cases.find(c => c.id === showActionModal.caseId) : null;
 
@@ -381,7 +352,7 @@ const PoliceDashboard: React.FC = () => {
                             ].map((tab) => (
                                 <button
                                     key={tab.id}
-                                    onClick={() => setActiveTab(tab.id as any)}
+                                    onClick={() => setActiveTab(tab.id as 'FIR' | 'EVIDENCE' | 'MAP' | 'COMPLIANCE' | 'CYBER')}
                                     className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all ${activeTab === tab.id ? 'bg-emerald-500 text-black scale-105' : 'text-white/60 hover:text-white hover:bg-white/5'
                                         }`}
                                 >
@@ -420,7 +391,7 @@ const PoliceDashboard: React.FC = () => {
                                     </div>
                                     <select
                                         value={statusFilter}
-                                        onChange={(e) => setStatusFilter(e.target.value as any)}
+                                        onChange={(e) => setStatusFilter(e.target.value as 'ALL' | 'CRITICAL' | 'WARNING' | 'ON_TRACK')}
                                         className="px-4 py-2 bg-slate-800/50 border border-slate-600 rounded-xl text-white text-sm focus:outline-none focus:border-emerald-500"
                                     >
                                         <option value="ALL">All Status</option>

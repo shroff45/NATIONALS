@@ -34,12 +34,13 @@ const CaseQueuePage: React.FC = () => {
     const [filter, setFilter] = useState<string>('ALL');
     const [selectedCase, setSelectedCase] = useState<QueueCase | null>(null);
 
-    const filteredCases = MOCK_QUEUE.filter(c => {
+    // ⚡ Bolt: Memoize filtered cases to prevent unnecessary re-computations on every render
+    const filteredCases = React.useMemo(() => MOCK_QUEUE.filter(c => {
         const matchesSearch = c.title.toLowerCase().includes(search.toLowerCase()) ||
             c.cnr.toLowerCase().includes(search.toLowerCase());
         const matchesFilter = filter === 'ALL' || c.type === filter;
         return matchesSearch && matchesFilter;
-    });
+    }), [search, filter]);
 
     const getPriorityColor = (priority: string) => {
         switch (priority) {

@@ -195,11 +195,12 @@ District Judge
         { id: 'WELLNESS', label: 'Wellness Check', icon: Heart },
     ];
 
-    const filteredCases = MOCK_CASES.filter(c =>
+    // ⚡ Bolt: Memoize filtered cases to prevent unnecessary re-computations on every render
+    const filteredCases = React.useMemo(() => MOCK_CASES.filter(c =>
         (c.cnrNumber || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
         (c.complainant || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
         (c.respondent || '').toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    ), [searchQuery]);
 
     const lawyerRisk = getLawyerRisk(selectedCase?.lawyerId);
 

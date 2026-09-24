@@ -206,7 +206,6 @@ const CaseIntakeTriage: React.FC<CaseIntakeTriageProps> = ({ t, allCases, setAll
     const [isPiiModalOpen, setIsPiiModalOpen] = useState(false);
     const [detectedPii, setDetectedPii] = useState<{ [key: string]: string }>({});
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-    const [filteredCases, setFilteredCases] = useState<Case[]>(allCases);
     const [searchTerm, setSearchTerm] = useState('');
     const [activeCaseType, setActiveCaseType] = useState<CaseTypeFilter>('All');
     const [activePriority, setActivePriority] = useState<PriorityFilter>('All');
@@ -215,7 +214,8 @@ const CaseIntakeTriage: React.FC<CaseIntakeTriageProps> = ({ t, allCases, setAll
     // Notes State
     const [notes, setNotes] = useState('');
 
-    useEffect(() => {
+    // ⚡ Bolt: Memoize filtered cases to prevent unnecessary re-computations on every render
+    const filteredCases = React.useMemo(() => {
         let cases = [...allCases];
         const lowercasedSearch = searchTerm.toLowerCase();
 
@@ -235,7 +235,7 @@ const CaseIntakeTriage: React.FC<CaseIntakeTriageProps> = ({ t, allCases, setAll
                 c.respondent.toLowerCase().includes(lowercasedSearch)
             );
         }
-        setFilteredCases(cases);
+        return cases;
     }, [searchTerm, activeCaseType, activePriority, allCases]);
 
     useEffect(() => {

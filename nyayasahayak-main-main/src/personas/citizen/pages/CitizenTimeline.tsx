@@ -83,10 +83,11 @@ const CitizenTimeline: React.FC = () => {
     const [isLoading, setIsLoading] = useState(false);
     const timelineRef = useRef<HTMLDivElement>(null);
 
-    const filteredCases = mockCitizenCases.filter(c =>
+    // ⚡ Bolt: Memoize filtered cases to prevent unnecessary re-computations on every render
+    const filteredCases = React.useMemo(() => mockCitizenCases.filter(c =>
         c.cnr.toLowerCase().includes(searchQuery.toLowerCase()) ||
         c.title.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    ), [searchQuery]);
 
     useEffect(() => {
         if (!selectedCase || !timelineRef.current) return;

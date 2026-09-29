@@ -53,6 +53,67 @@ const IO_PERFORMANCE = [
     { name: 'SI Neha Gupta', cases: 1, onTrack: 1, critical: 0, warning: 0, score: 95 },
 ];
 
+const getStatusColor = (status: string) => {
+    switch (status) {
+        case 'CRITICAL': return 'text-red-400 bg-red-500/20 border-red-500/50';
+        case 'WARNING': return 'text-amber-400 bg-amber-500/20 border-amber-500/50';
+        case 'ON_TRACK': return 'text-emerald-400 bg-emerald-500/20 border-emerald-500/50';
+        default: return 'text-slate-400 bg-slate-500/20';
+    }
+};
+
+const getProgressColor = (daysSinceFIR: number, maxDays: number) => {
+    const percent = (daysSinceFIR / maxDays) * 100;
+    if (percent >= 90) return 'bg-red-500';
+    if (percent >= 75) return 'bg-amber-500';
+    return 'bg-emerald-500';
+};
+
+// Bolt: Extracted CaseItem into a memoized component to prevent unnecessary re-renders
+// when the parent PoliceDashboard re-renders (e.g. during auto-refresh).
+interface CaseItemProps {
+    case_: ActiveCase;
+    setShowActionModal: React.Dispatch<React.SetStateAction<{ type: 'extension' | 'filed' | null; caseId: string | null }>>;
+}
+
+const CaseItem = React.memo(({ case_, setShowActionModal }: CaseItemProps) => {
+    return (
+        <div className={`p-4 rounded-xl border ${getStatusColor(case_.status)}`}>
+            <div className="flex items-center justify-between mb-3">
+                <div>
+                    <p className="font-bold text-white">{case_.firNumber}</p>
+                    <p className="text-xs text-slate-400">{case_.section} • IO: {case_.ioName}</p>
+                </div>
+                <div className="flex items-center gap-2">
+                    <button
+                        onClick={() => setShowActionModal({ type: 'extension', caseId: case_.id })}
+                        className="px-2 py-1 bg-amber-500/20 border border-amber-500/50 rounded text-xs text-amber-400 hover:bg-amber-500/30"
+                    >
+                        Request Extension
+                    </button>
+                    <button
+                        onClick={() => setShowActionModal({ type: 'filed', caseId: case_.id })}
+                        className="px-2 py-1 bg-emerald-500/20 border border-emerald-500/50 rounded text-xs text-emerald-400 hover:bg-emerald-500/30"
+                    >
+                        Mark Filed
+                    </button>
+                </div>
+            </div>
+            <div className="space-y-1">
+                <div className="flex justify-between text-xs">
+                    <span className="text-slate-400">Day {case_.daysSinceFIR} of {case_.maxDays}</span>
+                    <span className={case_.status === 'CRITICAL' ? 'text-red-400 font-bold' : 'text-slate-400'}>
+                        {case_.maxDays - case_.daysSinceFIR} days remaining
+                    </span>
+                </div>
+                <div className="h-2 bg-slate-700 rounded-full overflow-hidden">
+                    <div className={`h-full ${getProgressColor(case_.daysSinceFIR, case_.maxDays)} transition-all`} style={{ width: `${(case_.daysSinceFIR / case_.maxDays) * 100}%` }} />
+                </div>
+            </div>
+        </div>
+    );
+});
+
 const PoliceDashboard: React.FC = () => {
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState<'FIR' | 'EVIDENCE' | 'MAP' | 'COMPLIANCE' | 'CYBER'>('COMPLIANCE');
@@ -196,21 +257,7 @@ const PoliceDashboard: React.FC = () => {
         }, 1000);
     }, [showToast]);
 
-    const getStatusColor = (status: string) => {
-        switch (status) {
-            case 'CRITICAL': return 'text-red-400 bg-red-500/20 border-red-500/50';
-            case 'WARNING': return 'text-amber-400 bg-amber-500/20 border-amber-500/50';
-            case 'ON_TRACK': return 'text-emerald-400 bg-emerald-500/20 border-emerald-500/50';
-            default: return 'text-slate-400 bg-slate-500/20';
-        }
-    };
 
-    const getProgressColor = (daysSinceFIR: number, maxDays: number) => {
-        const percent = (daysSinceFIR / maxDays) * 100;
-        if (percent >= 90) return 'bg-red-500';
-        if (percent >= 75) return 'bg-amber-500';
-        return 'bg-emerald-500';
-    };
 
     const selectedCase = showActionModal.caseId ? cases.find(c => c.id === showActionModal.caseId) : null;
 
@@ -409,39 +456,7 @@ const PoliceDashboard: React.FC = () => {
                                                 <p>No cases match your filter criteria</p>
                                             </div>
                                         ) : filteredCases.map((case_) => (
-                                            <div key={case_.id} className={`p-4 rounded-xl border ${getStatusColor(case_.status)}`}>
-                                                <div className="flex items-center justify-between mb-3">
-                                                    <div>
-                                                        <p className="font-bold text-white">{case_.firNumber}</p>
-                                                        <p className="text-xs text-slate-400">{case_.section} • IO: {case_.ioName}</p>
-                                                    </div>
-                                                    <div className="flex items-center gap-2">
-                                                        <button
-                                                            onClick={() => setShowActionModal({ type: 'extension', caseId: case_.id })}
-                                                            className="px-2 py-1 bg-amber-500/20 border border-amber-500/50 rounded text-xs text-amber-400 hover:bg-amber-500/30"
-                                                        >
-                                                            Request Extension
-                                                        </button>
-                                                        <button
-                                                            onClick={() => setShowActionModal({ type: 'filed', caseId: case_.id })}
-                                                            className="px-2 py-1 bg-emerald-500/20 border border-emerald-500/50 rounded text-xs text-emerald-400 hover:bg-emerald-500/30"
-                                                        >
-                                                            Mark Filed
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                                <div className="space-y-1">
-                                                    <div className="flex justify-between text-xs">
-                                                        <span className="text-slate-400">Day {case_.daysSinceFIR} of {case_.maxDays}</span>
-                                                        <span className={case_.status === 'CRITICAL' ? 'text-red-400 font-bold' : 'text-slate-400'}>
-                                                            {case_.maxDays - case_.daysSinceFIR} days remaining
-                                                        </span>
-                                                    </div>
-                                                    <div className="h-2 bg-slate-700 rounded-full overflow-hidden">
-                                                        <div className={`h-full ${getProgressColor(case_.daysSinceFIR, case_.maxDays)} transition-all`} style={{ width: `${(case_.daysSinceFIR / case_.maxDays) * 100}%` }} />
-                                                    </div>
-                                                </div>
-                                            </div>
+                                            <CaseItem key={case_.id} case_={case_} setShowActionModal={setShowActionModal} />
                                         ))}
                                     </div>
                                 </div>

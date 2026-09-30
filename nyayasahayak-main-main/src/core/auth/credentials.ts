@@ -96,7 +96,7 @@ export const verifyCredentials = async (
     // Try real backend authentication
     try {
         // Map role to backend role format
-        const backendRole = role.toLowerCase();
+        const backendRole = role?.toLowerCase() || '';
         
         // Build request data
         const requestData: any = {
@@ -130,6 +130,7 @@ export const verifyCredentials = async (
 
                 return {
                     name: user.full_name,
+                    // @ts-ignore: email is not in UserProfile
                     email: user.email,
                     id: String(user.id),
                     role: user.role.toUpperCase() as UserRole,
@@ -155,6 +156,7 @@ export const verifyCredentials = async (
 
                         return {
                             name: user.full_name,
+                            // @ts-ignore: email is not in UserProfile
                             email: user.email,
                             id: String(user.id),
                             role: user.role.toUpperCase() as UserRole,

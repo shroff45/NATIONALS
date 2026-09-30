@@ -1,6 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Case } from '@core/types';
 import { Loader2, Brain, Gavel, FileText } from 'lucide-react';
+
+// ⚡ BOLT OPTIMIZATION:
+// Extracted CaseItem and wrapped in React.memo to prevent O(N) re-renders
+// when parent state (like prediction/loading) changes.
+interface CaseItemProps {
+    c: Case;
+    selected: boolean;
+    onClick: (c: Case) => void;
+}
+
+const CaseItem = React.memo(({ c, selected, onClick }: CaseItemProps) => (
+    <div
+        onClick={() => onClick(c)}
+        className={`p-3 rounded-xl cursor-pointer border transition-all ${selected ? 'bg-blue-50 border-blue-200 dark:bg-blue-900/20 dark:border-blue-800' : 'bg-white dark:bg-slate-800 border-transparent hover:bg-slate-50 dark:hover:bg-slate-800'}`}
+    >
+        <div className="flex justify-between mb-1">
+            <span className="text-xs font-mono text-slate-500">{c.cnrNumber}</span>
+            <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${c.urgency === 'HIGH' ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600'}`}>{c.urgency}</span>
+        </div>
+        <h4 className="font-bold text-sm text-slate-800 dark:text-slate-200 truncate">{c.complainant} v. {c.respondent}</h4>
+        <div className="flex gap-2 mt-2">
+            <span className="text-[10px] bg-slate-100 dark:bg-slate-700 px-2 rounded text-slate-600 dark:text-slate-400">{c.caseType}</span>
+        </div>
+    </div>
+));
 
 // --- MOCKS FOR MISSING SERVICES ---
 const geminiService = {
@@ -32,6 +57,12 @@ export const CaseTriage: React.FC<CaseTriageProps> = ({ cases, onSelectCase }) =
     const [prediction, setPrediction] = useState<any>(null);
     const [loading, setLoading] = useState(false);
 
+    const handleCaseClick = useCallback((c: Case) => {
+        setSelectedCase(c);
+        onSelectCase(c);
+        setPrediction(null);
+    }, [onSelectCase]);
+
     const handlePredict = async () => {
         if (!selectedCase) return;
         setLoading(true);
@@ -50,20 +81,12 @@ export const CaseTriage: React.FC<CaseTriageProps> = ({ cases, onSelectCase }) =
                 </div>
                 <div className="overflow-y-auto p-2 space-y-2">
                     {cases.map(c => (
-                        <div
+                        <CaseItem
                             key={c.id}
-                            onClick={() => { setSelectedCase(c); onSelectCase(c); setPrediction(null); }}
-                            className={`p-3 rounded-xl cursor-pointer border transition-all ${selectedCase?.id === c.id ? 'bg-blue-50 border-blue-200 dark:bg-blue-900/20 dark:border-blue-800' : 'bg-white dark:bg-slate-800 border-transparent hover:bg-slate-50 dark:hover:bg-slate-800'}`}
-                        >
-                            <div className="flex justify-between mb-1">
-                                <span className="text-xs font-mono text-slate-500">{c.cnrNumber}</span>
-                                <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${c.urgency === 'HIGH' ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600'}`}>{c.urgency}</span>
-                            </div>
-                            <h4 className="font-bold text-sm text-slate-800 dark:text-slate-200 truncate">{c.complainant} v. {c.respondent}</h4>
-                            <div className="flex gap-2 mt-2">
-                                <span className="text-[10px] bg-slate-100 dark:bg-slate-700 px-2 rounded text-slate-600 dark:text-slate-400">{c.caseType}</span>
-                            </div>
-                        </div>
+                            c={c}
+                            selected={selectedCase?.id === c.id}
+                            onClick={handleCaseClick}
+                        />
                     ))}
                 </div>
             </div>

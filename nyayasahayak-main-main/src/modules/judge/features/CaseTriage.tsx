@@ -18,6 +18,30 @@ const geminiService = {
 // --- INLINE COMPONENTS ---
 const Spinner = () => <Loader2 className="animate-spin text-blue-600" />;
 
+// ⚡ Bolt: Memoized CaseItem to prevent re-renders when parent state changes
+interface CaseItemProps {
+    c: Case;
+    isSelected: boolean;
+    onClick: (c: Case) => void;
+}
+
+const CaseItem = React.memo(({ c, isSelected, onClick }: CaseItemProps) => (
+    <div
+        onClick={() => onClick(c)}
+        className={`p-3 rounded-xl cursor-pointer border transition-all ${isSelected ? 'bg-blue-50 border-blue-200 dark:bg-blue-900/20 dark:border-blue-800' : 'bg-white dark:bg-slate-800 border-transparent hover:bg-slate-50 dark:hover:bg-slate-800'}`}
+    >
+        <div className="flex justify-between mb-1">
+            <span className="text-xs font-mono text-slate-500">{c.cnrNumber}</span>
+            <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${c.urgency === 'HIGH' ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600'}`}>{c.urgency}</span>
+        </div>
+        <h4 className="font-bold text-sm text-slate-800 dark:text-slate-200 truncate">{c.complainant} v. {c.respondent}</h4>
+        <div className="flex gap-2 mt-2">
+            <span className="text-[10px] bg-slate-100 dark:bg-slate-700 px-2 rounded text-slate-600 dark:text-slate-400">{c.caseType}</span>
+        </div>
+    </div>
+));
+
+
 // Modal component removed as it was unused in the simplified version
 
 
@@ -40,6 +64,13 @@ export const CaseTriage: React.FC<CaseTriageProps> = ({ cases, onSelectCase }) =
         setLoading(false);
     };
 
+    // ⚡ Bolt: Memoized handler to avoid creating new references on every render
+    const handleCaseClick = React.useCallback((c: Case) => {
+        setSelectedCase(c);
+        onSelectCase(c);
+        setPrediction(null);
+    }, [onSelectCase]);
+
     return (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 h-full">
             {/* LIST VIEW */}
@@ -50,20 +81,12 @@ export const CaseTriage: React.FC<CaseTriageProps> = ({ cases, onSelectCase }) =
                 </div>
                 <div className="overflow-y-auto p-2 space-y-2">
                     {cases.map(c => (
-                        <div
+                        <CaseItem
                             key={c.id}
-                            onClick={() => { setSelectedCase(c); onSelectCase(c); setPrediction(null); }}
-                            className={`p-3 rounded-xl cursor-pointer border transition-all ${selectedCase?.id === c.id ? 'bg-blue-50 border-blue-200 dark:bg-blue-900/20 dark:border-blue-800' : 'bg-white dark:bg-slate-800 border-transparent hover:bg-slate-50 dark:hover:bg-slate-800'}`}
-                        >
-                            <div className="flex justify-between mb-1">
-                                <span className="text-xs font-mono text-slate-500">{c.cnrNumber}</span>
-                                <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${c.urgency === 'HIGH' ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600'}`}>{c.urgency}</span>
-                            </div>
-                            <h4 className="font-bold text-sm text-slate-800 dark:text-slate-200 truncate">{c.complainant} v. {c.respondent}</h4>
-                            <div className="flex gap-2 mt-2">
-                                <span className="text-[10px] bg-slate-100 dark:bg-slate-700 px-2 rounded text-slate-600 dark:text-slate-400">{c.caseType}</span>
-                            </div>
-                        </div>
+                            c={c}
+                            isSelected={selectedCase?.id === c.id}
+                            onClick={handleCaseClick}
+                        />
                     ))}
                 </div>
             </div>

@@ -313,10 +313,10 @@ def run_tests():
     # Print failed tests
     if results['failed'] > 0:
         print("\nFAILED TESTS:")
-        for test_item in results['tests']:
-            if test_item['status'] == "FAIL":
+        for verify_item in results['tests']:
+            if verify_item['status'] == "FAIL":
                 print(f"  - {test_item['name']}")
-                if test_item['details']:
+                if verify_item['details']:
                     print(f"    {test_item['details']}")
     
     return results['failed'] == 0

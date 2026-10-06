@@ -130,7 +130,7 @@ export const verifyCredentials = async (
 
                 return {
                     name: user.full_name,
-                    // // // email: user.email,
+                    // // // // email: user.email,
                     id: String(user.id),
                     role: (user.role || "").toUpperCase() as UserRole,
                     avatar: user.google_profile_picture || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.full_name}`,
@@ -155,9 +155,9 @@ export const verifyCredentials = async (
 
                         return {
                             name: user.full_name,
-                            // email: user.email,
+                            // // email: user.email,
                             id: String(user.id),
-                            role: user.role.toUpperCase() as UserRole,
+                            role: (user.role || "").toUpperCase() as UserRole,
                             avatar: user.google_profile_picture || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.full_name}`,
                             station: metadata?.station,
                             courtId: metadata?.courtId,

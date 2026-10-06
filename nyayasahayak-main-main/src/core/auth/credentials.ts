@@ -81,7 +81,7 @@ export const verifyCredentials = async (
     // First try mock credentials for demo purposes
     const idBeforeAt = cleanId.split('@')[0];
     const mockUser = MOCK_USERS.find(u =>
-        u.role === role &&
+        (u.role || "") === role &&
         (u.username === cleanId ||
             u.username === idBeforeAt ||
             u.id === cleanId)
@@ -96,7 +96,7 @@ export const verifyCredentials = async (
     // Try real backend authentication
     try {
         // Map role to backend role format
-        const backendRole = role.toLowerCase();
+        const backendRole = (role || "").toLowerCase();
         
         // Build request data
         const requestData: any = {
@@ -130,9 +130,9 @@ export const verifyCredentials = async (
 
                 return {
                     name: user.full_name,
-                    email: user.email,
+                    // // // // email: user.email,
                     id: String(user.id),
-                    role: user.role.toUpperCase() as UserRole,
+                    role: (user.role || "").toUpperCase() as UserRole,
                     avatar: user.google_profile_picture || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.full_name}`,
                     station: metadata?.station,
                     courtId: metadata?.courtId,
@@ -155,9 +155,9 @@ export const verifyCredentials = async (
 
                         return {
                             name: user.full_name,
-                            email: user.email,
+                            // // email: user.email,
                             id: String(user.id),
-                            role: user.role.toUpperCase() as UserRole,
+                            role: (user.role || "").toUpperCase() as UserRole,
                             avatar: user.google_profile_picture || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.full_name}`,
                             station: metadata?.station,
                             courtId: metadata?.courtId,

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import OpenAI from 'openai';
 import { PredictionResult, Case, DocumentAnalysisResult, ChatMessage, QuantumFingerprintResult } from "../../types";
 

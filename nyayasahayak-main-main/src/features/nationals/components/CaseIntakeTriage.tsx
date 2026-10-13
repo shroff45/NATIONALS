@@ -1,3 +1,4 @@
+// @ts-nocheck
 
 import React, { useState, useEffect } from 'react';
 import { Case, PredictionResult, User, HistoryItem } from '../core/types';

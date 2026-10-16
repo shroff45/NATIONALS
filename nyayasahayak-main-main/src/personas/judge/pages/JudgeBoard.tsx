@@ -179,7 +179,7 @@ interface CaseCardProps {
     isSelected: boolean;
     onSelect: (case_: BoardCase) => void;
     blindMode: boolean;
-    getBNSSStatus: (case_: BoardCase) => 'NORMAL' | 'WARNING' | 'CRITICAL';
+    getBNSSStatus: (case_: BoardCase) => 'NORMAL' | 'WARNING' | 'CRITICAL' | null;
     getPriorityColor: (priority: string) => string;
     getCaseTypeIcon: (type: string) => React.ReactNode;
     getRiskColor: (risk: string) => string;
@@ -393,8 +393,8 @@ const JudgeBoard: React.FC = () => {
         const remaining = case_.maxDays - case_.investigationDays;
         if (remaining <= 5) return 'CRITICAL';
         if (remaining <= 15) return 'WARNING';
-        return 'OK';
-    };
+        return 'NORMAL';
+    }, []);
 
     const getPriorityColor = useCallback((priority: string) => {
         switch (priority) {
@@ -404,7 +404,7 @@ const JudgeBoard: React.FC = () => {
             case 'LOW': return 'bg-slate-500/20 text-slate-400 border-slate-500/50';
             default: return 'bg-slate-500/20 text-slate-400';
         }
-    };
+    }, []);
 
     const getCaseTypeIcon = useCallback((type: string) => {
         switch (type) {
@@ -415,7 +415,7 @@ const JudgeBoard: React.FC = () => {
             case 'JUDGMENT': return <Gavel className="w-4 h-4" />;
             default: return <FileText className="w-4 h-4" />;
         }
-    };
+    }, []);
 
     const getRiskColor = useCallback((risk: string) => {
         switch (risk) {
@@ -433,7 +433,7 @@ const JudgeBoard: React.FC = () => {
             case 'PENDING': return 'text-red-400 bg-red-500/20';
             default: return 'text-slate-400 bg-slate-500/20';
         }
-    };
+    }, []);
 
     // Stats
     const urgentCount = MOCK_CASES.filter(c => c.priority === 'URGENT').length;

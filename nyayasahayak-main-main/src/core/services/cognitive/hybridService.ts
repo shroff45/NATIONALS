@@ -1,6 +1,6 @@
 import { GoogleGenAI, Type, GenerateContentResponse, Part } from "@google/genai";
 import { PredictionResult, Case, DocumentAnalysisResult, ChatMessage, QuantumFingerprintResult } from "../../types";
-import { withErrorRecovery } from "../../lib/withErrorRecovery";
+import { withErrorRecovery } from "../../../lib/withErrorRecovery";
 
 // --- Env Variables ---
 const GEMINI_API_KEY = import.meta.env.GEMINI_API_KEY || import.meta.env.VITE_GEMINI_API_KEY;
@@ -241,22 +241,24 @@ const partsToText = (parts: Part[] | string): string => {
 };
 
 export const hybridService = {
-    predictCaseOutcome: (sanitizedCase: Case, language: string) =>
-        withErrorRecovery(async () => {
+    predictCaseOutcome: (sanitizedCase: Case, language: string) => {
+        return withErrorRecovery(async () => {
             if (AI_PROVIDER === 'OPENAI') {
                 return await predictCaseOutcomeOpenAI(sanitizedCase, language);
             }
             return await predictCaseOutcomeInternal(sanitizedCase, language);
-        }, fallbackPrediction),
+        }, fallbackPrediction)();
+    },
 
-    analyzeDocuments: (parts: Part[]) =>
-        withErrorRecovery(async () => {
+    analyzeDocuments: (parts: Part[]) => {
+        return withErrorRecovery(async () => {
             if (AI_PROVIDER === 'OPENAI') {
                 const text = partsToText(parts);
                 return await analyzeDocumentsOpenAI(text);
             }
             return await analyzeDocumentsInternal(parts);
-        }, fallbackDocAnalysis),
+        }, fallbackDocAnalysis)();
+    },
 
     chatWithNyayabot: async (message: string, ragParts?: Part[], history: ChatMessage[] = []) => {
         if (AI_PROVIDER === 'OPENAI') {
@@ -266,14 +268,15 @@ export const hybridService = {
         return await chatWithNyayabotInternal(message, ragParts, history);
     },
 
-    generateQuantumFingerprint: (content: string | Part[], language: string) =>
-        withErrorRecovery(async () => {
+    generateQuantumFingerprint: (content: string | Part[], language: string) => {
+        return withErrorRecovery(async () => {
             if (AI_PROVIDER === 'OPENAI') {
-                const text = partsToText(content as Part[]); // Cast mainly for safe handling
+                const text = partsToText(content as Part[]);
                 return await generateQuantumFingerprintOpenAI(text, language);
             }
             return await generateQuantumFingerprintInternal(content, language);
-        }, fallbackFingerprint),
+        }, fallbackFingerprint)();
+    },
 
     transcribeAudio: async (audioPart: Part) => {
         // OpenAI Whisper would be ideal here, but for now we fallback to Gemini or just skip if OpenAI selected but no audio impl

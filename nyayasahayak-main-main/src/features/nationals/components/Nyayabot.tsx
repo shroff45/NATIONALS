@@ -221,10 +221,23 @@ const Nyayabot: React.FC<NyayabotProps> = ({ t, messages, setMessages, currentUs
             );
 
             const response = await geminiService.chatWithNyayabot(userMessage, fileParts, newMessages);
-            const groundingChunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks;
-            const sources = groundingChunks?.map((chunk: any) => chunk.web.uri);
 
-            const modelResponse: ChatMessage = { role: 'model', content: response.text || '', sources };
+            // Extract text handling both Gemini GenerateContentResponse and OpenAI mock response
+            let responseText = '';
+            let sources = undefined;
+
+            if ('text' in response && typeof response.text === 'function') {
+                 responseText = response.text();
+            } else if ('text' in response && typeof response.text === 'string') {
+                 responseText = response.text;
+            }
+
+            if ('candidates' in response) {
+                 const groundingChunks = (response as any).candidates?.[0]?.groundingMetadata?.groundingChunks;
+                 sources = groundingChunks?.map((chunk: any) => chunk.web.uri);
+            }
+
+            const modelResponse: ChatMessage = { role: 'model', content: responseText || '', sources };
             setMessages([...newMessages, modelResponse]);
         } catch (error: any) {
             console.error("Error chatting with Nyayabot:", error);

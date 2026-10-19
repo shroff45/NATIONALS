@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Case, PredictionResult, User, HistoryItem } from '../types';
 import { geminiService } from '../services/geminiService';
 import { piiService } from '../services/piiService';

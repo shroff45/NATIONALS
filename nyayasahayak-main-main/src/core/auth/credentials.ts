@@ -6,6 +6,11 @@ import api from '../services/api';
 export interface CredentialUser extends UserProfile {
     username: string;
     password: string;
+    email?: string;
+    tokens?: {
+        access_token: string;
+        refresh_token: string;
+    };
 }
 
 // Keep mock users as fallback for demo/development
@@ -96,7 +101,7 @@ export const verifyCredentials = async (
     // Try real backend authentication
     try {
         // Map role to backend role format
-        const backendRole = role.toLowerCase();
+        const backendRole = role?.toLowerCase() || 'citizen';
         
         // Build request data
         const requestData: any = {

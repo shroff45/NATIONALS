@@ -4,7 +4,7 @@ import json
 
 BASE_URL = "http://localhost:8000/api/v1/police/evidence"
 
-def test_evidence_lifecycle():
+def verify_evidence_lifecycle():
     print("🚀 Testing Evidence Locker API...")
     
     # 1. Upload Evidence

@@ -383,7 +383,7 @@ const JudgeBoard: React.FC = () => {
 
     // Calculate BNSS compliance status
     const getBNSSStatus = (case_: BoardCase) => {
-        if (case_.maxDays === 0) return null; // Civil case
+        if (case_.maxDays === 0) return 'NORMAL'; // Civil case
         const remaining = case_.maxDays - case_.investigationDays;
         if (remaining <= 5) return 'CRITICAL';
         if (remaining <= 15) return 'WARNING';

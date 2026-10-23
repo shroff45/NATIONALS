@@ -1,0 +1,3 @@
+## 2025-02-28 - React Memoization and List Rendering Performance
+**Learning:** In large React dashboards (like JudgeBoard or PoliceDashboard), rendering lists of complex items inside a map function without using `React.memo` causes unnecessary re-renders of the entire list whenever any parent state (like keyboard selection, modal toggles, or filter selections) changes. Extracting the inline mapping to a memoized component significantly reduces layout thrashing and CPU usage during UI interactions, which is essential for performance.
+**Action:** Always extract complex inner items from `.map()` blocks into separate components wrapped in `React.memo()`, especially in large dashboard components with frequent state updates (like keyboard navigation).

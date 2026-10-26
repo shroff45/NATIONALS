@@ -1,6 +1,6 @@
 import { GoogleGenAI, Type, GenerateContentResponse, Part } from "@google/genai";
 import { PredictionResult, Case, DocumentAnalysisResult, ChatMessage, QuantumFingerprintResult } from "../../types";
-import { withErrorRecovery } from "../../lib/withErrorRecovery";
+const withErrorRecovery = async <T,>(fn: () => Promise<T>, fallback: any): Promise<T> => { try { return await fn(); } catch { return fallback; } };
 
 // --- Env Variables ---
 const GEMINI_API_KEY = import.meta.env.GEMINI_API_KEY || import.meta.env.VITE_GEMINI_API_KEY;

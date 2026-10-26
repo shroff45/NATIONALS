@@ -89,6 +89,8 @@ export const verifyCredentials = async (
 
     if (mockUser && mockUser.password === cleanPass) {
         // Return profile without sensitive auth data
+        if (!mockUser.role) mockUser.role = 'CITIZEN';
+        // Return profile without sensitive auth data
         const { password: _pw, username: _un, ...profile } = mockUser;
         return profile;
     }
@@ -96,13 +98,13 @@ export const verifyCredentials = async (
     // Try real backend authentication
     try {
         // Map role to backend role format
-        const backendRole = role.toLowerCase();
+        const backendRole = role?.toLowerCase() || 'citizen';
         
         // Build request data
         const requestData: any = {
             email: cleanId.includes('@') ? cleanId : `${cleanId}@demo.local`,
             password: cleanPass,
-            role: backendRole,
+            role: backendRole as UserRole,
             full_name: metadata?.name || cleanId
         };
 

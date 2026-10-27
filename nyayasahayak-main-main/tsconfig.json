@@ -21,17 +21,8 @@
         "noFallthroughCasesInSwitch": true,
         "baseUrl": ".",
         "paths": {
-            "@core/*": [
-                "src/core/*"
-            ],
-            "@personas/*": [
-                "src/personas/*"
-            ],
-            "@shared/*": [
-                "src/shared/*"
-            ],
-            "@app-types/*": [
-                "src/types/*"
+            "@/*": [
+                "./src/*"
             ]
         }
     },

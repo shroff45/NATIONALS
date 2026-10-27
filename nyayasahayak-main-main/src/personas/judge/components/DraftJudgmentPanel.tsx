@@ -1,5 +1,5 @@
 import React from 'react';
-import { Case } from '@core/types';
+import { Case } from '../../../types';
 import { FileSignature, Shield, AlertCircle, CheckCircle, Gavel, Flame, Sparkles } from 'lucide-react';
 
 interface DraftJudgmentPanelProps {

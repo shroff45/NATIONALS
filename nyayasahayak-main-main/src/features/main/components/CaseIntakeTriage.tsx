@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { Case, PredictionResult, User, HistoryItem } from '../types';
 import { geminiService } from '../services/geminiService';
 import { piiService } from '../services/piiService';
@@ -37,7 +37,7 @@ const StatCard: React.FC<{ icon: string; value: number; title: string; subtitle:
     </div>
 );
 
-const CaseCard: React.FC<{ caseData: Case; isSelected: boolean; onSelect: () => void; formatNumber: (n: string) => string }> = ({ caseData, isSelected, onSelect, formatNumber }) => {
+const CaseCard = React.memo(({ caseData, isSelected, onSelect, formatNumber }: { caseData: Case; isSelected: boolean; onSelect: (c: Case) => void; formatNumber: (n: string) => string }) => {
     const typeColors: { [key in Case['caseType']]: string } = {
         Criminal: 'text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 border-red-100 dark:border-red-900/30',
         Civil: 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 border-blue-100 dark:border-blue-900/30',
@@ -48,7 +48,7 @@ const CaseCard: React.FC<{ caseData: Case; isSelected: boolean; onSelect: () => 
 
     return (
         <div
-            onClick={onSelect}
+            onClick={() => onSelect(caseData)}
             className={`p-4 rounded-xl cursor-pointer transition-all duration-200 border mb-2 ${isSelected
                     ? 'bg-white dark:bg-gray-700 border-blue-500 shadow-md ring-1 ring-blue-500/20'
                     : 'bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-750 hover:border-gray-300 dark:hover:border-gray-600'
@@ -82,7 +82,7 @@ const CaseCard: React.FC<{ caseData: Case; isSelected: boolean; onSelect: () => 
             </div>
         </div>
     );
-};
+});
 
 const CreateCaseModal: React.FC<{ isOpen: boolean; onClose: () => void; onSave: (newCase: Omit<Case, 'id' | 'complexityScore' | 'filingDate' | 'lastHearingDate'>) => void; t: (key: string) => string; }> = ({ isOpen, onClose, onSave, t }) => {
     const [newCaseData, setNewCaseData] = useState({
@@ -205,7 +205,6 @@ const CaseIntakeTriage: React.FC<CaseIntakeTriageProps> = ({ t, allCases, setAll
     const [isPiiModalOpen, setIsPiiModalOpen] = useState(false);
     const [detectedPii, setDetectedPii] = useState<{ [key: string]: string }>({});
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-    const [filteredCases, setFilteredCases] = useState<Case[]>(allCases);
     const [searchTerm, setSearchTerm] = useState('');
     const [activeCaseType, setActiveCaseType] = useState<CaseTypeFilter>('All');
     const [activePriority, setActivePriority] = useState<PriorityFilter>('All');
@@ -214,7 +213,8 @@ const CaseIntakeTriage: React.FC<CaseIntakeTriageProps> = ({ t, allCases, setAll
     // Notes State
     const [notes, setNotes] = useState('');
 
-    useEffect(() => {
+    // OPTIMIZATION: Replaced useState/useEffect sync with useMemo to prevent double-renders
+    const filteredCases = useMemo(() => {
         let cases = [...allCases];
         const lowercasedSearch = searchTerm.toLowerCase();
 
@@ -234,7 +234,7 @@ const CaseIntakeTriage: React.FC<CaseIntakeTriageProps> = ({ t, allCases, setAll
                 c.respondent.toLowerCase().includes(lowercasedSearch)
             );
         }
-        setFilteredCases(cases);
+        return cases;
     }, [searchTerm, activeCaseType, activePriority, allCases]);
 
     useEffect(() => {
@@ -285,11 +285,12 @@ const CaseIntakeTriage: React.FC<CaseIntakeTriageProps> = ({ t, allCases, setAll
         logActivity('CASE_CREATED', t('history_case_created').replace('{title}', newCase.title));
     };
 
-    const handleCaseSelect = (caseData: Case) => {
+    // OPTIMIZATION: Memoized selection handler to prevent CaseCard re-renders
+    const handleCaseSelect = useCallback((caseData: Case) => {
         setSelectedCase(caseData);
         setMobileTab('details');
         window.scrollTo({ top: 0, behavior: 'smooth' });
-    };
+    }, []);
 
     const handleSaveNotes = () => {
         if (!selectedCase) return;
@@ -421,7 +422,7 @@ const CaseIntakeTriage: React.FC<CaseIntakeTriageProps> = ({ t, allCases, setAll
                                     key={caseData.id}
                                     caseData={caseData}
                                     isSelected={selectedCase?.id === caseData.id}
-                                    onSelect={() => handleCaseSelect(caseData)}
+                                    onSelect={handleCaseSelect}
                                     formatNumber={formatNumber}
                                 />
                             )) : (

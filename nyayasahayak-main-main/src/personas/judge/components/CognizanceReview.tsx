@@ -20,7 +20,7 @@ import {
 } from 'lucide-react';
 
 
-import type { ForensicCompliance, OverrideReason } from '@app-types/forensic.types';
+import type { ForensicCompliance, OverrideReason } from '../../../types/forensic.types';
 
 interface CognizanceReviewProps {
     caseId: string;

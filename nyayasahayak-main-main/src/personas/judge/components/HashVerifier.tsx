@@ -15,7 +15,7 @@ import {
     FileText,
     AlertTriangle
 } from 'lucide-react';
-import { computeFileHash, verifyFileHash } from '@core/services/evidenceHasher';
+import { computeFileHash, verifyFileHash } from '../../../core/services/evidenceHasher';
 
 interface HashVerifierProps {
     evidenceId?: string;

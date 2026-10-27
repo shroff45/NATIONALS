@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Scan, Loader2 } from 'lucide-react';
-import { documentAnalysis } from '@shared/services/documentAnalysis';
-import { observability } from '@shared/services/observabilityService';
-import { EvidenceAnalysis } from '@core/types';
+import { documentAnalysis } from '../services/documentAnalysis';
+import { observability } from '../services/observabilityService';
+import { EvidenceAnalysis } from '../../types';
 
 export const VisualEvidencePanel = () => {
     const [data, setData] = useState<EvidenceAnalysis | null>(null);
@@ -29,7 +29,7 @@ export const VisualEvidencePanel = () => {
                 {data ? (
                     <>
                         <img src={data.sourceUrl} className="w-full h-full object-cover opacity-50" />
-                        {data.detections.map((d, i) => (
+                        {data.detections.map((d: any, i: number) => (
                             <div key={i} className="absolute border-2 border-green-500 bg-green-500/20"
                                 style={{ left: `${d.bbox.x}%`, top: `${d.bbox.y}%`, width: `${d.bbox.w}%`, height: `${d.bbox.h}%` }}>
                                 <span className="absolute -top-6 left-0 bg-green-600 text-[10px] px-1 rounded font-bold">{d.concept}</span>

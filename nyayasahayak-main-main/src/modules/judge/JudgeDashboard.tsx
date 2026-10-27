@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Case } from '@core/types';
+import { Case } from '../../types';
 import { CaseTriage } from './features/CaseTriage';
-import { VisualEvidencePanel } from '@shared/components/VisualEvidencePanel';
+import { VisualEvidencePanel } from '../../shared/components/VisualEvidencePanel';
 import { Scale, Camera, Activity } from 'lucide-react';
 
 // --- MOCK DATA ---

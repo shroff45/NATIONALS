@@ -1,4 +1,4 @@
-import { AIDecisionTrace } from '@core/types';
+import { AIDecisionTrace } from '../../types';
 
 type Listener = (trace: AIDecisionTrace) => void;
 

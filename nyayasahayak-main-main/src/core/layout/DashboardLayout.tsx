@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { useAuth } from '@core/auth/AuthContext';
+import { useAuth } from '../auth/AuthContext';
 import { LogOut, Shield, Gavel, User, Menu, Home, FileText, Map, Settings, Phone } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
-import { DecisionStream } from '@shared/components/DecisionStream';
+import { DecisionStream } from '../../shared/components/DecisionStream';
 
 export const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const { user, logout } = useAuth();

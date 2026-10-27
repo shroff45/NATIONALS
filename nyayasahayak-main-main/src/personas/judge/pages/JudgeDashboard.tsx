@@ -5,9 +5,9 @@ import {
 } from 'lucide-react';
 
 // --- MODULAR IMPORTS ---
-import { Case } from '@core/types';
-import { VisualEvidencePanel } from '@shared/components/VisualEvidencePanel';
-import { observability } from '@shared/services/observabilityService';
+import { Case } from '../../../types';
+import { VisualEvidencePanel } from '../../../shared/components/VisualEvidencePanel';
+import { observability } from '../../../shared/services/observabilityService';
 
 // --- CROSS-MODULE IMPORTS ---
 

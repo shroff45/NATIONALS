@@ -3,6 +3,7 @@ import { Case } from '@core/types';
 import { CaseTriage } from './features/CaseTriage';
 import { VisualEvidencePanel } from '@shared/components/VisualEvidencePanel';
 import { Scale, Camera, Activity } from 'lucide-react';
+import React from 'react';
 
 // --- MOCK DATA ---
 const MOCK_CASES: Case[] = [
@@ -36,9 +37,36 @@ const MOCK_CASES: Case[] = [
     }
 ];
 
+interface TabButtonProps {
+    tab: { id: string, label: string, icon: React.ElementType };
+    isActive: boolean;
+    onClick: (id: string) => void;
+}
+
+// Performance optimization: Extracted TabButton into React.memo to prevent unnecessary re-renders
+// Impact: Reduces re-renders of inactive tabs when activeTab state changes
+const TabButton = React.memo(({ tab, isActive, onClick }: TabButtonProps) => (
+    <button
+        onClick={() => onClick(tab.id)}
+        className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all ${isActive
+            ? 'bg-blue-600 text-white shadow-md'
+            : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'
+            }`}
+    >
+        <tab.icon size={16} />
+        {tab.label}
+    </button>
+));
+TabButton.displayName = 'TabButton';
+
 export default function JudgeDashboard() {
     const [activeTab, setActiveTab] = useState('TRIAGE');
     const [cases] = useState<Case[]>(MOCK_CASES);
+
+    // Performance optimization: Memoized handleTabClick to maintain referential equality
+    const handleTabClick = React.useCallback((id: string) => {
+        setActiveTab(id);
+    }, []);
 
     const tabs = [
         { id: 'TRIAGE', label: 'Case Triage', icon: Scale },
@@ -55,17 +83,12 @@ export default function JudgeDashboard() {
                 </div>
                 <div className="bg-white dark:bg-slate-900 p-1 rounded-xl border border-slate-200 dark:border-slate-700 flex">
                     {tabs.map(tab => (
-                        <button
+                        <TabButton
                             key={tab.id}
-                            onClick={() => setActiveTab(tab.id)}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all ${activeTab === tab.id
-                                ? 'bg-blue-600 text-white shadow-md'
-                                : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'
-                                }`}
-                        >
-                            <tab.icon size={16} />
-                            {tab.label}
-                        </button>
+                            tab={tab}
+                            isActive={activeTab === tab.id}
+                            onClick={handleTabClick}
+                        />
                     ))}
                 </div>
             </div>

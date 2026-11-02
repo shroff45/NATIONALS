@@ -1,0 +1,3 @@
+## 2024-06-25 - React.memo vs useMemo for Lists
+**Learning:** React \`useMemo\` and \`useEffect\` with local state can introduce subtle performance issues in lists or derived state when not used carefully. Filtering arrays inside \`useEffect\` and setting state causes unnecessary extra renders. Replacing \`useEffect\` + \`useState\` with \`useMemo\` is a clean performance boost. Same goes for inline sorts inside components (like \`STATE_PENDENCY.sort().map(...)\`) that execute on every render.
+**Action:** Always check components doing \`.filter()\` or \`.sort()\` in \`useEffect\` or inline render logic and replace them with \`useMemo\`.

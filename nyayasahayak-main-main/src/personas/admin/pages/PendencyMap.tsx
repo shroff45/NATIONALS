@@ -2,7 +2,7 @@
 // NyayaSahayak Hybrid v2.0.0 - Case Pendency Heatmap
 // Geospatial visualization of case backlogs
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useMemo } from 'react';
 import {
     Map, BarChart3, TrendingDown, AlertTriangle,
     RefreshCw, Filter, Download
@@ -32,6 +32,11 @@ const PendencyMap: React.FC = () => {
     const mapRef = useRef<any>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [selectedState, setSelectedState] = useState<typeof STATE_PENDENCY[0] | null>(null);
+
+    // Bolt ⚡: Memoize sorted state pendency to avoid recalculating on every render
+    const sortedStatePendency = useMemo(() => {
+        return [...STATE_PENDENCY].sort((a, b) => b.pending - a.pending);
+    }, []);
 
     // Load Leaflet from CDN
     useEffect(() => {
@@ -188,7 +193,7 @@ const PendencyMap: React.FC = () => {
                         State Ranking
                     </h3>
                     <div className="space-y-2 overflow-y-auto flex-1">
-                        {STATE_PENDENCY.sort((a, b) => b.pending - a.pending).map((state, idx) => (
+                        {sortedStatePendency.map((state, idx) => (
                             <div
                                 key={state.name}
                                 onClick={() => setSelectedState(state)}

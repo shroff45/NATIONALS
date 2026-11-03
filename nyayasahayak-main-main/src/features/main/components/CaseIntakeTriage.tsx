@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Case, PredictionResult, User, HistoryItem } from '../types';
 import { geminiService } from '../services/geminiService';
 import { piiService } from '../services/piiService';
@@ -37,7 +37,7 @@ const StatCard: React.FC<{ icon: string; value: number; title: string; subtitle:
     </div>
 );
 
-const CaseCard: React.FC<{ caseData: Case; isSelected: boolean; onSelect: () => void; formatNumber: (n: string) => string }> = ({ caseData, isSelected, onSelect, formatNumber }) => {
+const CaseCard: React.FC<{ caseData: Case; isSelected: boolean; onSelect: (c: Case) => void; formatNumber: (n: string) => string }> = React.memo(({ caseData, isSelected, onSelect, formatNumber }) => {
     const typeColors: { [key in Case['caseType']]: string } = {
         Criminal: 'text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 border-red-100 dark:border-red-900/30',
         Civil: 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 border-blue-100 dark:border-blue-900/30',
@@ -48,7 +48,7 @@ const CaseCard: React.FC<{ caseData: Case; isSelected: boolean; onSelect: () => 
 
     return (
         <div
-            onClick={onSelect}
+            onClick={() => onSelect(caseData)}
             className={`p-4 rounded-xl cursor-pointer transition-all duration-200 border mb-2 ${isSelected
                     ? 'bg-white dark:bg-gray-700 border-blue-500 shadow-md ring-1 ring-blue-500/20'
                     : 'bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-750 hover:border-gray-300 dark:hover:border-gray-600'
@@ -199,7 +199,8 @@ const PredictionResultDisplay: React.FC<{ prediction: PredictionResult; t: (key:
 };
 
 const CaseIntakeTriage: React.FC<CaseIntakeTriageProps> = ({ t, allCases, setAllCases, selectedCase, setSelectedCase, language, currentUser, logActivity }) => {
-    const { formatNumber } = useLocalization(language);
+    const { formatNumber: _formatNumber } = useLocalization(language);
+    const formatNumber = useCallback((n: string) => _formatNumber(n), [_formatNumber]);
     const [isLoading, setIsLoading] = useState(false);
     const [prediction, setPrediction] = useState<PredictionResult | null>(null);
     const [isPiiModalOpen, setIsPiiModalOpen] = useState(false);
@@ -285,11 +286,11 @@ const CaseIntakeTriage: React.FC<CaseIntakeTriageProps> = ({ t, allCases, setAll
         logActivity('CASE_CREATED', t('history_case_created').replace('{title}', newCase.title));
     };
 
-    const handleCaseSelect = (caseData: Case) => {
+    const handleCaseSelect = useCallback((caseData: Case) => {
         setSelectedCase(caseData);
         setMobileTab('details');
         window.scrollTo({ top: 0, behavior: 'smooth' });
-    };
+    }, [setSelectedCase]);
 
     const handleSaveNotes = () => {
         if (!selectedCase) return;
@@ -421,7 +422,7 @@ const CaseIntakeTriage: React.FC<CaseIntakeTriageProps> = ({ t, allCases, setAll
                                     key={caseData.id}
                                     caseData={caseData}
                                     isSelected={selectedCase?.id === caseData.id}
-                                    onSelect={() => handleCaseSelect(caseData)}
+                                    onSelect={handleCaseSelect}
                                     formatNumber={formatNumber}
                                 />
                             )) : (

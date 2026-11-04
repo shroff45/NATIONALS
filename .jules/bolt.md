@@ -1,0 +1,3 @@
+## 2024-11-04 - Optimize React List Rendering
+**Learning:** Preventing unnecessary O(N) re-renders in large lists requires stable function references and primitive props (like booleans) for memoized components.
+**Action:** Always wrap child components in `React.memo` and ensure the event handlers passed to them from parent maps are wrapped in `useCallback`. Do not pass inline functions like `onClick={() => handle(item)}` directly from the map loop to memoized components; instead, pass the stable `handle` and do `onClick={() => handle(item)}` inside the memoized child component (or pass the ID).

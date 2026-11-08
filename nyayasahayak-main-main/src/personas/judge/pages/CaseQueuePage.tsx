@@ -2,7 +2,7 @@
 // NyayaSahayak Hybrid v2.0.0 - Case Queue Page
 // Standalone case queue without external prop dependencies
 
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
     ListFilter, Clock,
     Search, ChevronRight
@@ -29,10 +29,60 @@ const MOCK_QUEUE: QueueCase[] = [
     { id: '5', cnr: 'DLCT/2025/005', title: 'State vs. Lakshmi', type: 'CRIMINAL', priority: 'LOW', filingDate: '2025-01-20', nextHearing: '2025-02-01', pendingDays: 10, advocate: 'Adv. Sinha' },
 ];
 
+
+// ⚡ Bolt Optimization: Extracted and memoized list item to prevent O(N) re-renders
+interface QueueCaseCardProps {
+    case_: QueueCase;
+    isSelected: boolean;
+    onSelect: (id: string) => void;
+    typeColor: string;
+    priorityColor: string;
+}
+const QueueCaseCard = React.memo(({
+    case_,
+    isSelected,
+    onSelect,
+    typeColor,
+    priorityColor
+}: QueueCaseCardProps) => {
+    return (
+        <div
+            onClick={() => onSelect(case_.id)}
+            className={`bg-slate-800/50 border rounded-xl p-4 cursor-pointer transition-all hover:bg-slate-800 ${isSelected
+                ? 'border-purple-500 ring-1 ring-purple-500/50'
+                : 'border-slate-700'
+                }`}
+        >
+            <div className="flex items-start justify-between mb-3">
+                <span className={`text-xs font-bold ${typeColor}`}>
+                    {case_.type.replace('_', ' ')}
+                </span>
+                <span className={`text-xs px-2 py-0.5 rounded border font-bold ${priorityColor}`}>
+                    {case_.priority}
+                </span>
+            </div>
+            <h3 className="font-bold text-white mb-1">{case_.title}</h3>
+            <p className="text-xs text-slate-500 mb-3">{case_.cnr}</p>
+            <div className="flex items-center justify-between text-xs text-slate-400">
+                <span className="flex items-center gap-1">
+                    <Clock className="w-3 h-3" /> {case_.pendingDays}d pending
+                </span>
+                <span>{case_.advocate}</span>
+            </div>
+        </div>
+    );
+});
+
 const CaseQueuePage: React.FC = () => {
     const [search, setSearch] = useState('');
     const [filter, setFilter] = useState<string>('ALL');
     const [selectedCase, setSelectedCase] = useState<QueueCase | null>(null);
+
+
+    const handleSelect = useCallback((id: string) => {
+        const selected = MOCK_QUEUE.find(c => c.id === id);
+        if (selected) setSelectedCase(selected);
+    }, []);
 
     const filteredCases = MOCK_QUEUE.filter(c => {
         const matchesSearch = c.title.toLowerCase().includes(search.toLowerCase()) ||
@@ -108,33 +158,14 @@ const CaseQueuePage: React.FC = () => {
             {/* Cases Grid */}
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {filteredCases.map(case_ => (
-                    <div
+                    <QueueCaseCard
                         key={case_.id}
-                        onClick={() => setSelectedCase(case_)}
-                        className={`bg-slate-800/50 border rounded-xl p-4 cursor-pointer transition-all hover:bg-slate-800 ${selectedCase?.id === case_.id
-                            ? 'border-purple-500 ring-1 ring-purple-500/50'
-                            : 'border-slate-700'
-                            }`}
-                    >
-                        <div className="flex items-start justify-between mb-3">
-                            <span className={`text-xs font-bold ${getTypeColor(case_.type)}`}>
-                                {case_.type.replace('_', ' ')}
-                            </span>
-                            <span className={`text-xs px-2 py-0.5 rounded border font-bold ${getPriorityColor(case_.priority)}`}>
-                                {case_.priority}
-                            </span>
-                        </div>
-
-                        <h3 className="font-bold text-white mb-1">{case_.title}</h3>
-                        <p className="text-xs text-slate-500 mb-3">{case_.cnr}</p>
-
-                        <div className="flex items-center justify-between text-xs text-slate-400">
-                            <span className="flex items-center gap-1">
-                                <Clock className="w-3 h-3" /> {case_.pendingDays}d pending
-                            </span>
-                            <span>{case_.advocate}</span>
-                        </div>
-                    </div>
+                        case_={case_}
+                        isSelected={selectedCase?.id === case_.id}
+                        onSelect={handleSelect}
+                        typeColor={getTypeColor(case_.type)}
+                        priorityColor={getPriorityColor(case_.priority)}
+                    />
                 ))}
             </div>
 

@@ -82,7 +82,13 @@ export default function JudgeDashboard() {
         if (MOCK_CASES.length > 0) setSelectedCase(MOCK_CASES[0]);
     }, []);
 
-    const handleCaseSelect = (c: Case) => {
+
+    const handleCaseSelect = useCallback((c: Case) => {
+        setSelectedCase(c);
+        setShowAIPanel(false);
+    }, []);
+
+    // const handleCaseSelect =
         setSelectedCase(c);
         observability.trace('JUDGE_ASSIST', `Judge viewed case ${c.cnrNumber}`, 1.0);
         setDraft(''); // Reset draft on case switch
@@ -163,23 +169,12 @@ export default function JudgeDashboard() {
                             </div>
                             <div className="flex-1 overflow-y-auto p-2 space-y-2">
                                 {MOCK_CASES.map(c => (
-                                    <div
+                                    <DashboardCaseItem
                                         key={c.id}
-                                        onClick={() => handleCaseSelect(c)}
-                                        className={`p-4 rounded-xl cursor-pointer border transition-all ${selectedCase?.id === c.id
-                                            ? 'bg-blue-600/20 border-blue-500 relative overflow-hidden'
-                                            : 'bg-slate-800/50 border-slate-700 hover:bg-slate-800'}`}
-                                    >
-                                        {selectedCase?.id === c.id && <div className="absolute left-0 top-0 bottom-0 w-1 bg-blue-500"></div>}
-                                        <div className="flex justify-between mb-1">
-                                            <span className="text-[10px] font-mono text-slate-400">{c.cnrNumber}</span>
-                                            <span className={`text-[10px] px-2 rounded-full font-bold ${c.urgency === 'HIGH' ? 'bg-red-500 text-white' : c.urgency === 'MEDIUM' ? 'bg-yellow-500 text-black' : 'bg-green-500 text-white'}`}>{c.urgency}</span>
-                                        </div>
-                                        <h4 className="font-bold text-sm text-white truncate mb-1">{c.complainant} v. {c.respondent}</h4>
-                                        <div className="flex items-center gap-1 text-[10px] text-slate-400">
-                                            <Clock size={10} /> {c.filingDate}
-                                        </div>
-                                    </div>
+                                        case_={c}
+                                        isSelected={selectedCase?.id === c.id}
+                                        onSelect={handleCaseSelect}
+                                    />
                                 ))}
                             </div>
                         </div>

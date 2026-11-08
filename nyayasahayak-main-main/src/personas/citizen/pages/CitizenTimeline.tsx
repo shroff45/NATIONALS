@@ -76,11 +76,69 @@ const mockCitizenCases: CaseInfo[] = [
     }
 ];
 
+
+// ⚡ Bolt Optimization: Extracted and memoized list item to prevent O(N) re-renders
+interface TimelineCaseItemProps {
+    caseInfo: typeof mockCases[0];
+    onSelect: (caseInfo: typeof mockCases[0]) => void;
+}
+const TimelineCaseItem = React.memo(({
+    caseInfo,
+    onSelect
+}: TimelineCaseItemProps) => {
+    return (
+        <button
+            onClick={() => onSelect(caseInfo)}
+            className="p-6 bg-slate-800/50 border border-slate-700 rounded-2xl text-left hover:border-cyan-500/50 hover:bg-slate-800 transition-all group"
+        >
+            <div className="flex justify-between items-start mb-4">
+                <div>
+                    <div className="text-sm font-mono text-cyan-500 mb-1">{caseInfo.cnrNumber}</div>
+                    <h3 className="text-lg font-bold text-white group-hover:text-cyan-400 transition-colors">{caseInfo.title}</h3>
+                </div>
+                <div className="px-3 py-1 bg-cyan-500/20 text-cyan-400 rounded-full text-xs font-medium border border-cyan-500/30">
+                    {caseInfo.status}
+                </div>
+            </div>
+
+            <div className="space-y-2 mb-4">
+                <div className="flex items-center text-sm text-slate-400">
+                    <Calendar className="w-4 h-4 mr-2 text-slate-500" />
+                    Filed: {caseInfo.filingDate}
+                </div>
+                <div className="flex items-center text-sm text-slate-400">
+                    <Clock className="w-4 h-4 mr-2 text-slate-500" />
+                    Next Hearing: <span className="ml-1 text-white font-medium">{caseInfo.nextHearing}</span>
+                </div>
+                <div className="flex items-center text-sm text-slate-400">
+                    <User className="w-4 h-4 mr-2 text-slate-500" />
+                    Judge: {caseInfo.judge}
+                </div>
+            </div>
+            <div className="flex justify-between items-center pt-4 border-t border-slate-700">
+                <span className="text-sm text-slate-500">
+                    {caseInfo.events.length} Updates Available
+                </span>
+                <ChevronRight className="w-5 h-5 text-slate-600 group-hover:text-cyan-400 transition-colors group-hover:translate-x-1" />
+            </div>
+        </button>
+    );
+});
+
 const CitizenTimeline: React.FC = () => {
     const { t } = useCitizenTranslation();
     const [selectedCase, setSelectedCase] = useState<CaseInfo | null>(null);
     const [searchQuery, setSearchQuery] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+
+    const handleSelect = useCallback((caseInfo: typeof mockCases[0]) => {
+        setIsLoading(true);
+        setTimeout(() => {
+            setSelectedCase(caseInfo);
+            setIsLoading(false);
+        }, 500);
+    }, []);
+
     const timelineRef = useRef<HTMLDivElement>(null);
 
     const filteredCases = mockCitizenCases.filter(c =>
@@ -160,44 +218,12 @@ const CitizenTimeline: React.FC = () => {
 
                         {/* Cases Grid */}
                         <div className="grid md:grid-cols-2 gap-4">
-                            {filteredCases.map((caseInfo) => (
-                                <button
+                            {filteredCases.map(caseInfo => (
+                                <TimelineCaseItem
                                     key={caseInfo.id}
-                                    onClick={() => {
-                                        setIsLoading(true);
-                                        setTimeout(() => {
-                                            setSelectedCase(caseInfo);
-                                            setIsLoading(false);
-                                        }, 500);
-                                    }}
-                                    className="p-6 bg-slate-800/50 border border-slate-700 rounded-2xl text-left hover:border-cyan-500/50 hover:bg-slate-800 transition-all group"
-                                    aria-label={`View timeline for case ${caseInfo.cnr}`}
-                                >
-                                    <div className="flex items-start justify-between mb-3">
-                                        <span className="text-xs font-mono text-cyan-400 bg-cyan-500/10 px-2 py-1 rounded">
-                                            {caseInfo.cnr}
-                                        </span>
-                                        <ChevronRight className="w-5 h-5 text-slate-500 group-hover:text-cyan-400 transition-colors" />
-                                    </div>
-                                    <h3 className="text-lg font-semibold text-white mb-2">{caseInfo.title}</h3>
-                                    <p className="text-sm text-slate-400 mb-4">{caseInfo.court}</p>
-                                    <div className="flex items-center gap-4 text-xs text-slate-500">
-                                        <span className="flex items-center gap-1">
-                                            <Clock className="w-3 h-3" />
-                                            {calculateDuration(caseInfo)} days
-                                        </span>
-                                        <span className="flex items-center gap-1">
-                                            <Calendar className="w-3 h-3" />
-                                            {caseInfo.events.length} events
-                                        </span>
-                                        {caseInfo.nextHearing && (
-                                            <span className="flex items-center gap-1 text-amber-400">
-                                                <AlertCircle className="w-3 h-3" />
-                                                Next: {new Date(caseInfo.nextHearing).toLocaleDateString()}
-                                            </span>
-                                        )}
-                                    </div>
-                                </button>
+                                    caseInfo={caseInfo}
+                                    onSelect={handleSelect}
+                                />
                             ))}
                         </div>
 

@@ -17,7 +17,7 @@ results = {
     "tests": []
 }
 
-def verify_verify_verify_test(name, condition, details=""):
+def run_test(name, condition, details=""):
     """Record test result"""
     status = "PASS" if condition else "FAIL"
     results["tests"].append({
